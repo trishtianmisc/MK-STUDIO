@@ -1,0 +1,58 @@
+# MK Studio — Project TODO
+
+- [x] Retain the Velvet Wardrobe Editorial homepage and MK Studio brand presentation
+- [x] Keep the revised website frontend-only with no database queries, backend product operations, authentication, or persisted forms
+- [x] Build a responsive static fashion catalogue with twelve product showcase cards
+- [x] Add editorial occasion filtering, sorting, and in-page catalogue search
+- [x] Add dedicated static product-detail routes with enquiry and save-preview interactions
+- [x] Add a styled About / brand-story page using the supplied wardrobe visual as a framed editorial asset
+- [x] Add a responsive Contact page with social and contact-details sections plus a clearly labeled non-sending enquiry form
+- [x] Add a clearly labeled non-persistent admin-interface preview with product-management controls
+- [x] Link homepage navigation and CTAs into the catalogue and contact experience
+- [x] Add Vitest coverage for the local static catalogue data
+- [x] Verify type checking, production build, tests, and desktop/mobile layouts
+- [x] Replace the MK Studio homepage hero with the newly supplied wardrobe image and verify responsive composition
+- [x] Generate a clean version of the supplied wardrobe image without the embedded MK Studio wordmark or Curated by sisters tagline, then update the hero background
+- [x] Verify and document that the final hero asset contains no embedded wordmark or tagline
+- [x] Add minimal, accessible editorial motion to the homepage hero and primary calls to action
+- [x] Update catalogue cards with rental price, availability status, and static add-to-order controls
+- [x] Add product-detail UI for size selection, rental information, a static availability calendar, and add-to-order controls
+- [x] Build a multi-product order summary with editable rental dates and automatic frontend total calculation
+- [x] Build static checkout, proof-of-payment, order-confirmation, and order-tracking interface previews without submission or persistence
+- [x] Expand the admin preview into static catalogue, order, payment-proof, availability, and status-management screens without authentication or CRUD
+- [x] Remove or relabel unsupported features so the site does not imply live payment, booking, upload, availability, login, or order-tracking functionality
+- [x] Verify all revised flows on desktop and mobile, then document the frontend-only limitations
+- [x] Audit rental, availability, checkout, tracking, and admin-preview screens for clear static-preview labeling and re-verify them
+- [x] Confirm and, if needed, strengthen static-preview labeling in the product-detail availability calendar and order-tracking screen
+- [x] Remove all public Studio Admin links and ensure the admin preview is reachable only through /admin
+- [x] Add a clearly labeled frontend-only fixed-credential login gate for /admin without backend authentication
+- [x] Verify public navigation, invalid-login feedback, successful admin entry, and logout behavior
+- [x] Verify invalid fixed-credential rejection and its visible error path through the admin-access component logic
+- [x] Verify successful fixed-credential session entry and sign-out clearing through the session-gate test
+- [x] Add automated coverage for the temporary admin session grant and sign-out clearing behavior
+- [x] Add a UI-level test that verifies invalid /admin credentials show the visible error message
+- [x] Add a UI-level test that verifies valid /admin credentials open the preview and Sign out returns to the login screen
+- [x] Apply a complementary warm-champagne, espresso, muted-rose, coral, and sunset-orange palette across the MK Studio interface
+- [x] Verify the retuned theme preserves readable contrast across desktop and mobile pages
+- [x] Correct the valid product-detail route or restyle its fallback so it remains within the MK Studio color system
+- [x] Verify the color theme and contrast on valid product detail, order, tracking, contact, and admin screens at desktop and mobile sizes
+- [x] Recheck the final order and private admin color treatment at desktop size after the last palette adjustments
+- [x] Review the supplied Endless landing-page reference and translate its browsing hierarchy into an original MK Studio direction
+- [x] Redesign only the MK Studio homepage with local mock rental-discovery content and no changes to existing non-home routes
+- [x] Verify the redesigned homepage at desktop and mobile sizes while preserving existing navigation and frontend-only behavior
+- [x] Verify the rebuilt homepage’s desktop and mobile navigation and call-to-action destinations remain intact
+- [x] Recheck the final desktop homepage composition after the campaign-image update
+- [x] Add interaction coverage for the remaining desktop navigation, discovery doors, product-card, order, and footer destinations
+- [x] Verify the remaining desktop header links and all discovery-door destinations
+- [x] Verify the remaining footer links and document the full homepage route-destination matrix
+- [x] Generate an aesthetic MK Studio Collection Rail hero background for user review
+- [x] Change the homepage hero title to “Collect Memories Not Clutter” and apply the new background
+- [x] Verify the revised hero at desktop and mobile sizes
+- [ ] Remove the public rental-order/cart system and `/order` route from the frontend showcase.
+- [ ] Remove the tracking system and `/track-order` route from the frontend showcase.
+- [ ] Remove payment-proof upload and checkout-preview UI from the frontend showcase.
+- [ ] Refine `/admin` to catalogue and category management preview only.
+- [ ] Replace product-detail date calendar UI with informational availability labels.
+- [ ] Add Consignment as a catalogue category/section.
+- [ ] Align public copy, navigation, and metadata with MK Studio showcase-only scope.
+- [ ] Update Vitest coverage for scope reduction and run typecheck, build, tests, and responsive visual verification.
