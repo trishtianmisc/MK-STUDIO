@@ -240,7 +240,7 @@ export default defineConfig({
       "127.0.0.1",
     ],
     proxy: {
-      "/api": "http://localhost:3000",
+      "/api": "http://localhost:3001",
     },
     fs: {
       strict: true,

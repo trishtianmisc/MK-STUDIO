@@ -26,8 +26,8 @@ router.post(
   upload.single("file"),
   imagesController.uploadImage,
 );
+router.patch("/reorder/all", requireAuth, requireAdmin, imagesController.reorderImages);
 router.delete("/:id", requireAuth, requireAdmin, imagesController.deleteImage);
 router.patch("/:id", requireAuth, requireAdmin, imagesController.updateImage);
-router.patch("/reorder/all", requireAuth, requireAdmin, imagesController.reorderImages);
 
 export default router;

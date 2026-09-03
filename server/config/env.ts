@@ -12,7 +12,7 @@ function optionalEnv(name: string, fallback: string): string {
 
 export const env = {
   NODE_ENV: optionalEnv("NODE_ENV", "development"),
-  PORT: optionalEnv("PORT", "3000"),
+  PORT: optionalEnv("PORT", "3001"),
   SUPABASE_URL: requireEnv("SUPABASE_URL"),
   SUPABASE_ANON_KEY: requireEnv("SUPABASE_ANON_KEY"),
   SUPABASE_SERVICE_ROLE_KEY: requireEnv("SUPABASE_SERVICE_ROLE_KEY"),
