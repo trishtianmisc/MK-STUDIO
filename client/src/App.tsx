@@ -16,8 +16,16 @@ import AdminLayout from "./components/AdminLayout";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminProducts from "./pages/AdminProducts";
 import AdminCategories from "./pages/AdminCategories";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { AdminView } from "./components/AdminLayout";
+
+function ScrollToTop() {
+  const [location] = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [location]);
+  return null;
+}
 
 function ProtectedAdminRoute() {
   const { user, loading, isAdmin } = useAuth();
@@ -73,7 +81,9 @@ function AdminLayoutWrapper({ view, setView, children }: { view: AdminView; setV
 
 function Router() {
   return (
-    <Switch>
+    <>
+      <ScrollToTop />
+      <Switch>
       <Route path={"/"} component={Home} />
       <Route path={"/catalogue"} component={Catalogue} />
       <Route path={"/catalogue/:slug"} component={ProductDetail} />
@@ -84,7 +94,8 @@ function Router() {
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
-    </Switch>
+      </Switch>
+    </>
   );
 }
 

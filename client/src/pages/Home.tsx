@@ -5,8 +5,6 @@ import {
   ChevronRight,
   Heart,
   Menu,
-  Search,
-  ShoppingBag,
   X,
 } from "lucide-react";
 import { useLocation } from "wouter";
@@ -53,18 +51,18 @@ export default function Home() {
 
   return (
     <div className="rail-home">
-      <div className="rail-service-bar">
+      {/* <div className="rail-service-bar">
         <span>MK Studio rental collection</span>
         <span>Choose the piece. Keep the memory.</span>
       </div>
+        */}
 
       <header className="rail-header">
         <button className="rail-menu-trigger" onClick={() => setMenuOpen((open) => !open)} aria-label="Toggle main menu">
           {menuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
         <button className="rail-brand" onClick={() => goTo("home")}> 
-          <img src="/images/my-studio-mark_4967063e.png" alt="" />
-          <span>MK Studio</span>
+          <img src="/images/mklogo.png" alt="" />
         </button>
         <nav className="rail-nav" aria-label="Main navigation">
           <button onClick={() => goTo("discover")}>Shop the edit</button>
@@ -72,9 +70,8 @@ export default function Home() {
           <button onClick={() => goTo("rental-ritual")}>How it works</button>
         </nav>
         <div className="rail-actions">
-          <button onClick={() => goTo("current-edit")} aria-label="Search the edit"><Search size={18} /></button>
-          <button className="rail-order-action" onClick={() => goTo("/order")} aria-label="View rental order">
-            <ShoppingBag size={18} /> <span>Order</span><i>0</i>
+          <button className="rail-order-action" onClick={() => goTo("/contact")} aria-label="Enquire about a piece">
+            Enquire
           </button>
         </div>
       </header>
@@ -92,7 +89,7 @@ export default function Home() {
         <section className="rail-hero" aria-labelledby="rail-hero-heading">
           <img
             className="rail-hero-image"
-            src="/images/mk-studio-collection-hero_e6c20280.jpg"
+            src="/images/mkherosec2.png"
             alt="A woman in a coral evening dress walking through a sunset-lit boutique hotel arcade"
           />
           <div className="rail-hero-shade" />
@@ -170,7 +167,7 @@ export default function Home() {
             <span className="rail-arch rail-arch-large" aria-hidden="true" />
           </article>
           <article className="rail-campaign rail-campaign-image">
-            <img src="/images/mk-studio-hero-clean_48a115fb.png" alt="Jewel-tone occasion dresses from the MK Studio wardrobe" />
+            <img src="/images/mkherosec.png" alt="Jewel-tone occasion dresses from the MK Studio wardrobe" />
             <div>
               <p className="rail-kicker">From the rail</p>
               <h2>One piece.<br /><em>More stories.</em></h2>

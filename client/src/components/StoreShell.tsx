@@ -1,32 +1,29 @@
-import { ArrowUpRight, Menu, Search, X } from "lucide-react";
+import { ArrowUpRight, Menu, X } from "lucide-react";
 import { ReactNode, useState } from "react";
 import { useLocation } from "wouter";
 
 type StoreShellProps = {
   children: ReactNode;
   current?: "catalogue" | "about" | "contact" | "admin";
-  onSearch?: () => void;
 };
 
-export function StoreShell({ children, current, onSearch }: StoreShellProps) {
+export function StoreShell({ children, current }: StoreShellProps) {
   const [, setLocation] = useLocation();
   const [open, setOpen] = useState(false);
   const go = (path: string) => {
     setOpen(false);
     setLocation(path);
-    window.scrollTo({ top: 0, behavior: "instant" });
   };
 
   return (
     <div className="store-shell">
-      <div className="announcement-bar"><span>MK Studio rental collection</span><span className="announcement-note">Digital showcase — contact the studio for rental enquiries.</span></div>
+      {/* <div className="announcement-bar"><span>MK Studio rental collection</span><span className="announcement-note">Digital showcase — contact the studio for rental enquiries.</span></div> */}
       <header className="store-header">
         <button className="mobile-menu-trigger" onClick={() => setOpen(v => !v)} aria-label="Toggle navigation">
           {open ? <X size={21} /> : <Menu size={21} />}
         </button>
         <button className="brand-lockup" onClick={() => go("/")} aria-label="Return to MK Studio home">
-          <img src="/images/my-studio-mark_4967063e.png" alt="" className="brand-mark" />
-          <span>MK Studio</span>
+          <img src="/images/mklogo.png" alt="" className="brand-mark" />
         </button>
         <nav className="store-nav" aria-label="Main navigation">
           <button className={current === "catalogue" ? "is-current" : ""} onClick={() => go("/catalogue")}>Catalogue</button>
@@ -34,8 +31,7 @@ export function StoreShell({ children, current, onSearch }: StoreShellProps) {
           <button className={current === "contact" ? "is-current" : ""} onClick={() => go("/contact")}>Contact</button>
         </nav>
         <div className="store-actions">
-          <button className="icon-action" onClick={onSearch} aria-label="Search the catalogue"><Search size={17} /></button>
-          <button className="store-cta" onClick={() => go("/contact")}>Enquire now</button>
+          <button className="store-cta" onClick={() => go("/contact")}>Enquire</button>
         </div>
       </header>
       {open && (

@@ -43,7 +43,7 @@ export default function Catalogue() {
 
 
   return (
-    <StoreShell current="catalogue" onSearch={() => setSearchOpen(true)}>
+    <StoreShell current="catalogue">
       <main className="catalogue-page">
         <section className="catalogue-hero">
           <p className="eyebrow">The MK Studio catalogue</p>
