@@ -2,16 +2,23 @@ import { ArrowLeft, ClipboardList, Edit3, ImagePlus, LayoutDashboard, Plus, Tras
 import { useState } from "react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
+import { useAuth } from "@/contexts/AuthContext";
 import { categoryMeta, formatRentalPrice, showcaseProducts } from "@/data/catalogue";
 
 type AdminView = "dashboard" | "products" | "categories" | "content";
 
-export default function AdminPreview({ onSignOut }: { onSignOut: () => void }) {
+export default function AdminPreview() {
+  const { user, signOut } = useAuth();
   const [, setLocation] = useLocation();
   const [view, setView] = useState<AdminView>("dashboard");
   const preview = (action: string) => toast("Admin interface preview", { description: `${action} is visual only. No records are created, edited, deleted, or stored.` });
   const navigate = (next: AdminView) => setView(next);
-  
+
+  const handleSignOut = async () => {
+    await signOut();
+    setLocation("/admin");
+  };
+
   const navItems: { id: AdminView; label: string; count?: string; icon: typeof LayoutDashboard }[] = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
     { id: "products", label: "Products", count: String(showcaseProducts.length), icon: ImagePlus },
@@ -19,11 +26,11 @@ export default function AdminPreview({ onSignOut }: { onSignOut: () => void }) {
     { id: "content", label: "Page content", icon: Edit3 },
   ];
 
-  const title = { 
-    dashboard: "Studio overview", 
-    products: "Product catalogue", 
-    categories: "Product categories", 
-    content: "Site content" 
+  const title = {
+    dashboard: "Studio overview",
+    products: "Product catalogue",
+    categories: "Product categories",
+    content: "Site content"
   }[view];
 
   return (
@@ -32,21 +39,21 @@ export default function AdminPreview({ onSignOut }: { onSignOut: () => void }) {
         <button onClick={() => setLocation("/")}><ArrowLeft size={17} /> Return to site</button>
         <span>MK Studio</span>
         <div className="admin-preview-header-actions">
-          <p>Static admin interface preview</p>
-          <button onClick={onSignOut}>Sign out</button>
+          <p>{user?.email}</p>
+          <button onClick={handleSignOut}>Sign out</button>
         </div>
       </header>
-      
+
       <section className="admin-preview-intro">
         <div>
-          <p>FRONTEND ONLY</p>
+          <p>ADMIN AREA</p>
           <h1>{view === "dashboard" ? <>Studio rental<br />overview.</> : <>{title}<br /><em>preview.</em></>}</h1>
         </div>
         <button onClick={() => preview(view === "products" ? "Adding a new product" : "Saving this workspace change")}>
           <Plus size={17} /> {view === "products" ? "Add product" : "New action"}
         </button>
       </section>
-      
+
       <section className="admin-preview-content">
         <aside>
           <p>Workspace</p>
@@ -69,16 +76,16 @@ export default function AdminPreview({ onSignOut }: { onSignOut: () => void }) {
             );
           })}
         </aside>
-        
+
         <div className="admin-table-wrap">
           <div className="admin-table-head">
             <div>
               <p>{title}</p>
-              <span>Static frontend preview — no login, changes, uploads, or records are saved.</span>
+              <span>Admin preview — product management coming in a future phase.</span>
             </div>
             {view === "products" && <button onClick={() => preview("Adding a product")}><Plus size={16} /> New product</button>}
           </div>
-          
+
           {view === "dashboard" && <Dashboard navigate={navigate} />}
           {view === "products" && <Products preview={preview} />}
           {view === "categories" && <Categories preview={preview} />}

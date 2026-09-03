@@ -1,38 +1,50 @@
-import { ArrowLeft, ArrowUpRight, LockKeyhole } from "lucide-react";
+import { LockKeyhole, ArrowLeft, ArrowUpRight } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { useLocation } from "wouter";
-import AdminPreview from "./AdminPreview";
-import {
-  clearAdminPreviewSession,
-  grantAdminPreviewSession,
-  hasAdminPreviewSession,
-  validateAdminCredentials,
-} from "@/lib/adminAccess";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function AdminAccess() {
+  const { user, loading, isAdmin, signIn } = useAuth();
   const [, setLocation] = useLocation();
-  const [isAuthenticated, setIsAuthenticated] = useState(hasAdminPreviewSession);
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
-  const submit = (event: FormEvent) => {
+  // Still checking session
+  if (loading) {
+    return (
+      <main className="admin-access-page">
+        <section className="admin-access-panel">
+          <p className="admin-access-intro">Checking session...</p>
+        </section>
+      </main>
+    );
+  }
+
+  // Already logged in as admin — redirect to dashboard
+  if (user && isAdmin) {
+    setLocation("/admin/dashboard");
+    return null;
+  }
+
+  const submit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!validateAdminCredentials(username, password)) {
-      setError("The username or password is not recognised.");
+    setError("");
+    setSubmitting(true);
+
+    const result = await signIn(email, password);
+
+    if (result.error) {
+      setError(result.error);
+      setSubmitting(false);
       return;
     }
-    grantAdminPreviewSession();
-    setIsAuthenticated(true);
-  };
 
-  const signOut = () => {
-    clearAdminPreviewSession();
-    setPassword("");
-    setIsAuthenticated(false);
+    // signIn succeeded — the AuthContext will update user/isAdmin
+    // and the redirect will happen on next render via the check above
+    setSubmitting(false);
   };
-
-  if (isAuthenticated) return <AdminPreview onSignOut={signOut} />;
 
   return (
     <main className="admin-access-page">
@@ -43,14 +55,20 @@ export default function AdminAccess() {
         <div className="admin-access-mark"><LockKeyhole size={19} /></div>
         <p className="eyebrow">Private studio access</p>
         <h1>Studio<br /><em>sign in.</em></h1>
-        <p className="admin-access-intro">Enter the temporary studio credentials to open the MK Studio management preview.</p>
+        <p className="admin-access-intro">Enter your administrator credentials to access the MK Studio management area.</p>
         <form onSubmit={submit}>
-          <label>Username<input autoComplete="username" value={username} onChange={event => setUsername(event.target.value)} placeholder="Studio username" required /></label>
+          <label>Email<input autoComplete="email" type="email" value={email} onChange={event => setEmail(event.target.value)} placeholder="admin@mkstudio.com" required /></label>
           <label>Password<input autoComplete="current-password" type="password" value={password} onChange={event => setPassword(event.target.value)} placeholder="Password" required /></label>
           {error && <p className="admin-access-error" role="alert">{error}</p>}
-          <button className="editorial-button editorial-button-light" type="submit">Open studio preview <ArrowUpRight size={16} /></button>
+          <button className="editorial-button editorial-button-light" type="submit" disabled={submitting}>
+            {submitting ? "Signing in..." : <>Sign in <ArrowUpRight size={16} /></>}
+          </button>
         </form>
-        <p className="admin-access-note">Temporary frontend-only access. This gate is not secure and will be replaced with proper authentication in the backend phase.</p>
+        {user && !isAdmin && (
+          <p className="admin-access-error" role="alert">
+            Your account does not have administrator privileges.
+          </p>
+        )}
       </section>
     </main>
   );

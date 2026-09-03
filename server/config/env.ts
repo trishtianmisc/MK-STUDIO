@@ -16,4 +16,5 @@ export const env = {
   SUPABASE_URL: requireEnv("SUPABASE_URL"),
   SUPABASE_ANON_KEY: requireEnv("SUPABASE_ANON_KEY"),
   SUPABASE_SERVICE_ROLE_KEY: requireEnv("SUPABASE_SERVICE_ROLE_KEY"),
+  CORS_ORIGIN: optionalEnv("CORS_ORIGIN", "http://localhost:3000"),
 } as const;

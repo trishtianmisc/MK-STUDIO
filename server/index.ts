@@ -2,9 +2,11 @@ import express from "express";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
+import { env } from "./config/env.js";
 import productsRoutes from "./routes/products.routes.js";
 import categoriesRoutes from "./routes/categories.routes.js";
 import imagesRoutes from "./routes/images.routes.js";
+import authRoutes from "./routes/auth.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -17,6 +19,22 @@ async function startServer() {
   // Body parsing
   app.use(express.json());
 
+  // CORS for local development
+  app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    if (origin) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+    }
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+    if (req.method === "OPTIONS") {
+      res.sendStatus(204);
+      return;
+    }
+    next();
+  });
+
   // Serve static files from dist/public in production
   const staticPath =
     process.env.NODE_ENV === "production"
@@ -26,6 +44,7 @@ async function startServer() {
   app.use(express.static(staticPath));
 
   // API routes
+  app.use("/api/auth", authRoutes);
   app.use("/api/products", productsRoutes);
   app.use("/api/categories", categoriesRoutes);
   app.use("/api/images", imagesRoutes);
@@ -43,7 +62,7 @@ async function startServer() {
   // Error handler (must be last)
   app.use(errorHandler);
 
-  const port = process.env.PORT || 3000;
+  const port = env.PORT;
 
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
