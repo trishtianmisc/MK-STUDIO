@@ -13,9 +13,8 @@ import { errorHandler } from "./middleware/errorHandler.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-async function startServer() {
+export function createApp() {
   const app = express();
-  const server = createServer(app);
 
   // Body parsing
   app.use(express.json());
@@ -63,11 +62,16 @@ async function startServer() {
   // Error handler (must be last)
   app.use(errorHandler);
 
-  const port = env.PORT;
-
-  server.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}/`);
-  });
+  return app;
 }
 
-startServer().catch(console.error);
+const app = createApp();
+export default app;
+
+// Only start the HTTP server when running locally (not on Vercel)
+if (!process.env.VERCEL) {
+  const server = createServer(app);
+  server.listen(env.PORT, () => {
+    console.log(`Server running on http://localhost:${env.PORT}/`);
+  });
+}
