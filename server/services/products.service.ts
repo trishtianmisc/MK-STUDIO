@@ -4,42 +4,54 @@ import type { Database } from "../types/database.js";
 type ProductRow = Database["public"]["Tables"]["products"]["Row"];
 type ProductInsert = Database["public"]["Tables"]["products"]["Insert"];
 type ProductUpdate = Database["public"]["Tables"]["products"]["Update"];
+type CategoryRow = Database["public"]["Tables"]["categories"]["Row"];
+type ProductImageRow = Database["public"]["Tables"]["product_images"]["Row"];
+
+/** Product with joined category and images — returned by catalogue queries */
+export type ProductWithRelations = ProductRow & {
+  categories: CategoryRow | null;
+  product_images: ProductImageRow[];
+};
+
+const SELECT_WITH_RELATIONS = "*, categories(*), product_images(*)" as const;
 
 /**
  * Get all public products (for anonymous/public access).
- * Ordered by sort_order.
+ * Includes category and image data.
  */
-export async function getPublicProducts(): Promise<ProductRow[]> {
+export async function getPublicProducts(): Promise<ProductWithRelations[]> {
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select(SELECT_WITH_RELATIONS)
     .eq("is_public", true)
     .order("sort_order");
 
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []) as unknown as ProductWithRelations[];
 }
 
 /**
  * Get all products (admin view — includes private products).
+ * Includes category and image data.
  */
-export async function getAllProducts(): Promise<ProductRow[]> {
+export async function getAllProducts(): Promise<ProductWithRelations[]> {
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select(SELECT_WITH_RELATIONS)
     .order("sort_order");
 
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []) as unknown as ProductWithRelations[];
 }
 
 /**
  * Get a single public product by slug.
+ * Includes category and image data.
  */
-export async function getPublicProductBySlug(slug: string): Promise<ProductRow | null> {
+export async function getPublicProductBySlug(slug: string): Promise<ProductWithRelations | null> {
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select(SELECT_WITH_RELATIONS)
     .eq("slug", slug)
     .eq("is_public", true)
     .single();
@@ -48,16 +60,17 @@ export async function getPublicProductBySlug(slug: string): Promise<ProductRow |
     if (error.code === "PGRST116") return null;
     throw error;
   }
-  return data;
+  return data as unknown as ProductWithRelations | null;
 }
 
 /**
  * Get a single product by slug (admin view — includes private products).
+ * Includes category and image data.
  */
-export async function getProductBySlug(slug: string): Promise<ProductRow | null> {
+export async function getProductBySlug(slug: string): Promise<ProductWithRelations | null> {
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select(SELECT_WITH_RELATIONS)
     .eq("slug", slug)
     .single();
 
@@ -65,11 +78,12 @@ export async function getProductBySlug(slug: string): Promise<ProductRow | null>
     if (error.code === "PGRST116") return null;
     throw error;
   }
-  return data;
+  return data as unknown as ProductWithRelations | null;
 }
 
 /**
  * Get a single product by ID (admin view).
+ * Does not include relations (used internally for validation).
  */
 export async function getProductById(id: string): Promise<ProductRow | null> {
   const { data, error } = await supabase
@@ -83,6 +97,22 @@ export async function getProductById(id: string): Promise<ProductRow | null> {
     throw error;
   }
   return data;
+}
+
+/**
+ * Get featured public products.
+ * Includes category and image data.
+ */
+export async function getFeaturedProducts(): Promise<ProductWithRelations[]> {
+  const { data, error } = await supabase
+    .from("products")
+    .select(SELECT_WITH_RELATIONS)
+    .eq("is_public", true)
+    .eq("is_featured", true)
+    .order("sort_order");
+
+  if (error) throw error;
+  return (data ?? []) as unknown as ProductWithRelations[];
 }
 
 /**

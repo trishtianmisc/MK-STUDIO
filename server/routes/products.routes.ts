@@ -7,6 +7,7 @@ const router = Router();
 
 // Public routes (no auth required)
 router.get("/", productsController.listProducts);
+router.get("/featured", productsController.listFeaturedProducts);
 router.get("/:slug", productsController.getProductBySlug);
 
 // Admin-only routes

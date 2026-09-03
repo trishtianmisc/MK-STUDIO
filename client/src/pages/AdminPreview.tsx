@@ -1,9 +1,11 @@
 import { ArrowLeft, ClipboardList, Edit3, ImagePlus, LayoutDashboard, Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
-import { categoryMeta, formatRentalPrice, showcaseProducts } from "@/data/catalogue";
+import { categoryMeta, formatRentalPrice, toShowcaseProduct } from "@/data/catalogue";
+import { useProducts } from "@/hooks/useProducts";
+import { useCategories } from "@/hooks/useCategories";
 
 type AdminView = "dashboard" | "products" | "categories" | "content";
 
@@ -14,6 +16,11 @@ export default function AdminPreview() {
   const preview = (action: string) => toast("Admin interface preview", { description: `${action} is visual only. No records are created, edited, deleted, or stored.` });
   const navigate = (next: AdminView) => setView(next);
 
+  const { products: rawProducts } = useProducts();
+  const { categories } = useCategories();
+
+  const products = useMemo(() => rawProducts.map(toShowcaseProduct), [rawProducts]);
+
   const handleSignOut = async () => {
     await signOut();
     setLocation("/admin");
@@ -21,8 +28,8 @@ export default function AdminPreview() {
 
   const navItems: { id: AdminView; label: string; count?: string; icon: typeof LayoutDashboard }[] = [
     { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { id: "products", label: "Products", count: String(showcaseProducts.length), icon: ImagePlus },
-    { id: "categories", label: "Categories", count: String(Object.keys(categoryMeta).length), icon: ClipboardList },
+    { id: "products", label: "Products", count: String(products.length), icon: ImagePlus },
+    { id: "categories", label: "Categories", count: String(categories.length), icon: ClipboardList },
     { id: "content", label: "Page content", icon: Edit3 },
   ];
 
@@ -86,9 +93,9 @@ export default function AdminPreview() {
             {view === "products" && <button onClick={() => preview("Adding a product")}><Plus size={16} /> New product</button>}
           </div>
 
-          {view === "dashboard" && <Dashboard navigate={navigate} />}
-          {view === "products" && <Products preview={preview} />}
-          {view === "categories" && <Categories preview={preview} />}
+          {view === "dashboard" && <Dashboard navigate={navigate} products={products} categories={categories} />}
+          {view === "products" && <Products preview={preview} products={products} />}
+          {view === "categories" && <Categories preview={preview} products={products} categories={categories} />}
           {view === "content" && <Content preview={preview} />}
         </div>
       </section>
@@ -96,22 +103,22 @@ export default function AdminPreview() {
   );
 }
 
-function Dashboard({ navigate }: { navigate: (view: AdminView) => void }) {
+function Dashboard({ navigate, products, categories }: { navigate: (view: AdminView) => void; products: ReturnType<typeof toShowcaseProduct>[]; categories: { id: string; slug: string; name: string }[] }) {
   return (
     <section className="admin-stat-grid">
       <article>
         <span>Showcase products</span>
-        <strong>{showcaseProducts.length}</strong>
+        <strong>{products.length}</strong>
         <button onClick={() => navigate("products")}>View catalogue</button>
       </article>
       <article>
         <span>Product categories</span>
-        <strong>{Object.keys(categoryMeta).length}</strong>
+        <strong>{categories.length}</strong>
         <button onClick={() => navigate("categories")}>Manage categories</button>
       </article>
       <article>
         <span>Consignment pieces</span>
-        <strong>{showcaseProducts.filter(p => p.category === "consignment").length}</strong>
+        <strong>{products.filter(p => p.category === "consignment").length}</strong>
         <button onClick={() => navigate("products")}>Review consignment</button>
       </article>
       <article>
@@ -123,7 +130,7 @@ function Dashboard({ navigate }: { navigate: (view: AdminView) => void }) {
   );
 }
 
-function Products({ preview }: { preview: (action: string) => void }) {
+function Products({ preview, products }: { preview: (action: string) => void; products: ReturnType<typeof toShowcaseProduct>[] }) {
   return (
     <div className="admin-table">
       <div className="admin-row admin-row-head">
@@ -132,7 +139,7 @@ function Products({ preview }: { preview: (action: string) => void }) {
         <span>Availability</span>
         <span />
       </div>
-      {showcaseProducts.slice(0, 10).map(product => (
+      {products.slice(0, 10).map(product => (
         <div className="admin-row" key={product.slug}>
           <div className="admin-product-cell">
             <img src={product.image} alt="" />
@@ -141,7 +148,7 @@ function Products({ preview }: { preview: (action: string) => void }) {
               <span>{formatRentalPrice(product.rentalPrice)} · {product.color}</span>
             </div>
           </div>
-          <span>{categoryMeta[product.category].label}</span>
+          <span>{product.categoryLabel}</span>
           <span className={`admin-status ${product.availability.toLowerCase()}`}>{product.availability}</span>
           <div className="admin-row-actions">
             <button onClick={() => preview(`Editing ${product.name}`)} aria-label={`Edit ${product.name}`}><Edit3 size={16} /></button>
@@ -154,15 +161,15 @@ function Products({ preview }: { preview: (action: string) => void }) {
   );
 }
 
-function Categories({ preview }: { preview: (action: string) => void }) {
+function Categories({ preview, products, categories }: { preview: (action: string) => void; products: ReturnType<typeof toShowcaseProduct>[]; categories: { id: string; slug: string; name: string }[] }) {
   return (
     <div className="admin-simple-grid">
-      {Object.entries(categoryMeta).map(([slug, category]) => (
-        <article key={slug}>
-          <span>{category.label}</span>
-          <strong>{showcaseProducts.filter(product => product.category === slug).length} products</strong>
-          <p>{category.short}</p>
-          <button onClick={() => preview(`Editing ${category.label}`)}><Edit3 size={15} /> Edit category</button>
+      {categories.map((category) => (
+        <article key={category.slug}>
+          <span>{category.name}</span>
+          <strong>{products.filter(product => product.category === category.slug).length} products</strong>
+          <p>{categoryMeta[category.slug]?.short ?? ""}</p>
+          <button onClick={() => preview(`Editing ${category.name}`)}><Edit3 size={15} /> Edit category</button>
         </article>
       ))}
     </div>

@@ -1,4 +1,6 @@
-export type ProductCategory = "wedding-guest" | "date-night" | "studio-to-dinner" | "consignment";
+import type { ProductWithRelations } from "@/services/products";
+
+export type ProductCategory = string;
 export type AvailabilityStatus = "Available" | "Limited" | "Unavailable";
 
 export type ShowcaseProduct = {
@@ -22,25 +24,50 @@ export type ShowcaseProduct = {
 
 export const formatRentalPrice = (price: number) => new Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP", maximumFractionDigits: 0 }).format(price);
 
-export const categoryMeta: Record<ProductCategory, { label: string; short: string; image: string }> = {
+export const categoryMeta: Record<string, { label: string; short: string; image: string }> = {
   "wedding-guest": { label: "Wedding guest", short: "For the invitation", image: "/images/my-studio-wedding_fb88aaa2.jpg" },
   "date-night": { label: "Date night", short: "For after dark", image: "/images/my-studio-date-night_9391da5f.jpg" },
   "studio-to-dinner": { label: "Studio to dinner", short: "For the whole day", image: "/images/my-studio-workwear_671a35a4.jpg" },
   "consignment": { label: "Consignment", short: "Pre-loved studio pieces", image: "/images/my-studio-mark_4967063e.png" },
 };
 
-export const showcaseProducts: ShowcaseProduct[] = [
-  { slug: "velvet-evening-slip", name: "The Velvet Evening Slip", category: "wedding-guest", categoryLabel: "Wedding guest", image: "/images/dress-wedding-01_6dc2cc7f.jpg", description: "A floor-length burgundy velvet slip with a softly draped neckline that catches the light as you move.", details: "Fully lined with a concealed side zip. A dramatic but effortless choice for receptions and late tables.", sizing: "Fits UK 6–12; true to size.", sizes: ["UK 6", "UK 8", "UK 10", "UK 12"], fabric: "Silk velvet", color: "Burgundy", rentalPrice: 1800, availability: "Available", unavailableDays: [12, 13, 25], rentalNote: "3-day rental · Professional care included", featured: true },
-  { slug: "champagne-bias-maxi", name: "The Champagne Bias Maxi", category: "wedding-guest", categoryLabel: "Wedding guest", image: "/images/dress-wedding-02_e36a566c.jpg", description: "A champagne satin maxi that makes a quiet entrance and stays in the light.", details: "Bias cut in fluid silk satin with adjustable shoulder straps and a gently scooped back.", sizing: "Fits UK 6–14; forgiving through the body.", sizes: ["UK 6", "UK 8", "UK 10", "UK 12", "UK 14"], fabric: "Silk satin", color: "Champagne", rentalPrice: 1500, availability: "Limited", unavailableDays: [10, 11, 12, 20, 21], rentalNote: "3-day rental · Two available windows this month", featured: true },
-  { slug: "garden-rsvp-midi", name: "The Garden RSVP Midi", category: "wedding-guest", categoryLabel: "Wedding guest", image: "/images/dress-wedding-03_6f321d53.jpg", description: "Ivory and blush florals on floating chiffon — the piece that reads effortless from across the lawn.", details: "Double-layered chiffon over a soft slip with a concealed back zip.", sizing: "Fits UK 8–14; true to size.", sizes: ["UK 8", "UK 10", "UK 12", "UK 14"], fabric: "Chiffon", color: "Ivory blush floral", rentalPrice: 1300, availability: "Available", unavailableDays: [7, 8, 18], rentalNote: "3-day rental · Professional care included" },
-  { slug: "emerald-one-shoulder", name: "The Emerald One-Shoulder", category: "wedding-guest", categoryLabel: "Wedding guest", image: "/images/dress-wedding-04_4d976b1d.jpg", description: "A deep emerald one-shoulder gown with sculptural draping and a sure sense of occasion.", details: "Structured bodice and fluid skirt in lustrous stretch satin.", sizing: "Fits UK 6–12; structured through the bodice.", sizes: ["UK 6", "UK 8", "UK 10", "UK 12"], fabric: "Stretch satin", color: "Emerald", rentalPrice: 2000, availability: "Available", unavailableDays: [3, 4, 15, 16], rentalNote: "3-day rental · Styling guidance available" },
-  { slug: "after-hours-sequin", name: "The After-Hours Sequin", category: "date-night", categoryLabel: "Date night", image: "/images/dress-date-01_b79285ae.jpg", description: "Black sequins that answer to candlelight. A wrap midi that makes the room lean in.", details: "Fully lined mesh with an adjustable wrap closure and inner tie.", sizing: "Fits UK 8–14; adjustable wrap fit.", sizes: ["UK 8", "UK 10", "UK 12", "UK 14"], fabric: "Sequinned mesh", color: "Black", rentalPrice: 1600, availability: "Limited", unavailableDays: [9, 10, 11, 28], rentalNote: "3-day rental · Limited availability this month", featured: true },
-  { slug: "plum-silk-whisper", name: "The Plum Silk Whisper", category: "date-night", categoryLabel: "Date night", image: "/images/dress-date-02_e1b4d07f.jpg", description: "A deep plum slip with delicate lace trim — luminous, relaxed, and ready for the walk home.", details: "A bias-cut silk slip with a low back and fine eyelash-lace trim.", sizing: "Fits UK 6–12; bias slip fit.", sizes: ["UK 6", "UK 8", "UK 10", "UK 12"], fabric: "Silk charmeuse", color: "Plum", rentalPrice: 1400, availability: "Available", unavailableDays: [14, 15], rentalNote: "3-day rental · Professional care included", featured: true },
-  { slug: "rose-gold-pleat", name: "The Rose Gold Pleat", category: "date-night", categoryLabel: "Date night", image: "/images/dress-date-03_5db20bdf.jpg", description: "Metallic rose-gold pleats that move with you and hold on to the warmth of the room.", details: "Fine knife pleats with an elasticated waist and fluid midi-length movement.", sizing: "Fits UK 6–14; flexible waist.", sizes: ["UK 6", "UK 8", "UK 10", "UK 12", "UK 14"], fabric: "Metallic pleated crepe", color: "Rose gold", rentalPrice: 1450, availability: "Available", unavailableDays: [5, 6, 23], rentalNote: "3-day rental · Professional care included" },
-  { slug: "charcoal-blazer-dress", name: "The Charcoal Blazer Dress", category: "studio-to-dinner", categoryLabel: "Studio to dinner", image: "/images/dress-studio-01_30fb2bbf.jpg", description: "A charcoal blazer dress with a cinched waist — the day’s confidence carried into the night.", details: "Structured shoulders, tailored silhouette, and removable belt.", sizing: "Fits UK 6–14; tailored fit.", sizes: ["UK 6", "UK 8", "UK 10", "UK 12", "UK 14"], fabric: "Wool blend", color: "Charcoal", rentalPrice: 1500, availability: "Available", unavailableDays: [11, 12, 19], rentalNote: "3-day rental · Professional care included" },
-  { slug: "olive-utility-jumpsuit", name: "The Olive Utility Jumpsuit", category: "studio-to-dinner", categoryLabel: "Studio to dinner", image: "/images/dress-studio-02_f044b274.jpg", description: "Wide-leg tailoring with a belted waist — one piece that does the work of a full suit.", details: "Press-stud closures, side pockets, and a self-tie waist.", sizing: "Fits UK 6–14; adjustable belt.", sizes: ["UK 6", "UK 8", "UK 10", "UK 12", "UK 14"], fabric: "Cotton twill", color: "Olive", rentalPrice: 1350, availability: "Available", unavailableDays: [2, 3, 26], rentalNote: "3-day rental · Professional care included" },
-  { slug: "navy-column", name: "The Navy Column", category: "studio-to-dinner", categoryLabel: "Studio to dinner", image: "/images/dress-studio-03_65ead7e4.jpg", description: "A midnight navy column with architectural draping and all the polish the day calls for.", details: "Concealed back zip and soft, fluid crepe construction.", sizing: "Fits UK 8–14; true to size.", sizes: ["UK 8", "UK 10", "UK 12", "UK 14"], fabric: "Crepe", color: "Midnight navy", rentalPrice: 1550, availability: "Unavailable", unavailableDays: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28], rentalNote: "This piece is unavailable for the current preview month" },
-  { slug: "ivory-shirt-dress", name: "The Ivory Shirt Dress", category: "studio-to-dinner", categoryLabel: "Studio to dinner", image: "/images/my-studio-workwear_671a35a4.jpg", description: "Crisp ivory tailoring softened by a self-tie waist — considered dressing, made simple.", details: "Button-through front, gentle A-line skirt, and side seam pockets.", sizing: "Fits UK 6–14; relaxed fit.", sizes: ["UK 6", "UK 8", "UK 10", "UK 12", "UK 14"], fabric: "Cotton poplin", color: "Ivory", rentalPrice: 1200, availability: "Available", unavailableDays: [17, 18], rentalNote: "3-day rental · Professional care included" },
-  { slug: "garnet-wrap-midi", name: "The Garnet Wrap Midi", category: "date-night", categoryLabel: "Date night", image: "/images/my-studio-date-night_9391da5f.jpg", description: "A deep garnet wrap midi in fluid crepe — the colour of intention, cut for movement.", details: "An adjustable tie waist with a softly draped V neckline.", sizing: "Fits UK 8–14; adjustable wrap.", sizes: ["UK 8", "UK 10", "UK 12", "UK 14"], fabric: "Viscose crepe", color: "Garnet", rentalPrice: 1250, availability: "Available", unavailableDays: [8, 9, 29], rentalNote: "3-day rental · Professional care included" },
-  { slug: "preloved-silk-gown", name: "Pre-loved Silk Gown", category: "consignment", categoryLabel: "Consignment", image: "/images/dress-wedding-01_6dc2cc7f.jpg", description: "A pre-loved silk gown from the studio collection, maintained in excellent condition.", details: "Part of our consignment program, offering studio-quality pieces for direct purchase.", sizing: "UK 10; true to size.", sizes: ["UK 10"], fabric: "Silk", color: "Midnight", rentalPrice: 4500, availability: "Available", unavailableDays: [], rentalNote: "Consignment purchase · Direct sale only" },
-];
+/**
+ * Convert a product with joined category and images from the API
+ * into the existing frontend ShowcaseProduct shape.
+ */
+export function toShowcaseProduct(row: ProductWithRelations): ShowcaseProduct {
+  const categorySlug = row.categories?.slug ?? "";
+  const categoryLabel = row.categories?.name ?? "";
+
+  // Pick the best image: prefer primary from product_images, else fallback to product.image
+  let image = row.image ?? "";
+  if (row.product_images && row.product_images.length > 0) {
+    const primary = row.product_images.find((img) => img.is_primary);
+    if (primary) {
+      image = primary.url;
+    } else {
+      // Sort by sort_order and pick the first
+      const sorted = [...row.product_images].sort((a, b) => a.sort_order - b.sort_order);
+      image = sorted[0].url;
+    }
+  }
+
+  return {
+    slug: row.slug,
+    name: row.name,
+    category: categorySlug,
+    categoryLabel,
+    image,
+    description: row.description ?? "",
+    details: row.details ?? "",
+    sizing: row.sizing ?? "",
+    sizes: row.sizes ?? [],
+    fabric: row.fabric ?? "",
+    color: row.color ?? "",
+    rentalPrice: row.rental_price,
+    availability: row.availability as AvailabilityStatus,
+    unavailableDays: row.unavailable_days ?? [],
+    rentalNote: row.rental_note ?? "",
+    featured: row.is_featured,
+  };
+}

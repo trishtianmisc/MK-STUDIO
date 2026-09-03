@@ -9,6 +9,39 @@ vi.mock("wouter", () => ({
   useLocation: () => ["/", setLocation],
 }));
 
+vi.mock("@/hooks/useProducts", () => ({
+  useFeaturedProducts: () => ({
+    products: [
+      {
+        id: "1",
+        category_id: "1",
+        name: "The Velvet Evening Slip",
+        slug: "velvet-evening-slip",
+        description: "A floor-length burgundy velvet slip.",
+        details: "Fully lined.",
+        sizing: "Fits UK 6-12.",
+        sizes: ["UK 6", "UK 8"],
+        fabric: "Silk velvet",
+        color: "Burgundy",
+        rental_price: 1800,
+        availability: "Available",
+        unavailable_days: [],
+        rental_note: "3-day rental",
+        is_featured: true,
+        image: "/images/test.jpg",
+        sort_order: 1,
+        is_public: true,
+        created_at: "",
+        updated_at: "",
+        categories: { id: "1", slug: "wedding-guest", name: "Wedding guest", description: null, image: null, sort_order: 1, created_at: "", updated_at: "" },
+        product_images: [],
+      },
+    ],
+    loading: false,
+    error: null,
+  }),
+}));
+
 import Home from "./Home";
 
 describe("Collection Rail homepage", () => {

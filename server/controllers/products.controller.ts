@@ -36,6 +36,20 @@ export async function listProducts(req: Request, res: Response) {
 }
 
 /**
+ * GET /api/products/featured
+ * Public: returns featured public products.
+ */
+export async function listFeaturedProducts(req: Request, res: Response) {
+  try {
+    const products = await productService.getFeaturedProducts();
+    res.json(products);
+  } catch (err) {
+    console.error("[Products Featured]", err);
+    res.status(500).json({ error: "Failed to fetch featured products" });
+  }
+}
+
+/**
  * GET /api/products/:slug
  * Public: returns a single public product by slug.
  */

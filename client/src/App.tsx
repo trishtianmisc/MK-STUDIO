@@ -7,15 +7,22 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import About from "./pages/About";
 import AdminAccess from "./pages/AdminAccess";
-import AdminPreview from "./pages/AdminPreview";
 import Catalogue from "./pages/Catalogue";
 import Contact from "./pages/Contact";
 import Home from "./pages/Home";
 import ProductDetail from "./pages/ProductDetail";
 
+import AdminLayout from "./components/AdminLayout";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminProducts from "./pages/AdminProducts";
+import AdminCategories from "./pages/AdminCategories";
+import { useState } from "react";
+import type { AdminView } from "./components/AdminLayout";
+
 function ProtectedAdminRoute() {
   const { user, loading, isAdmin } = useAuth();
   const [, setLocation] = useLocation();
+  const [view, setView] = useState<AdminView>("dashboard");
 
   if (loading) {
     return (
@@ -51,7 +58,17 @@ function ProtectedAdminRoute() {
     );
   }
 
-  return <AdminPreview />;
+  return (
+    <AdminLayoutWrapper view={view} setView={setView}>
+      {view === "dashboard" && <AdminDashboard />}
+      {view === "products" && <AdminProducts />}
+      {view === "categories" && <AdminCategories />}
+    </AdminLayoutWrapper>
+  );
+}
+
+function AdminLayoutWrapper({ view, setView, children }: { view: AdminView; setView: (v: AdminView) => void; children: React.ReactNode }) {
+  return <AdminLayout view={view} setView={setView}>{children}</AdminLayout>;
 }
 
 function Router() {

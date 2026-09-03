@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -10,7 +10,8 @@ import {
   X,
 } from "lucide-react";
 import { useLocation } from "wouter";
-import { formatRentalPrice, showcaseProducts } from "@/data/catalogue";
+import { formatRentalPrice, toShowcaseProduct } from "@/data/catalogue";
+import { useFeaturedProducts } from "@/hooks/useProducts";
 
 const discoveryDoors = [
   {
@@ -30,11 +31,15 @@ const discoveryDoors = [
   },
 ];
 
-const currentEdit = showcaseProducts.filter((piece) => piece.featured).slice(0, 4);
-
 export default function Home() {
   const [, setLocation] = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { products: rawFeatured, loading } = useFeaturedProducts();
+
+  const currentEdit = useMemo(
+    () => rawFeatured.map(toShowcaseProduct).slice(0, 4),
+    [rawFeatured],
+  );
 
   const goTo = (destination: string) => {
     if (destination.startsWith("/")) {
@@ -136,7 +141,7 @@ export default function Home() {
             <button className="rail-inline-link" onClick={() => goTo("/catalogue")}>View all pieces <ArrowUpRight size={16} /></button>
           </div>
           <div className="rail-product-grid">
-            {currentEdit.map((piece) => (
+            {!loading && currentEdit.map((piece) => (
               <article className="rail-product-card" key={piece.slug}>
                 <button className="rail-product-image" onClick={() => goTo(`/catalogue/${piece.slug}`)} aria-label={`View ${piece.name}`}>
                   <img src={piece.image} alt={piece.name} />

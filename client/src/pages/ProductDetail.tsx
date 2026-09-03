@@ -1,9 +1,10 @@
 import { ArrowLeft, ArrowUpRight, Check, Info, MessageSquare } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useLocation, useRoute } from "wouter";
 import { StoreShell } from "@/components/StoreShell";
-import { formatRentalPrice, showcaseProducts } from "@/data/catalogue";
+import { formatRentalPrice, toShowcaseProduct } from "@/data/catalogue";
+import { useProduct } from "@/hooks/useProducts";
 
 
 
@@ -12,9 +13,14 @@ export default function ProductDetail() {
   const [, params] = useRoute("/catalogue/:slug");
   const [, setLocation] = useLocation();
 
-  const product = showcaseProducts.find(item => item.slug === params?.slug);
+  const { product: rawProduct, loading, error } = useProduct(params?.slug ?? null);
+  const product = useMemo(() => (rawProduct ? toShowcaseProduct(rawProduct) : null), [rawProduct]);
   const [size, setSize] = useState(product?.sizes[0] ?? "");
 
+
+  if (loading) return <StoreShell current="catalogue"><main className="not-found-page"><p className="eyebrow">Catalogue</p><h1>Loading...</h1></main></StoreShell>;
+
+  if (error) return <StoreShell current="catalogue"><main className="not-found-page"><p className="eyebrow">Catalogue</p><h1>Something went wrong.</h1><p>{error}</p><button className="editorial-button editorial-button-dark" onClick={() => setLocation("/catalogue")}>Back to the catalogue <ArrowLeft size={16} /></button></main></StoreShell>;
 
   if (!product) return <StoreShell current="catalogue"><main className="not-found-page"><p className="eyebrow">Catalogue</p><h1>This piece has moved on.</h1><button className="editorial-button editorial-button-dark" onClick={() => setLocation("/catalogue")}>Back to the catalogue <ArrowLeft size={16} /></button></main></StoreShell>;
 
