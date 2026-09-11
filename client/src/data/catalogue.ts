@@ -17,7 +17,6 @@ export type ShowcaseProduct = {
   color: string;
   rentalPrice: number;
   availability: AvailabilityStatus;
-  unavailableDays: number[];
   rentalNote: string;
   featured?: boolean;
 };
@@ -26,9 +25,11 @@ export const formatRentalPrice = (price: number) => new Intl.NumberFormat("en-PH
 
 export const categoryMeta: Record<string, { label: string; short: string; image: string }> = {
   "wedding-guest": { label: "Wedding guest", short: "For the invitation", image: "/images/my-studio-wedding_fb88aaa2.jpg" },
-  "date-night": { label: "Date night", short: "For after dark", image: "/images/my-studio-date-night_9391da5f.jpg" },
-  "studio-to-dinner": { label: "Studio to dinner", short: "For the whole day", image: "/images/my-studio-workwear_671a35a4.jpg" },
-  "consignment": { label: "Consignment", short: "Pre-loved studio pieces", image: "/images/my-studio-mark_4967063e.png" },
+  "formal": { label: "Formal", short: "For after dark", image: "/images/my-studio-date-night_9391da5f.jpg" },
+  "casual": { label: "Casual", short: "For the whole day", image: "/images/my-studio-workwear_671a35a4.jpg" },
+  "prom": { label: "Prom", short: "Pre-loved studio pieces", image: "/images/my-studio-mark_4967063e.png" },
+  "evening": { label: "Evening", short: "Pre-loved studio pieces", image: "/images/my-studio-mark_4967063e.png" },
+
 };
 
 /**
@@ -66,7 +67,6 @@ export function toShowcaseProduct(row: ProductWithRelations): ShowcaseProduct {
     color: row.color ?? "",
     rentalPrice: row.rental_price,
     availability: row.availability as AvailabilityStatus,
-    unavailableDays: row.unavailable_days ?? [],
     rentalNote: row.rental_note ?? "",
     featured: row.is_featured,
   };

@@ -1,29 +1,60 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getProducts, getProductBySlug, getFeaturedProducts, type ProductWithRelations } from "@/services/products";
 
 export function useProducts() {
   const [products, setProducts] = useState<ProductWithRelations[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const mountedRef = useRef(true);
 
   useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    setError(null);
-    getProducts()
-      .then((data) => {
-        if (!cancelled) setProducts(data);
-      })
-      .catch((err) => {
-        if (!cancelled) setError(err.message || "Failed to load products");
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => { cancelled = true; };
+    mountedRef.current = true;
+    return () => { mountedRef.current = false; };
   }, []);
 
-  return { products, loading, error };
+  const fetchPage = useCallback(async (pageNum: number) => {
+    const result = await getProducts(pageNum, 20);
+    if (!mountedRef.current) return result;
+    const items = Array.isArray(result) ? result : result.data ?? [];
+    const pages = Array.isArray(result) ? 1 : result.totalPages ?? 1;
+    if (pageNum === 1) {
+      setProducts(items);
+    } else {
+      setProducts((prev) => [...prev, ...items]);
+    }
+    setTotalPages(pages);
+    setPage(pageNum);
+    return result;
+  }, []);
+
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    fetchPage(1)
+      .catch((err) => {
+        if (mountedRef.current) setError(err.message || "Failed to load products");
+      })
+      .finally(() => {
+        if (mountedRef.current) setLoading(false);
+      });
+  }, [fetchPage]);
+
+  const loadMore = useCallback(async () => {
+    if (loadingMore || page >= totalPages) return;
+    setLoadingMore(true);
+    try {
+      await fetchPage(page + 1);
+    } catch {
+      // error already handled by fetchPage
+    } finally {
+      if (mountedRef.current) setLoadingMore(false);
+    }
+  }, [fetchPage, loadingMore, page, totalPages]);
+
+  return { products, loading, loadingMore, error, loadMore, hasMore: page < totalPages };
 }
 
 export function useProduct(slug: string | null) {

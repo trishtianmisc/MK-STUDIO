@@ -25,7 +25,6 @@ vi.mock("@/hooks/useProducts", () => ({
         color: "Burgundy",
         rental_price: 1800,
         availability: "Available",
-        unavailable_days: [],
         rental_note: "3-day rental",
         is_featured: true,
         image: "/images/test.jpg",

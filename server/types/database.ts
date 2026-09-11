@@ -41,7 +41,6 @@ export interface Database {
           color: string | null;
           rental_price: number;
           availability: "Available" | "Limited" | "Unavailable";
-          unavailable_days: number[];
           rental_note: string | null;
           is_featured: boolean;
           image: string | null;

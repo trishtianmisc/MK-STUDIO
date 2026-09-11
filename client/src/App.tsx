@@ -6,18 +6,28 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import About from "./pages/About";
-import AdminAccess from "./pages/AdminAccess";
 import Catalogue from "./pages/Catalogue";
 import Contact from "./pages/Contact";
 import Home from "./pages/Home";
 import ProductDetail from "./pages/ProductDetail";
-
-import AdminLayout from "./components/AdminLayout";
-import AdminDashboard from "./pages/AdminDashboard";
-import AdminProducts from "./pages/AdminProducts";
-import AdminCategories from "./pages/AdminCategories";
-import { useState, useEffect } from "react";
+import { Suspense, lazy, useState, useEffect } from "react";
 import type { AdminView } from "./components/AdminLayout";
+
+const AdminAccess = lazy(() => import("./pages/AdminAccess"));
+const AdminLayout = lazy(() => import("./components/AdminLayout"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const AdminProducts = lazy(() => import("./pages/AdminProducts"));
+const AdminCategories = lazy(() => import("./pages/AdminCategories"));
+
+function AdminFallback() {
+  return (
+    <main className="admin-access-page">
+      <section className="admin-access-panel">
+        <p className="admin-access-intro">Loading...</p>
+      </section>
+    </main>
+  );
+}
 
 function ScrollToTop() {
   const [location] = useLocation();
@@ -67,16 +77,26 @@ function ProtectedAdminRoute() {
   }
 
   return (
-    <AdminLayoutWrapper view={view} setView={setView}>
-      {view === "dashboard" && <AdminDashboard />}
-      {view === "products" && <AdminProducts />}
-      {view === "categories" && <AdminCategories />}
-    </AdminLayoutWrapper>
+    <Suspense fallback={<AdminFallback />}>
+      <AdminLayoutWrapper view={view} setView={setView}>
+        {view === "dashboard" && <AdminDashboard />}
+        {view === "products" && <AdminProducts />}
+        {view === "categories" && <AdminCategories />}
+      </AdminLayoutWrapper>
+    </Suspense>
   );
 }
 
 function AdminLayoutWrapper({ view, setView, children }: { view: AdminView; setView: (v: AdminView) => void; children: React.ReactNode }) {
   return <AdminLayout view={view} setView={setView}>{children}</AdminLayout>;
+}
+
+function LazyAdminAccess() {
+  return <Suspense fallback={<AdminFallback />}><AdminAccess /></Suspense>;
+}
+
+function LazyProtectedAdminRoute() {
+  return <Suspense fallback={<AdminFallback />}><ProtectedAdminRoute /></Suspense>;
 }
 
 function Router() {
@@ -89,8 +109,8 @@ function Router() {
       <Route path={"/catalogue/:slug"} component={ProductDetail} />
       <Route path={"/about"} component={About} />
       <Route path={"/contact"} component={Contact} />
-      <Route path={"/admin"} component={AdminAccess} />
-      <Route path={"/admin/dashboard"} component={ProtectedAdminRoute} />
+      <Route path={"/admin"} component={LazyAdminAccess} />
+      <Route path={"/admin/dashboard"} component={LazyProtectedAdminRoute} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

@@ -15,7 +15,6 @@ const mockProductRow: ProductWithRelations = {
   color: "Red",
   rental_price: 1500,
   availability: "Available",
-  unavailable_days: [5, 10],
   rental_note: "3-day rental",
   is_featured: true,
   image: "/images/test.jpg",
@@ -48,7 +47,6 @@ describe("MK Studio catalogue adapter", () => {
     expect(result.featured).toBe(true);
     expect(result.image).toBe("/images/test.jpg");
     expect(result.sizes).toEqual(["UK 8", "UK 10", "UK 12"]);
-    expect(result.unavailableDays).toEqual([5, 10]);
   });
 
   it("handles missing category gracefully", () => {
@@ -88,9 +86,10 @@ describe("MK Studio catalogue adapter", () => {
   it("has all four catalogue occasions in categoryMeta", () => {
     const keys = Object.keys(categoryMeta);
     expect(keys).toContain("wedding-guest");
-    expect(keys).toContain("date-night");
-    expect(keys).toContain("studio-to-dinner");
-    expect(keys).toContain("consignment");
+    expect(keys).toContain("formal");
+    expect(keys).toContain("casual");
+    expect(keys).toContain("prom");
+    expect(keys).toContain("evening");
   });
 
   it("formats rental price as PHP currency", () => {

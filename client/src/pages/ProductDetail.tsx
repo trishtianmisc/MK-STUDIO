@@ -1,8 +1,9 @@
-import { ArrowLeft, ArrowUpRight, Check, Info, MessageSquare } from "lucide-react";
+import { ArrowLeft, Check, Info, MessageSquare } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useLocation, useRoute } from "wouter";
 import { StoreShell } from "@/components/StoreShell";
+import AvailabilityCalendar from "@/components/AvailabilityCalendar";
 import { formatRentalPrice, toShowcaseProduct } from "@/data/catalogue";
 import { useProduct } from "@/hooks/useProducts";
 
@@ -31,7 +32,7 @@ export default function ProductDetail() {
       <main className="product-page">
         <button className="back-link" onClick={() => setLocation("/catalogue")}><ArrowLeft size={16} /> Back to catalogue</button>
         <div className="product-detail-layout">
-          <div className="product-detail-image"><img src={product.image} alt={product.name} /><span>{product.categoryLabel}</span><span className={`detail-availability availability-${product.availability.toLowerCase()}`}>{product.availability} for September</span></div>
+          <div className="product-detail-image"><img src={product.image} alt={product.name} loading="lazy" decoding="async" /><span>{product.categoryLabel}</span><span className={`detail-availability availability-${product.availability.toLowerCase()}`}>{product.availability}</span></div>
           <article className="product-detail-copy">
             <p className="eyebrow">{product.categoryLabel}</p>
             <h1>{product.name}</h1>
@@ -43,15 +44,18 @@ export default function ProductDetail() {
             <section className="rental-config" aria-label="Rental information">
               <div className="rental-config-heading"><div><p className="eyebrow">Rental information</p><h2>Availability & Sizing</h2></div><span>{product.rentalNote}</span></div>
               <div className="size-row"><span>Available sizes</span><div>{product.sizes.map(option => <button key={option} className={size === option ? "is-selected" : ""} onClick={() => setSize(option)}>{option.replace("UK ", "")}</button>)}</div></div>
-              <div className="availability-status">
-                <div>
-                  <Info size={16} />
-                  <strong>Current Status</strong>
-                  <span className={`status-badge status-${product.availability.toLowerCase()}`}>{product.availability}</span>
+              {product.availability === "Unavailable" && (
+                <div className="availability-status">
+                  <div>
+                    <strong>Current Status: </strong>
+                    <span className={`status-badge status-${product.availability.toLowerCase()}${product.availability === "Unavailable" ? " status-highlight" : ""}`}>{product.availability}</span>
+                  </div>
                 </div>
-                <p>Availability is updated weekly. Contact the studio with your preferred dates to secure this piece.</p>
-              </div>
-              <button className="editorial-button editorial-button-dark rental-add-button" onClick={() => setLocation("/contact")}>Enquire for rental <MessageSquare size={16} /></button>
+              )}
+              {rawProduct && product.availability !== "Unavailable" && <AvailabilityCalendar slug={rawProduct.slug} />}
+              {product.availability !== "Unavailable" && (
+                <button className="editorial-button editorial-button-dark rental-add-button" onClick={() => setLocation("/contact")}>Enquire for rental <MessageSquare size={16} /></button>
+              )}
             </section>
           </article>
         </div>

@@ -12,7 +12,7 @@ type Filter = "all" | string;
 
 export default function Catalogue() {
   const [, setLocation] = useLocation();
-  const { products: rawProducts, loading, error } = useProducts();
+  const { products: rawProducts, loading, loadingMore, error, loadMore, hasMore } = useProducts();
 
   const products = useMemo(
     () => rawProducts.map(toShowcaseProduct),
@@ -73,7 +73,7 @@ export default function Catalogue() {
                 {sortedProducts.map((product, index) => (
                   <article className="product-card" key={product.slug} style={{ transitionDelay: `${index * 35}ms` }}>
                     <button className="product-image" onClick={() => setLocation(`/catalogue/${product.slug}`)} aria-label={`View ${product.name}`}>
-                      <img src={product.image} alt={product.name} />
+                      <img src={product.image} alt={product.name} loading="lazy" decoding="async" />
                       <span className="product-category">{product.categoryLabel}</span>
                       <span className={`availability-badge availability-${product.availability.toLowerCase()}`}>{product.availability}</span>
                       <span className="product-view">View piece <ArrowUpRight size={15} /></span>
@@ -86,6 +86,13 @@ export default function Catalogue() {
                   </article>
                 ))}
               </div>
+              {hasMore && (
+                <div className="catalogue-load-more">
+                  <button onClick={loadMore} disabled={loadingMore}>
+                    {loadingMore ? "Loading..." : "Load more"}
+                  </button>
+                </div>
+              )}
               {sortedProducts.length === 0 && <div className="catalogue-empty"><Search size={22} /><h2>No pieces found</h2><p>Try a different search phrase or return to the full edit.</p><button onClick={() => { setSearch(""); setFilter("all"); }}>Reset catalogue</button></div>}
             </>
           )}

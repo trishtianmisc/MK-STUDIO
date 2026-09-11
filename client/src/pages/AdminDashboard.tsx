@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getProducts, type ProductWithRelations } from "@/services/products";
+import { getAdminProducts, type ProductWithRelations } from "@/services/products";
 import { getCategories, type Category } from "@/services/categories";
 
 export default function AdminDashboard() {
@@ -8,7 +8,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([getProducts(), getCategories()])
+    Promise.all([getAdminProducts(), getCategories()])
       .then(([p, c]) => { setProducts(p); setCategories(c); })
       .catch(() => {})
       .finally(() => setLoading(false));

@@ -15,7 +15,6 @@ export interface ProductWithRelations {
   color: string | null;
   rental_price: number;
   availability: "Available" | "Limited" | "Unavailable";
-  unavailable_days: number[];
   rental_note: string | null;
   is_featured: boolean;
   image: string | null;
@@ -44,6 +43,14 @@ export interface ProductWithRelations {
   }[];
 }
 
+export interface PaginatedResult<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 export interface CreateProductInput {
   category_id: string;
   name: string;
@@ -56,7 +63,6 @@ export interface CreateProductInput {
   color?: string;
   rental_price: number;
   availability?: "Available" | "Limited" | "Unavailable";
-  unavailable_days?: number[];
   rental_note?: string;
   is_featured?: boolean;
   image?: string;
@@ -87,8 +93,25 @@ async function authHeaders(): Promise<Record<string, string>> {
 // PUBLIC READS
 // =============================================================================
 
-export async function getProducts(): Promise<ProductWithRelations[]> {
-  return fetchJson<ProductWithRelations[]>(API_BASE);
+export async function getProducts(page = 1, limit = 20): Promise<PaginatedResult<ProductWithRelations>> {
+  return fetchJson<PaginatedResult<ProductWithRelations>>(`${API_BASE}?page=${page}&limit=${limit}`);
+}
+
+// =============================================================================
+// ADMIN READS
+// =============================================================================
+
+export async function getAdminProducts(): Promise<ProductWithRelations[]> {
+  const response = await fetch(`${API_BASE}?page=1&limit=1000`, {
+    credentials: "include",
+    headers: await authHeaders(),
+  });
+  if (!response.ok) {
+    const body = await response.json().catch(() => null);
+    throw new Error(body?.error || `Request failed (${response.status})`);
+  }
+  const result = await response.json();
+  return Array.isArray(result) ? result : result.data ?? [];
 }
 
 export async function getProductBySlug(slug: string): Promise<ProductWithRelations> {

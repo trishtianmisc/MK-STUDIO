@@ -145,7 +145,7 @@ export default function AdminImageManager({ product, onDone, onCancel }: Props) 
         <div style={{ display: "grid", gap: 12, maxWidth: 700 }}>
           {sortedImages.map((image, index) => (
             <div key={image.id} style={{ display: "flex", gap: 14, alignItems: "center", padding: "12px 16px", background: "#fff", border: "1px solid #dfe1dc", borderRadius: 6 }}>
-              <img src={image.url} alt={image.alt_text ?? ""} style={{ width: 56, height: 68, objectFit: "cover", borderRadius: 4 }} />
+              <img src={image.url} alt={image.alt_text ?? ""} loading="lazy" decoding="async" style={{ width: 56, height: 68, objectFit: "cover", borderRadius: 4 }} />
               <div style={{ flex: 1 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <strong style={{ fontSize: 12, color: "#28342d" }}>#{index + 1}</strong>

@@ -142,7 +142,7 @@ function Products({ preview, products }: { preview: (action: string) => void; pr
       {products.slice(0, 10).map(product => (
         <div className="admin-row" key={product.slug}>
           <div className="admin-product-cell">
-            <img src={product.image} alt="" />
+            <img src={product.image} alt="" loading="lazy" decoding="async" />
             <div>
               <strong>{product.name}</strong>
               <span>{formatRentalPrice(product.rentalPrice)} · {product.color}</span>

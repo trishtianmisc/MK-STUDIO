@@ -116,7 +116,7 @@ export default function Home() {
           <div className="rail-door-grid">
             {discoveryDoors.map((door, index) => (
               <button className="rail-door" key={door.label} onClick={() => goTo("/catalogue")}>
-                <img src={door.image} alt="" />
+                <img src={door.image} alt="" loading="lazy" decoding="async" />
                 <span className="rail-door-number">0{index + 1}</span>
                 <span className="rail-door-overlay" />
                 <span className="rail-door-copy">
@@ -141,7 +141,7 @@ export default function Home() {
             {!loading && currentEdit.map((piece) => (
               <article className="rail-product-card" key={piece.slug}>
                 <button className="rail-product-image" onClick={() => goTo(`/catalogue/${piece.slug}`)} aria-label={`View ${piece.name}`}>
-                  <img src={piece.image} alt={piece.name} />
+                  <img src={piece.image} alt={piece.name} loading="lazy" decoding="async" />
                   <span>{piece.categoryLabel}</span>
                   <i><Heart size={16} /></i>
                 </button>
@@ -167,7 +167,7 @@ export default function Home() {
             <span className="rail-arch rail-arch-large" aria-hidden="true" />
           </article>
           <article className="rail-campaign rail-campaign-image">
-            <img src="/images/mkherosec.png" alt="Jewel-tone occasion dresses from the MK Studio wardrobe" />
+            <img src="/images/mkherosec.png" alt="Jewel-tone occasion dresses from the MK Studio wardrobe" loading="lazy" decoding="async" />
             <div>
               <p className="rail-kicker">From the rail</p>
               <h2>One piece.<br /><em>More stories.</em></h2>

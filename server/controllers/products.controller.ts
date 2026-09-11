@@ -9,6 +9,8 @@ import { createProductSchema, updateProductSchema } from "../validators/products
  */
 export async function listProducts(req: Request, res: Response) {
   try {
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
     const hasAuth = req.headers.authorization?.startsWith("Bearer ");
 
     if (hasAuth) {
@@ -27,8 +29,8 @@ export async function listProducts(req: Request, res: Response) {
       }
     }
 
-    const products = await productService.getPublicProducts();
-    res.json(products);
+    const result = await productService.getPublicProducts(page, limit);
+    res.json(result);
   } catch (err) {
     console.error("[Products List]", err);
     res.status(500).json({ error: "Failed to fetch products" });

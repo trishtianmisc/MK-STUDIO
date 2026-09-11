@@ -20,7 +20,6 @@ describe("createProductSchema", () => {
       expect(result.data.is_featured).toBe(false);
       expect(result.data.is_public).toBe(true);
       expect(result.data.sizes).toEqual([]);
-      expect(result.data.unavailable_days).toEqual([]);
     }
   });
 
@@ -34,7 +33,6 @@ describe("createProductSchema", () => {
       fabric: "Silk",
       color: "Red",
       availability: "Limited",
-      unavailable_days: [5, 10, 15],
       rental_note: "3-day rental",
       is_featured: true,
       is_public: false,
@@ -97,21 +95,6 @@ describe("createProductSchema", () => {
       fabric: null,
     });
     expect(result.success).toBe(true);
-  });
-
-  it("rejects invalid unavailable_days values", () => {
-    expect(
-      createProductSchema.safeParse({
-        ...validInput,
-        unavailable_days: [0],
-      }).success
-    ).toBe(false);
-    expect(
-      createProductSchema.safeParse({
-        ...validInput,
-        unavailable_days: [32],
-      }).success
-    ).toBe(false);
   });
 });
 

@@ -7,41 +7,89 @@ type ProductUpdate = Database["public"]["Tables"]["products"]["Update"];
 type CategoryRow = Database["public"]["Tables"]["categories"]["Row"];
 type ProductImageRow = Database["public"]["Tables"]["product_images"]["Row"];
 
+/** Minimal image data needed by the public frontend */
+type ProductImagePreview = Pick<ProductImageRow, "url" | "is_primary" | "sort_order">;
+
 /** Product with joined category and images — returned by catalogue queries */
 export type ProductWithRelations = ProductRow & {
   categories: CategoryRow | null;
-  product_images: ProductImageRow[];
+  product_images: ProductImagePreview[];
 };
 
-const SELECT_WITH_RELATIONS = "*, categories(*), product_images(*)" as const;
+const SELECT_WITH_RELATIONS = "*, categories(*), product_images(url, is_primary, sort_order)" as const;
+
+export type PaginatedResult<T> = {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+};
 
 /**
  * Get all public products (for anonymous/public access).
  * Includes category and image data.
  */
-export async function getPublicProducts(): Promise<ProductWithRelations[]> {
+export async function getPublicProducts(
+  page = 1,
+  limit = 20,
+): Promise<PaginatedResult<ProductWithRelations>> {
+  const offset = (page - 1) * limit;
+
+  const { count } = await supabase
+    .from("products")
+    .select("id", { count: "exact", head: true })
+    .eq("is_public", true);
+
+  const total = count ?? 0;
+
   const { data, error } = await supabase
     .from("products")
     .select(SELECT_WITH_RELATIONS)
     .eq("is_public", true)
-    .order("sort_order");
+    .order("sort_order")
+    .range(offset, offset + limit - 1);
 
   if (error) throw error;
-  return (data ?? []) as unknown as ProductWithRelations[];
+  return {
+    data: (data ?? []) as unknown as ProductWithRelations[],
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  };
 }
 
 /**
  * Get all products (admin view — includes private products).
  * Includes category and image data.
  */
-export async function getAllProducts(): Promise<ProductWithRelations[]> {
+export async function getAllProducts(
+  page = 1,
+  limit = 1000,
+): Promise<PaginatedResult<ProductWithRelations>> {
+  const offset = (page - 1) * limit;
+
+  const { count } = await supabase
+    .from("products")
+    .select("id", { count: "exact", head: true });
+
+  const total = count ?? 0;
+
   const { data, error } = await supabase
     .from("products")
     .select(SELECT_WITH_RELATIONS)
-    .order("sort_order");
+    .order("sort_order")
+    .range(offset, offset + limit - 1);
 
   if (error) throw error;
-  return (data ?? []) as unknown as ProductWithRelations[];
+  return {
+    data: (data ?? []) as unknown as ProductWithRelations[],
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  };
 }
 
 /**
