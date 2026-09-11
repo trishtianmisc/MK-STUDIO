@@ -58,8 +58,8 @@ export default function Home() {
         */}
 
       <header className="rail-header">
-        <button className="rail-menu-trigger" onClick={() => setMenuOpen((open) => !open)} aria-label="Toggle main menu">
-          {menuOpen ? <X size={20} /> : <Menu size={20} />}
+        <button className="rail-menu-trigger" onClick={() => setMenuOpen(true)} aria-label="Open main menu">
+          <Menu size={20} />
         </button>
         <button className="rail-brand" onClick={() => goTo("home")}> 
           <img src="/images/mklogowhite.png" alt="" />
@@ -76,14 +76,27 @@ export default function Home() {
         </div>
       </header>
 
-      {menuOpen && (
-        <nav className="rail-mobile-menu" aria-label="Mobile navigation">
+      <div className={`rail-sidebar-overlay ${menuOpen ? "is-open" : ""}`} onClick={() => setMenuOpen(false)} />
+
+      <nav className={`rail-sidebar ${menuOpen ? "is-open" : ""}`} aria-label="Mobile navigation">
+        <div className="rail-sidebar-head">
+          <button className="rail-brand" onClick={() => goTo("home")}>
+            <img src="/images/mklogowhite.png" alt="" />
+          </button>
+          <button className="rail-sidebar-close" onClick={() => setMenuOpen(false)} aria-label="Close menu">
+            <X size={20} />
+          </button>
+        </div>
+        <div className="rail-sidebar-links">
           <button onClick={() => goTo("discover")}>Shop the edit <ChevronRight size={18} /></button>
           <button onClick={() => goTo("current-edit")}>New in <ChevronRight size={18} /></button>
           <button onClick={() => goTo("rental-ritual")}>How it works <ChevronRight size={18} /></button>
           <button onClick={() => goTo("/contact")}>Contact the studio <ArrowUpRight size={18} /></button>
-        </nav>
-      )}
+        </div>
+        <div className="rail-sidebar-footer">
+          <button className="rail-order-action" onClick={() => goTo("/contact")}>Enquire</button>
+        </div>
+      </nav>
 
       <main id="home">
         <section className="rail-hero" aria-labelledby="rail-hero-heading">

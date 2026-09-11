@@ -17,10 +17,9 @@ export function StoreShell({ children, current }: StoreShellProps) {
 
   return (
     <div className="store-shell">
-      {/* <div className="announcement-bar"><span>MK Studio rental collection</span><span className="announcement-note">Digital showcase — contact the studio for rental enquiries.</span></div> */}
       <header className="store-header">
-        <button className="mobile-menu-trigger" onClick={() => setOpen(v => !v)} aria-label="Toggle navigation">
-          {open ? <X size={21} /> : <Menu size={21} />}
+        <button className="mobile-menu-trigger" onClick={() => setOpen(true)} aria-label="Open navigation">
+          <Menu size={21} />
         </button>
         <button className="brand-lockup" onClick={() => go("/")} aria-label="Return to MK Studio home">
           <img src="/images/mklogo.png" alt="" className="brand-mark" />
@@ -34,13 +33,28 @@ export function StoreShell({ children, current }: StoreShellProps) {
           <button className="store-cta" onClick={() => go("/contact")}>Enquire</button>
         </div>
       </header>
-      {open && (
-        <nav className="store-mobile-nav" aria-label="Mobile navigation">
-          <button onClick={() => go("/catalogue")}>Catalogue <ArrowUpRight size={16} /></button>
-          <button onClick={() => go("/about")}>Our story <ArrowUpRight size={16} /></button>
-          <button onClick={() => go("/contact")}>Contact <ArrowUpRight size={16} /></button>
-        </nav>
-      )}
+
+      <div className={`store-sidebar-overlay ${open ? "is-open" : ""}`} onClick={() => setOpen(false)} />
+
+      <nav className={`store-sidebar ${open ? "is-open" : ""}`} aria-label="Mobile navigation">
+        <div className="store-sidebar-head">
+          <button className="brand-lockup" onClick={() => go("/")} aria-label="Return to MK Studio home">
+            <img src="/images/mklogo.png" alt="" className="brand-mark" />
+          </button>
+          <button className="store-sidebar-close" onClick={() => setOpen(false)} aria-label="Close navigation">
+            <X size={20} />
+          </button>
+        </div>
+        <div className="store-sidebar-links">
+          <button className={current === "catalogue" ? "is-current" : ""} onClick={() => go("/catalogue")}>Catalogue <ArrowUpRight size={16} /></button>
+          <button className={current === "about" ? "is-current" : ""} onClick={() => go("/about")}>Our story <ArrowUpRight size={16} /></button>
+          <button className={current === "contact" ? "is-current" : ""} onClick={() => go("/contact")}>Contact <ArrowUpRight size={16} /></button>
+        </div>
+        <div className="store-sidebar-footer">
+          <button className="store-cta" onClick={() => go("/contact")}>Enquire</button>
+        </div>
+      </nav>
+
       {children}
       <footer className="store-footer">
         <div className="store-footer-brand"><span>MK Studio</span><p>For every RSVP, reset, and reason to dress differently.</p></div>
