@@ -18,6 +18,7 @@ const AdminLayout = lazy(() => import("./components/AdminLayout"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminProducts = lazy(() => import("./pages/AdminProducts"));
 const AdminCategories = lazy(() => import("./pages/AdminCategories"));
+const AdminRentals = lazy(() => import("./pages/AdminRentals"));
 
 function AdminFallback() {
   return (
@@ -82,6 +83,7 @@ function ProtectedAdminRoute() {
         {view === "dashboard" && <AdminDashboard />}
         {view === "products" && <AdminProducts />}
         {view === "categories" && <AdminCategories />}
+        {view === "rentals" && <AdminRentals />}
       </AdminLayoutWrapper>
     </Suspense>
   );

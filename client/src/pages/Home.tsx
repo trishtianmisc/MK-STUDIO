@@ -62,7 +62,7 @@ export default function Home() {
           {menuOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
         <button className="rail-brand" onClick={() => goTo("home")}> 
-          <img src="/images/mklogo.png" alt="" />
+          <img src="/images/mklogowhite.png" alt="" />
         </button>
         <nav className="rail-nav" aria-label="Main navigation">
           <button onClick={() => goTo("discover")}>Shop the edit</button>

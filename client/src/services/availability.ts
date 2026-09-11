@@ -12,6 +12,12 @@ export interface RentalDate {
   created_at: string;
 }
 
+export interface RentalWithProduct extends RentalDate {
+  product_name: string;
+  product_slug: string;
+  product_image: string | null;
+}
+
 async function getAuthToken(): Promise<string | null> {
   const { data } = await supabase.auth.getSession();
   return data.session?.access_token ?? null;
@@ -40,6 +46,22 @@ export async function getProductAvailability(slug: string): Promise<RentalDate[]
 }
 
 // =============================================================================
+// ADMIN READS
+// =============================================================================
+
+export async function getAllRentals(): Promise<RentalWithProduct[]> {
+  return fetchJson<RentalWithProduct[]>(`${API_BASE}/admin/rentals`, {
+    headers: await authHeaders(),
+  });
+}
+
+export async function getUpcomingRentals(): Promise<RentalWithProduct[]> {
+  return fetchJson<RentalWithProduct[]>(`${API_BASE}/admin/rentals/upcoming`, {
+    headers: await authHeaders(),
+  });
+}
+
+// =============================================================================
 // ADMIN MUTATIONS
 // =============================================================================
 
@@ -52,6 +74,19 @@ export async function createRentalDate(input: {
 }): Promise<RentalDate> {
   return fetchJson<RentalDate>(`${API_BASE}/admin/availability`, {
     method: "POST",
+    headers: { "Content-Type": "application/json", ...(await authHeaders()) },
+    body: JSON.stringify(input),
+  });
+}
+
+export async function updateRentalDate(id: string, input: {
+  start_date?: string;
+  end_date?: string;
+  type?: string;
+  note?: string | null;
+}): Promise<RentalDate> {
+  return fetchJson<RentalDate>(`${API_BASE}/admin/availability/${id}`, {
+    method: "PUT",
     headers: { "Content-Type": "application/json", ...(await authHeaders()) },
     body: JSON.stringify(input),
   });

@@ -10,6 +10,12 @@ export interface RentalDate {
   created_at: string;
 }
 
+export interface RentalWithProduct extends RentalDate {
+  product_name: string;
+  product_slug: string;
+  product_image: string | null;
+}
+
 /**
  * Get all rental dates for a product by slug.
  */
@@ -47,6 +53,67 @@ export async function getAvailabilityByProductId(productId: string): Promise<Ren
 }
 
 /**
+ * Get all rental dates across all products (admin).
+ */
+export async function getAllRentals(): Promise<RentalWithProduct[]> {
+  const { data, error } = await supabase
+    .from("rental_dates")
+    .select("*, products(name, slug, product_images(url, is_primary, sort_order))")
+    .order("start_date", { ascending: false });
+
+  if (error) throw error;
+
+  return (data ?? []).map((row: any) => {
+    const images = row.products?.product_images ?? [];
+    const sorted = images.sort((a: any, b: any) => (a.is_primary ? -1 : b.is_primary ? 1 : a.sort_order - b.sort_order));
+    return {
+      id: row.id,
+      product_id: row.product_id,
+      start_date: row.start_date,
+      end_date: row.end_date,
+      type: row.type,
+      note: row.note,
+      created_at: row.created_at,
+      product_name: row.products?.name ?? "Unknown",
+      product_slug: row.products?.slug ?? "",
+      product_image: sorted[0]?.url ?? null,
+    };
+  });
+}
+
+/**
+ * Get upcoming rental dates (start_date >= today) across all products (admin).
+ */
+export async function getUpcomingRentals(): Promise<RentalWithProduct[]> {
+  const today = new Date().toISOString().split("T")[0];
+
+  const { data, error } = await supabase
+    .from("rental_dates")
+    .select("*, products(name, slug, product_images(url, is_primary, sort_order))")
+    .gte("end_date", today)
+    .order("start_date");
+
+  if (error) throw error;
+
+  return (data ?? []).map((row: any) => {
+    const images = row.products?.product_images ?? [];
+    const sorted = images.sort((a: any, b: any) => (a.is_primary ? -1 : b.is_primary ? 1 : a.sort_order - b.sort_order));
+    return {
+      id: row.id,
+      product_id: row.product_id,
+      start_date: row.start_date,
+      end_date: row.end_date,
+      type: row.type,
+      note: row.note,
+      created_at: row.created_at,
+      product_name: row.products?.name ?? "Unknown",
+      product_slug: row.products?.slug ?? "",
+      product_image: sorted[0]?.url ?? null,
+    };
+  });
+}
+
+/**
  * Create a rental date record.
  */
 export async function createRentalDate(input: {
@@ -65,6 +132,32 @@ export async function createRentalDate(input: {
       type: input.type,
       note: input.note ?? null,
     })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data as RentalDate;
+}
+
+/**
+ * Update a rental date record.
+ */
+export async function updateRentalDate(id: string, input: {
+  start_date?: string;
+  end_date?: string;
+  type?: string;
+  note?: string | null;
+}): Promise<RentalDate> {
+  const updates: Record<string, any> = {};
+  if (input.start_date !== undefined) updates.start_date = input.start_date;
+  if (input.end_date !== undefined) updates.end_date = input.end_date;
+  if (input.type !== undefined) updates.type = input.type;
+  if (input.note !== undefined) updates.note = input.note;
+
+  const { data, error } = await supabase
+    .from("rental_dates")
+    .update(updates)
+    .eq("id", id)
     .select()
     .single();
 

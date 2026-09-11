@@ -1,5 +1,5 @@
 import { ArrowLeft, Trash2, Plus, Calendar } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { toast } from "sonner";
 import { useAvailability } from "@/hooks/useAvailability";
 import { createRentalDate, deleteRentalDate, type RentalDate } from "@/services/availability";
@@ -23,6 +23,9 @@ const TYPE_COLORS: Record<string, string> = {
   blocked: "#705a4d",
 };
 
+const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
 export default function AdminAvailabilityModal({ product, onDone, onCancel }: Props) {
   const { dates, loading, refresh } = useAvailability(product.slug);
   const [startDate, setStartDate] = useState("");
@@ -31,6 +34,25 @@ export default function AdminAvailabilityModal({ product, onDone, onCancel }: Pr
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [calMonth, setCalMonth] = useState(() => new Date().getMonth());
+  const [calYear, setCalYear] = useState(() => new Date().getFullYear());
+
+  const today = new Date().toISOString().split("T")[0];
+
+  const calDays = useMemo(() => {
+    const firstDay = new Date(calYear, calMonth, 1);
+    const lastDay = new Date(calYear, calMonth + 1, 0);
+    const startOffset = (firstDay.getDay() + 6) % 7;
+    const daysInMonth = lastDay.getDate();
+    const cells: { day: number; date: string; types: string[] }[] = [];
+    for (let i = 0; i < startOffset; i++) cells.push({ day: 0, date: "", types: [] });
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dateStr = `${calYear}-${String(calMonth + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+      const dayTypes = dates.filter(r => r.start_date <= dateStr && r.end_date >= dateStr).map(r => r.type);
+      cells.push({ day: d, date: dateStr, types: dayTypes });
+    }
+    return cells;
+  }, [calMonth, calYear, dates]);
 
   const handleSubmit = async () => {
     if (!startDate || !endDate) {
@@ -87,7 +109,7 @@ export default function AdminAvailabilityModal({ product, onDone, onCancel }: Pr
         </div>
       </div>
 
-      <div className="admin-availability-panel">
+      <div className="admin-availability-layout">
         <section className="admin-form-card">
           <div className="admin-form-card-head">
             <div><span><Calendar size={14} /></span><h3>Add availability period</h3></div>
@@ -124,41 +146,71 @@ export default function AdminAvailabilityModal({ product, onDone, onCancel }: Pr
           </button>
         </section>
 
-        <section className="admin-form-card">
-          <div className="admin-form-card-head">
-            <div><span><Calendar size={14} /></span><h3>Scheduled periods</h3></div>
-            <p>{dates.length} period{dates.length !== 1 ? "s" : ""} configured</p>
+        <section className="admin-form-card admin-calendar-mini">
+          <div className="admin-calendar-header">
+            <button onClick={() => { if (calMonth === 0) { setCalMonth(11); setCalYear(y => y - 1); } else setCalMonth(m => m - 1); }}><ArrowLeft size={14} /></button>
+            <strong>{MONTHS[calMonth]} {calYear}</strong>
+            <button onClick={() => { if (calMonth === 11) { setCalMonth(0); setCalYear(y => y + 1); } else setCalMonth(m => m + 1); }}><ArrowLeft size={14} style={{ transform: "rotate(180deg)" }} /></button>
           </div>
-
-          {loading ? (
-            <p style={{ color: "#8a928c", fontSize: 12 }}>Loading...</p>
-          ) : dates.length === 0 ? (
-            <p style={{ color: "#8a928c", fontSize: 12 }}>No periods scheduled. All dates are available.</p>
-          ) : (
-            <div className="admin-rental-dates-list">
-              {dates.map((d) => (
-                <div key={d.id} className="admin-rental-date-row">
-                  <span className="admin-rental-date-type" style={{ color: TYPE_COLORS[d.type] }}>
-                    {TYPE_LABELS[d.type]}
-                  </span>
-                  <span className="admin-rental-date-range">
-                    {formatDate(d.start_date)} — {formatDate(d.end_date)}
-                  </span>
-                  {d.note && <span className="admin-rental-date-note">{d.note}</span>}
-                  <button
-                    className="admin-rental-date-delete"
-                    onClick={() => handleDelete(d.id)}
-                    disabled={deleting === d.id}
-                    title="Remove period"
-                  >
-                    <Trash2 size={14} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
+          <div className="admin-calendar-weekdays">
+            {WEEKDAYS.map(d => <span key={d}>{d}</span>)}
+          </div>
+          <div className="admin-calendar-grid">
+            {calDays.map((cell, i) => (
+              <div key={i} className={`admin-calendar-cell ${cell.date === today ? "is-today" : ""} ${cell.types.length > 0 ? "has-rentals" : ""}`}>
+                {cell.day > 0 && <span className="admin-calendar-day">{cell.day}</span>}
+                {cell.types.length > 0 && (
+                  <div className="admin-calendar-dots">
+                    {cell.types.slice(0, 2).map((t, j) => (
+                      <span key={j} className={`admin-calendar-dot type-${t}`} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+          <div className="admin-calendar-legend">
+            <span><i className="type-rented" /> Rented</span>
+            <span><i className="type-maintenance" /> Maintenance</span>
+            <span><i className="type-blocked" /> Blocked</span>
+          </div>
         </section>
       </div>
+
+      <section className="admin-form-card">
+        <div className="admin-form-card-head">
+          <div><span><Calendar size={14} /></span><h3>Scheduled periods</h3></div>
+          <p>{dates.length} period{dates.length !== 1 ? "s" : ""} configured</p>
+        </div>
+
+        {loading ? (
+          <p style={{ color: "#8a928c", fontSize: 12 }}>Loading...</p>
+        ) : dates.length === 0 ? (
+          <p style={{ color: "#8a928c", fontSize: 12 }}>No periods scheduled. All dates are available.</p>
+        ) : (
+          <div className="admin-rental-dates-list">
+            {dates.map((d) => (
+              <div key={d.id} className="admin-rental-date-row">
+                <span className="admin-rental-date-type" style={{ color: TYPE_COLORS[d.type] }}>
+                  {TYPE_LABELS[d.type]}
+                </span>
+                <span className="admin-rental-date-range">
+                  {formatDate(d.start_date)} — {formatDate(d.end_date)}
+                </span>
+                {d.note && <span className="admin-rental-date-note">{d.note}</span>}
+                <button
+                  className="admin-rental-date-delete"
+                  onClick={() => handleDelete(d.id)}
+                  disabled={deleting === d.id}
+                  title="Remove period"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   );
 }
