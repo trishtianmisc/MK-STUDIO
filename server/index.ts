@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import helmet from "helmet";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -17,13 +18,17 @@ const __dirname = path.dirname(__filename);
 export function createApp() {
   const app = express();
 
-  // Body parsing
-  app.use(express.json());
+  // Security headers
+  app.use(helmet());
 
-  // CORS for local development
+  // Body parsing with size limit
+  app.use(express.json({ limit: "1mb" }));
+
+  // CORS — only allow configured origin(s)
+  const allowedOrigins = [env.CORS_ORIGIN];
   app.use((req, res, next) => {
     const origin = req.headers.origin;
-    if (origin) {
+    if (origin && allowedOrigins.includes(origin)) {
       res.setHeader("Access-Control-Allow-Origin", origin);
     }
     res.setHeader("Access-Control-Allow-Credentials", "true");

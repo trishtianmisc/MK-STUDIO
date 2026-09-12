@@ -1,9 +1,15 @@
 import { Router } from "express";
 import type { Request, Response } from "express";
+import { z } from "zod";
 import { requireAuth, type AuthenticatedRequest } from "../middleware/auth.js";
 import { requireAdmin } from "../middleware/admin.js";
 import { rateLimit } from "../middleware/rateLimit.js";
 import * as authService from "../services/auth.service.js";
+
+const loginSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(1, "Password is required"),
+});
 
 const router = Router();
 
@@ -17,12 +23,13 @@ router.post(
   rateLimit(15 * 60 * 1000, 10), // 10 attempts per 15 minutes
   async (req: Request, res: Response) => {
     try {
-      const { email, password } = req.body;
-
-      if (!email || !password) {
-        res.status(400).json({ error: "Email and password are required" });
+      const parsed = loginSchema.safeParse(req.body);
+      if (!parsed.success) {
+        res.status(400).json({ error: "Invalid input" });
         return;
       }
+
+      const { email, password } = parsed.data;
 
       const data = await authService.signIn(email, password);
 

@@ -12,6 +12,7 @@ import Home from "./pages/Home";
 import ProductDetail from "./pages/ProductDetail";
 import { Suspense, lazy, useState, useEffect } from "react";
 import type { AdminView } from "./components/AdminLayout";
+import { Analytics } from "@vercel/analytics/react"
 
 const AdminAccess = lazy(() => import("./pages/AdminAccess"));
 const AdminLayout = lazy(() => import("./components/AdminLayout"));
@@ -128,6 +129,7 @@ function App() {
         <AuthProvider>
           <TooltipProvider>
             <Toaster />
+            <Analytics />
             <Router />
           </TooltipProvider>
         </AuthProvider>
