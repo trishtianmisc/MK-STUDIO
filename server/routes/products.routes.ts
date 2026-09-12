@@ -5,6 +5,9 @@ import * as productsController from "../controllers/products.controller.js";
 
 const router = Router();
 
+// Admin-only routes (must come before /:slug)
+router.get("/admin/stats", requireAuth, requireAdmin, productsController.getAdminStats);
+
 // Public routes (no auth required)
 router.get("/", productsController.listProducts);
 router.get("/featured", productsController.listFeaturedProducts);

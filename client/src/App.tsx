@@ -88,10 +88,10 @@ function ProtectedAdminRoute() {
   return (
     <Suspense fallback={<AdminFallback />}>
       <AdminLayoutWrapper view={view} setView={setView}>
-        {view === "dashboard" && <AdminDashboard />}
-        {view === "products" && <AdminProducts />}
-        {view === "categories" && <AdminCategories />}
-        {view === "rentals" && <AdminRentals />}
+        <div style={view !== "dashboard" ? { display: "none" } : undefined}><AdminDashboard /></div>
+        <div style={view !== "products" ? { display: "none" } : undefined}><AdminProducts /></div>
+        <div style={view !== "categories" ? { display: "none" } : undefined}><AdminCategories /></div>
+        <div style={view !== "rentals" ? { display: "none" } : undefined}><AdminRentals /></div>
       </AdminLayoutWrapper>
     </Suspense>
   );

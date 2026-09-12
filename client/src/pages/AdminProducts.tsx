@@ -32,7 +32,10 @@ export default function AdminProducts() {
     return matchesQuery && matchesFilter;
   }), [products, query, filter]);
   const handleDelete = async () => { if (!deleteTarget) return; setDeleting(true); try { await deleteProduct(deleteTarget.id); toast.success(`“${deleteTarget.name}” deleted`); setDeleteTarget(null); refresh(); } catch (err: any) { toast.error(err.message || "Failed to delete product"); } finally { setDeleting(false); } };
-  const toggle = async (product: ProductWithRelations, field: "is_public" | "is_featured") => { try { await updateProduct(product.id, { [field]: !product[field] }); refresh(); } catch { toast.error("Failed to update product"); } };
+  const toggle = async (product: ProductWithRelations, field: "is_public" | "is_featured") => {
+    setProducts(prev => prev.map(p => p.id === product.id ? { ...p, [field]: !p[field] } : p));
+    try { await updateProduct(product.id, { [field]: !product[field] }); } catch { setProducts(prev => prev.map(p => p.id === product.id ? { ...p, [field]: !p[field] } : p)); toast.error("Failed to update product"); }
+  };
 
   if (view === "add") return <AdminProductForm categories={categories} onDone={() => { setView("list"); refresh(); }} onCancel={() => setView("list")} />;
   if (view === "edit" && editingProduct) return <AdminProductForm categories={categories} product={editingProduct} onDone={() => { setView("list"); setEditingProduct(null); refresh(); }} onCancel={() => { setView("list"); setEditingProduct(null); }} />;

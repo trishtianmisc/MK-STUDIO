@@ -1,34 +1,26 @@
 import { useEffect, useState } from "react";
 import { Calendar } from "lucide-react";
-import { getAdminProducts, type ProductWithRelations } from "@/services/products";
-import { getCategories, type Category } from "@/services/categories";
+import { getAdminStats, type AdminStats } from "@/services/products";
 import { getUpcomingRentals, type RentalWithProduct } from "@/services/availability";
 
 export default function AdminDashboard() {
-  const [products, setProducts] = useState<ProductWithRelations[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [stats, setStats] = useState<AdminStats | null>(null);
   const [upcoming, setUpcoming] = useState<RentalWithProduct[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([getAdminProducts(), getCategories(), getUpcomingRentals()])
-      .then(([p, c, r]) => { setProducts(p); setCategories(c); setUpcoming(r); })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    getAdminStats().then(setStats).catch((err) => console.error("[Dashboard] stats:", err));
+    getUpcomingRentals().then(setUpcoming).catch((err) => console.error("[Dashboard] upcoming:", err)).finally(() => setLoading(false));
   }, []);
 
   if (loading) return <div style={{ padding: "20px", color: "#728077", fontSize: 12 }}>Loading...</div>;
 
-  const publicProducts = products.filter(p => p.is_public);
-  const featuredProducts = products.filter(p => p.is_featured);
-
-  const stats = [
-    { label: "Total products", value: products.length },
-    { label: "Public products", value: publicProducts.length },
-
-    { label: "Featured products", value: featuredProducts.length },
-    { label: "Categories", value: categories.length },
-  ];
+  const statItems = stats ? [
+    { label: "Total products", value: stats.totalProducts },
+    { label: "Public products", value: stats.publicProducts },
+    { label: "Featured products", value: stats.featuredProducts },
+    { label: "Categories", value: stats.totalCategories },
+  ] : [];
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -36,7 +28,7 @@ export default function AdminDashboard() {
     <div>
 
        <section className="admin-stat-grid">
-        {stats.map(stat => (
+        {statItems.map(stat => (
           <article key={stat.label}>
             <span>{stat.label}</span>
             <strong>{stat.value}</strong>

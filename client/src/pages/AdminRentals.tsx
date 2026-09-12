@@ -14,8 +14,8 @@ export default function AdminRentals() {
 
   const refresh = () => {
     setLoading(true);
-    Promise.all([getAllRentals(), getAdminProducts()])
-      .then(([r, p]) => { setRentals(r); setProducts(p); })
+    getAllRentals()
+      .then(r => { setRentals(r); })
       .catch(() => {})
       .finally(() => setLoading(false));
   };
@@ -33,6 +33,14 @@ export default function AdminRentals() {
   }, [rentals, filterType, search]);
 
   const today = new Date().toISOString().split("T")[0];
+
+  const handleEdit = async (rental: RentalWithProduct) => {
+    if (products.length === 0) {
+      const p = await getAdminProducts();
+      setProducts(p);
+    }
+    setEditingRental(rental);
+  };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this rental period?")) return;
@@ -91,7 +99,7 @@ export default function AdminRentals() {
                     </div>
                     <div className="admin-rental-note">{rental.note || "No Notes"}</div>
                     <div className="admin-rental-actions">
-                      <button onClick={() => setEditingRental(rental)} title="Edit"><Edit size={13} /></button>
+                      <button onClick={() => handleEdit(rental)} title="Edit"><Edit size={13} /></button>
                       <button onClick={() => handleDelete(rental.id)} title="Delete"><Trash2 size={13} /></button>
                     </div>
                   </div>

@@ -18,6 +18,9 @@ export type ProductWithRelations = ProductRow & {
 
 const SELECT_WITH_RELATIONS = "*, categories(*), product_images(url, is_primary, sort_order)" as const;
 
+/** Lightweight select for admin list view — drops heavy fields not shown in the table */
+const SELECT_ADMIN_LIST = "id, category_id, name, slug, color, rental_price, availability, is_featured, image, sort_order, is_public, created_at, updated_at, categories(id, slug, name), product_images(url, is_primary, sort_order)" as const;
+
 export type PaginatedResult<T> = {
   data: T[];
   total: number;
@@ -62,7 +65,7 @@ export async function getPublicProducts(
 
 /**
  * Get all products (admin view — includes private products).
- * Includes category and image data.
+ * Uses lightweight column set for list views.
  */
 export async function getAllProducts(
   page = 1,
@@ -70,25 +73,19 @@ export async function getAllProducts(
 ): Promise<PaginatedResult<ProductWithRelations>> {
   const offset = (page - 1) * limit;
 
-  const { count } = await supabase
+  const { data, error, count } = await supabase
     .from("products")
-    .select("id", { count: "exact", head: true });
-
-  const total = count ?? 0;
-
-  const { data, error } = await supabase
-    .from("products")
-    .select(SELECT_WITH_RELATIONS)
+    .select(SELECT_ADMIN_LIST, { count: "exact" })
     .order("sort_order")
     .range(offset, offset + limit - 1);
 
   if (error) throw error;
   return {
     data: (data ?? []) as unknown as ProductWithRelations[],
-    total,
+    total: count ?? 0,
     page,
     limit,
-    totalPages: Math.ceil(total / limit),
+    totalPages: Math.ceil((count ?? 0) / limit),
   };
 }
 
@@ -248,4 +245,28 @@ export async function countProductsByCategory(categoryId: string): Promise<numbe
 
   if (error) throw error;
   return count ?? 0;
+}
+
+/**
+ * Get admin dashboard stats — lightweight single query.
+ */
+export async function getAdminStats(): Promise<{
+  totalProducts: number;
+  publicProducts: number;
+  featuredProducts: number;
+  totalCategories: number;
+}> {
+  const [total, pub, feat, cats] = await Promise.all([
+    supabase.from("products").select("id", { count: "exact", head: true }),
+    supabase.from("products").select("id", { count: "exact", head: true }).eq("is_public", true),
+    supabase.from("products").select("id", { count: "exact", head: true }).eq("is_featured", true),
+    supabase.from("categories").select("id", { count: "exact", head: true }),
+  ]);
+
+  return {
+    totalProducts: total.count ?? 0,
+    publicProducts: pub.count ?? 0,
+    featuredProducts: feat.count ?? 0,
+    totalCategories: cats.count ?? 0,
+  };
 }

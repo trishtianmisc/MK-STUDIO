@@ -3,6 +3,20 @@ import * as productService from "../services/products.service.js";
 import { createProductSchema, updateProductSchema } from "../validators/products.validator.js";
 
 /**
+ * GET /api/admin/stats
+ * Admin only. Returns lightweight dashboard counts.
+ */
+export async function getAdminStats(_req: Request, res: Response) {
+  try {
+    const stats = await productService.getAdminStats();
+    res.json(stats);
+  } catch (err) {
+    console.error("[Admin Stats]", err);
+    res.status(500).json({ error: "Failed to fetch stats" });
+  }
+}
+
+/**
  * GET /api/products
  * Public: returns only public products.
  * Admin (with Bearer token): returns all products.

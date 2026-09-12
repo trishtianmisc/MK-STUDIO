@@ -101,6 +101,25 @@ export async function getProducts(page = 1, limit = 20): Promise<PaginatedResult
 // ADMIN READS
 // =============================================================================
 
+export interface AdminStats {
+  totalProducts: number;
+  publicProducts: number;
+  featuredProducts: number;
+  totalCategories: number;
+}
+
+export async function getAdminStats(): Promise<AdminStats> {
+  const response = await fetch(`${API_BASE}/admin/stats`, {
+    credentials: "include",
+    headers: await authHeaders(),
+  });
+  if (!response.ok) {
+    const body = await response.json().catch(() => null);
+    throw new Error(body?.error || `Request failed (${response.status})`);
+  }
+  return response.json();
+}
+
 export async function getAdminProducts(): Promise<ProductWithRelations[]> {
   const response = await fetch(`${API_BASE}?page=1&limit=1000`, {
     credentials: "include",
