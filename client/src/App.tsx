@@ -12,7 +12,7 @@ import Home from "./pages/Home";
 import ProductDetail from "./pages/ProductDetail";
 import { Suspense, lazy, useState, useEffect } from "react";
 import type { AdminView } from "./components/AdminLayout";
-import { Analytics } from "@vercel/analytics/react"
+import { Analytics } from "@vercel/analytics/react";
 
 const AdminAccess = lazy(() => import("./pages/AdminAccess"));
 const AdminLayout = lazy(() => import("./components/AdminLayout"));
@@ -65,12 +65,19 @@ function ProtectedAdminRoute() {
         <section className="admin-access-panel">
           <div className="admin-access-mark">!</div>
           <p className="eyebrow">Access denied</p>
-          <h1>Unauthorized<br /><em>access.</em></h1>
+          <h1>
+            Unauthorized
+            <br />
+            <em>access.</em>
+          </h1>
           <p className="admin-access-intro">
-            You do not have permission to access the admin area.
-            Your account does not have administrator privileges.
+            You do not have permission to access the admin area. Your account
+            does not have administrator privileges.
           </p>
-          <button className="editorial-button editorial-button-light" onClick={() => setLocation("/")}>
+          <button
+            className="editorial-button editorial-button-light"
+            onClick={() => setLocation("/")}
+          >
             Return to MK Studio
           </button>
         </section>
@@ -90,16 +97,36 @@ function ProtectedAdminRoute() {
   );
 }
 
-function AdminLayoutWrapper({ view, setView, children }: { view: AdminView; setView: (v: AdminView) => void; children: React.ReactNode }) {
-  return <AdminLayout view={view} setView={setView}>{children}</AdminLayout>;
+function AdminLayoutWrapper({
+  view,
+  setView,
+  children,
+}: {
+  view: AdminView;
+  setView: (v: AdminView) => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <AdminLayout view={view} setView={setView}>
+      {children}
+    </AdminLayout>
+  );
 }
 
 function LazyAdminAccess() {
-  return <Suspense fallback={<AdminFallback />}><AdminAccess /></Suspense>;
+  return (
+    <Suspense fallback={<AdminFallback />}>
+      <AdminAccess />
+    </Suspense>
+  );
 }
 
 function LazyProtectedAdminRoute() {
-  return <Suspense fallback={<AdminFallback />}><ProtectedAdminRoute /></Suspense>;
+  return (
+    <Suspense fallback={<AdminFallback />}>
+      <ProtectedAdminRoute />
+    </Suspense>
+  );
 }
 
 function Router() {
@@ -107,16 +134,16 @@ function Router() {
     <>
       <ScrollToTop />
       <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/catalogue"} component={Catalogue} />
-      <Route path={"/catalogue/:slug"} component={ProductDetail} />
-      <Route path={"/about"} component={About} />
-      <Route path={"/contact"} component={Contact} />
-      <Route path={"/admin"} component={LazyAdminAccess} />
-      <Route path={"/admin/dashboard"} component={LazyProtectedAdminRoute} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
-      <Route component={NotFound} />
+        <Route path={"/"} component={Home} />
+        <Route path={"/catalogue"} component={Catalogue} />
+        <Route path={"/catalogue/:slug"} component={ProductDetail} />
+        <Route path={"/about"} component={About} />
+        <Route path={"/contact"} component={Contact} />
+        <Route path={"/admin"} component={LazyAdminAccess} />
+        <Route path={"/admin/dashboard"} component={LazyProtectedAdminRoute} />
+        <Route path={"/404"} component={NotFound} />
+        {/* Final fallback route */}
+        <Route component={NotFound} />
       </Switch>
     </>
   );
