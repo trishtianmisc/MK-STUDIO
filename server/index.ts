@@ -18,14 +18,12 @@ const __dirname = path.dirname(__filename);
 export function createApp() {
   const app = express();
 
-  // Security headers (allow Vercel Analytics)
+  // Security headers (allow Vercel Analytics beacon)
   app.use(helmet({
     contentSecurityPolicy: {
       directives: {
         ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-        scriptSrc: ["'self'", "va.vercel-scripts.com"],
         connectSrc: ["'self'", "vitals.vercel-insights.com"],
-        imgSrc: ["'self'", "data:", "vitals.vercel-insights.com"],
       },
     },
   }));
