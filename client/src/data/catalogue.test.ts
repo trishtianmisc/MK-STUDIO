@@ -32,7 +32,6 @@ const mockProductRow: ProductWithRelations = {
     created_at: "2026-01-01T00:00:00Z",
     updated_at: "2026-01-01T00:00:00Z",
   },
-  product_images: [],
 };
 
 describe("MK Studio catalogue adapter", () => {
@@ -54,33 +53,6 @@ describe("MK Studio catalogue adapter", () => {
     const result = toShowcaseProduct(row);
     expect(result.category).toBe("");
     expect(result.categoryLabel).toBe("");
-  });
-
-  it("prefers primary image from product_images", () => {
-    const row: ProductWithRelations = {
-      ...mockProductRow,
-      image: "/images/fallback.jpg",
-      product_images: [
-        { id: "1", product_id: "x", url: "/images/secondary.jpg", alt_text: null, sort_order: 0, is_primary: false, created_at: "" },
-        { id: "2", product_id: "x", url: "/images/primary.jpg", alt_text: null, sort_order: 1, is_primary: true, created_at: "" },
-      ],
-    };
-    const result = toShowcaseProduct(row);
-    expect(result.image).toBe("/images/primary.jpg");
-  });
-
-  it("falls back to first image when no primary exists", () => {
-    const row: ProductWithRelations = {
-      ...mockProductRow,
-      image: null,
-      product_images: [
-        { id: "1", product_id: "x", url: "/images/first.jpg", alt_text: null, sort_order: 2, is_primary: false, created_at: "" },
-        { id: "2", product_id: "x", url: "/images/second.jpg", alt_text: null, sort_order: 1, is_primary: false, created_at: "" },
-      ],
-    };
-    const result = toShowcaseProduct(row);
-    // Should be sorted by sort_order, so index 0 is sort_order 1
-    expect(result.image).toBe("/images/second.jpg");
   });
 
   it("has all four catalogue occasions in categoryMeta", () => {

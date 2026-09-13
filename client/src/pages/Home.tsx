@@ -119,7 +119,7 @@ export default function Home() {
         <section className="rail-hero" aria-labelledby="rail-hero-heading">
           <img
             className="rail-hero-image"
-            src="/images/BG1.png"
+            src="/images/BG1.webp"
             alt="A woman in a coral evening dress walking through a sunset-lit boutique hotel arcade"
           />
           <div className="rail-hero-shade" />
@@ -169,7 +169,7 @@ export default function Home() {
           <img
             ref={imageRef}
             className="rail-discover-image"
-            src="/images/BG3.png"
+            src="/images/BG3.webp"
             alt="A woman in a coral evening dress walking through a sunset-lit boutique hotel arcade"
           />
           <div className="rail-discover-content">
@@ -217,7 +217,7 @@ export default function Home() {
             <span className="rail-arch rail-arch-large" aria-hidden="true" />
           </article>
           <article className="rail-campaign rail-campaign-image">
-            <img src="/images/mkherosec.png" alt="Jewel-tone occasion dresses from the MK Studio wardrobe" loading="lazy" decoding="async" />
+            <img src="/images/mkherosec.webp" alt="Jewel-tone occasion dresses from the MK Studio wardrobe" loading="lazy" decoding="async" />
             <div>
               <p className="rail-kicker">From the rail</p>
               <h2>List.<br /><em>With us.</em></h2>

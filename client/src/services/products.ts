@@ -13,6 +13,7 @@ export interface ProductWithRelations {
   sizes: string[];
   fabric: string | null;
   color: string | null;
+  brand: string | null;
   rental_price: number;
   availability: "Available" | "Limited" | "Unavailable";
   rental_note: string | null;
@@ -32,15 +33,6 @@ export interface ProductWithRelations {
     created_at: string;
     updated_at: string;
   } | null;
-  product_images: {
-    id: string;
-    product_id: string;
-    url: string;
-    alt_text: string | null;
-    sort_order: number;
-    is_primary: boolean;
-    created_at: string;
-  }[];
 }
 
 export interface PaginatedResult<T> {
@@ -61,6 +53,7 @@ export interface CreateProductInput {
   sizes?: string[];
   fabric?: string;
   color?: string;
+  brand?: string;
   rental_price: number;
   availability?: "Available" | "Limited" | "Unavailable";
   rental_note?: string;

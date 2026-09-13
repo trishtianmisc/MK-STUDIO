@@ -33,7 +33,6 @@ vi.mock("@/hooks/useProducts", () => ({
         created_at: "",
         updated_at: "",
         categories: { id: "1", slug: "wedding-guest", name: "Wedding guest", description: null, image: null, sort_order: 1, created_at: "", updated_at: "" },
-        product_images: [],
       },
     ],
     loading: false,

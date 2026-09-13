@@ -5,21 +5,16 @@ type ProductRow = Database["public"]["Tables"]["products"]["Row"];
 type ProductInsert = Database["public"]["Tables"]["products"]["Insert"];
 type ProductUpdate = Database["public"]["Tables"]["products"]["Update"];
 type CategoryRow = Database["public"]["Tables"]["categories"]["Row"];
-type ProductImageRow = Database["public"]["Tables"]["product_images"]["Row"];
 
-/** Minimal image data needed by the public frontend */
-type ProductImagePreview = Pick<ProductImageRow, "url" | "is_primary" | "sort_order">;
-
-/** Product with joined category and images — returned by catalogue queries */
+/** Product with joined category — returned by catalogue queries */
 export type ProductWithRelations = ProductRow & {
   categories: CategoryRow | null;
-  product_images: ProductImagePreview[];
 };
 
-const SELECT_WITH_RELATIONS = "*, categories(*), product_images(url, is_primary, sort_order)" as const;
+const SELECT_WITH_RELATIONS = "*, categories(*)" as const;
 
 /** Lightweight select for admin list view — drops heavy fields not shown in the table */
-const SELECT_ADMIN_LIST = "id, category_id, name, slug, color, rental_price, availability, is_featured, image, sort_order, is_public, created_at, updated_at, categories(id, slug, name), product_images(url, is_primary, sort_order)" as const;
+const SELECT_ADMIN_LIST = "id, category_id, name, slug, color, brand, rental_price, availability, is_featured, image, sort_order, is_public, created_at, updated_at, categories(id, slug, name)" as const;
 
 export type PaginatedResult<T> = {
   data: T[];

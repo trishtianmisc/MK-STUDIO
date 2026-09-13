@@ -209,7 +209,7 @@ export async function updateProduct(req: Request, res: Response) {
 
 /**
  * DELETE /api/products/:id
- * Admin only. Deletes a product and its Storage images.
+ * Admin only. Deletes a product.
  */
 export async function deleteProduct(req: Request, res: Response) {
   try {
@@ -224,29 +224,6 @@ export async function deleteProduct(req: Request, res: Response) {
     if (!existing) {
       res.status(404).json({ error: "Product not found" });
       return;
-    }
-
-    // Clean up Storage objects before deleting the product
-    // ON DELETE CASCADE handles DB cleanup, but Storage objects need explicit removal
-    try {
-      const { getAllImagesForProduct, extractStoragePathFromUrl, deleteFromStorage } = await import("../services/images.service.js");
-      const images = await getAllImagesForProduct(id);
-
-      for (const image of images) {
-        const storagePath = extractStoragePathFromUrl(image.url);
-        if (storagePath) {
-          try {
-            await deleteFromStorage(storagePath);
-          } catch (storageErr) {
-            console.error(`[Product Delete] Failed to delete Storage object: ${storagePath}`, storageErr);
-            // Continue with other images — don't fail the entire delete
-          }
-        }
-      }
-    } catch (imgErr) {
-      // If image cleanup fails entirely, log and continue with product deletion
-      // The DB cascade will remove image records even if Storage objects remain
-      console.error("[Product Delete] Image cleanup failed, proceeding with product deletion:", imgErr);
     }
 
     await productService.deleteProduct(id);

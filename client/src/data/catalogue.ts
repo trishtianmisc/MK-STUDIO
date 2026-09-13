@@ -15,6 +15,7 @@ export type ShowcaseProduct = {
   sizes: string[];
   fabric: string;
   color: string;
+  brand: string;
   rentalPrice: number;
   availability: AvailabilityStatus;
   rentalNote: string;
@@ -40,18 +41,7 @@ export function toShowcaseProduct(row: ProductWithRelations): ShowcaseProduct {
   const categorySlug = row.categories?.slug ?? "";
   const categoryLabel = row.categories?.name ?? "";
 
-  // Pick the best image: prefer primary from product_images, else fallback to product.image
-  let image = row.image ?? "";
-  if (row.product_images && row.product_images.length > 0) {
-    const primary = row.product_images.find((img) => img.is_primary);
-    if (primary) {
-      image = primary.url;
-    } else {
-      // Sort by sort_order and pick the first
-      const sorted = [...row.product_images].sort((a, b) => a.sort_order - b.sort_order);
-      image = sorted[0].url;
-    }
-  }
+  const image = row.image ?? "";
 
   return {
     slug: row.slug,
@@ -65,6 +55,7 @@ export function toShowcaseProduct(row: ProductWithRelations): ShowcaseProduct {
     sizes: row.sizes ?? [],
     fabric: row.fabric ?? "",
     color: row.color ?? "",
+    brand: row.brand ?? "",
     rentalPrice: row.rental_price,
     availability: row.availability as AvailabilityStatus,
     rentalNote: row.rental_note ?? "",

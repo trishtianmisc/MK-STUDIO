@@ -7,7 +7,6 @@ import { fileURLToPath } from "url";
 import { env } from "./config/env.js";
 import productsRoutes from "./routes/products.routes.js";
 import categoriesRoutes from "./routes/categories.routes.js";
-import imagesRoutes from "./routes/images.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import availabilityRoutes from "./routes/availability.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
@@ -60,7 +59,6 @@ export function createApp() {
   app.use("/api/auth", authRoutes);
   app.use("/api/products", productsRoutes);
   app.use("/api/categories", categoriesRoutes);
-  app.use("/api/images", imagesRoutes);
   app.use("/api", availabilityRoutes);
 
   // Health check

@@ -67,7 +67,7 @@ export default function Catalogue() {
     const text = search.trim().toLowerCase();
     return allProducts.filter((product) =>
       (filter === "all" || product.category === filter) &&
-      (!text || `${product.name} ${product.categoryLabel} ${product.color} ${product.fabric}`.toLowerCase().includes(text)) &&
+      (!text || `${product.name} ${product.categoryLabel} ${product.color} ${product.fabric} ${product.brand}`.toLowerCase().includes(text)) &&
       (selectedSizes.length === 0 || product.sizes.some(s => selectedSizes.includes(s))) &&
       (selectedColors.length === 0 || selectedColors.includes(product.color)) &&
       product.rentalPrice >= priceRange.min && product.rentalPrice <= priceRange.max
@@ -232,7 +232,7 @@ export default function Catalogue() {
                       <span className="product-view">View piece <ArrowUpRight size={15} /></span>
                     </button>
                     <div className="product-copy">
-                      <div><p>{product.color}</p><h2>{product.name}</h2><strong>{formatRentalPrice(product.rentalPrice)} <span>/ 3 days</span></strong></div>
+                      <div><p>{product.brand && <span className="product-brand">{product.brand}</span>}</p><h2>{product.name}</h2><strong>{formatRentalPrice(product.rentalPrice)} <span>/ 3 days</span></strong></div>
                       <button onClick={() => setLocation(`/catalogue/${product.slug}`)} aria-label={`View ${product.name}`}><ArrowUpRight size={19} /></button>
                     </div>
                     <button className="product-order-button" onClick={() => setLocation(`/catalogue/${product.slug}`)}>View details <ArrowUpRight size={15} /></button>

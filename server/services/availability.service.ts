@@ -58,27 +58,23 @@ export async function getAvailabilityByProductId(productId: string): Promise<Ren
 export async function getAllRentals(): Promise<RentalWithProduct[]> {
   const { data, error } = await supabase
     .from("rental_dates")
-    .select("*, products(name, slug, product_images(url, is_primary, sort_order))")
+    .select("*, products(name, slug, image)")
     .order("start_date", { ascending: false });
 
   if (error) throw error;
 
-  return (data ?? []).map((row: any) => {
-    const images = row.products?.product_images ?? [];
-    const sorted = images.sort((a: any, b: any) => (a.is_primary ? -1 : b.is_primary ? 1 : a.sort_order - b.sort_order));
-    return {
-      id: row.id,
-      product_id: row.product_id,
-      start_date: row.start_date,
-      end_date: row.end_date,
-      type: row.type,
-      note: row.note,
-      created_at: row.created_at,
-      product_name: row.products?.name ?? "Unknown",
-      product_slug: row.products?.slug ?? "",
-      product_image: sorted[0]?.url ?? null,
-    };
-  });
+  return (data ?? []).map((row: any) => ({
+    id: row.id,
+    product_id: row.product_id,
+    start_date: row.start_date,
+    end_date: row.end_date,
+    type: row.type,
+    note: row.note,
+    created_at: row.created_at,
+    product_name: row.products?.name ?? "Unknown",
+    product_slug: row.products?.slug ?? "",
+    product_image: row.products?.image ?? null,
+  }));
 }
 
 /**
@@ -89,28 +85,24 @@ export async function getUpcomingRentals(): Promise<RentalWithProduct[]> {
 
   const { data, error } = await supabase
     .from("rental_dates")
-    .select("*, products(name, slug, product_images(url, is_primary, sort_order))")
+    .select("*, products(name, slug, image)")
     .gte("end_date", today)
     .order("start_date");
 
   if (error) throw error;
 
-  return (data ?? []).map((row: any) => {
-    const images = row.products?.product_images ?? [];
-    const sorted = images.sort((a: any, b: any) => (a.is_primary ? -1 : b.is_primary ? 1 : a.sort_order - b.sort_order));
-    return {
-      id: row.id,
-      product_id: row.product_id,
-      start_date: row.start_date,
-      end_date: row.end_date,
-      type: row.type,
-      note: row.note,
-      created_at: row.created_at,
-      product_name: row.products?.name ?? "Unknown",
-      product_slug: row.products?.slug ?? "",
-      product_image: sorted[0]?.url ?? null,
-    };
-  });
+  return (data ?? []).map((row: any) => ({
+    id: row.id,
+    product_id: row.product_id,
+    start_date: row.start_date,
+    end_date: row.end_date,
+    type: row.type,
+    note: row.note,
+    created_at: row.created_at,
+    product_name: row.products?.name ?? "Unknown",
+    product_slug: row.products?.slug ?? "",
+    product_image: row.products?.image ?? null,
+  }));
 }
 
 /**

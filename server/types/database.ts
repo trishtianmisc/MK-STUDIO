@@ -39,6 +39,7 @@ export interface Database {
           sizes: string[];
           fabric: string | null;
           color: string | null;
+          brand: string | null;
           rental_price: number;
           availability: "Available" | "Limited" | "Unavailable";
           rental_note: string | null;
@@ -51,19 +52,6 @@ export interface Database {
         };
         Insert: Omit<Database["public"]["Tables"]["products"]["Row"], "id" | "created_at" | "updated_at">;
         Update: Partial<Database["public"]["Tables"]["products"]["Insert"]>;
-      };
-      product_images: {
-        Row: {
-          id: string;
-          product_id: string;
-          url: string;
-          alt_text: string | null;
-          sort_order: number;
-          is_primary: boolean;
-          created_at: string;
-        };
-        Insert: Omit<Database["public"]["Tables"]["product_images"]["Row"], "id" | "created_at">;
-        Update: Partial<Database["public"]["Tables"]["product_images"]["Insert"]>;
       };
       profiles: {
         Row: {
