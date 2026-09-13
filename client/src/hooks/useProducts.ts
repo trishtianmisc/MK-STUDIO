@@ -19,7 +19,7 @@ export function useProducts() {
 
     const fetchAll = async () => {
       try {
-        const firstPage = await getProducts(1, 1000);
+        const firstPage = await getProducts(1, 50);
         const items = Array.isArray(firstPage) ? firstPage : (firstPage as any).data ?? [];
 
         if (!cancelled) {
