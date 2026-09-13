@@ -145,7 +145,7 @@ function Products({ preview, products }: { preview: (action: string) => void; pr
             <img src={product.image} alt="" loading="lazy" decoding="async" />
             <div>
               <strong>{product.name}</strong>
-              <span>{formatRentalPrice(product.rentalPrice)} · {product.color}</span>
+              <span>{formatRentalPrice(product.rentalPrice)} · {product.style}</span>
             </div>
           </div>
           <span>{product.categoryLabel}</span>

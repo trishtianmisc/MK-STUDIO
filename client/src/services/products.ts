@@ -7,12 +7,9 @@ export interface ProductWithRelations {
   category_id: string;
   name: string;
   slug: string;
-  description: string | null;
-  details: string | null;
-  sizing: string | null;
+  style: string | null;
+  length: string | null;
   sizes: string[];
-  fabric: string | null;
-  color: string | null;
   brand: string | null;
   rental_price: number;
   availability: "Available" | "Limited" | "Unavailable";
@@ -47,12 +44,9 @@ export interface CreateProductInput {
   category_id: string;
   name: string;
   slug: string;
-  description?: string;
-  details?: string;
-  sizing?: string;
+  style?: string;
+  length?: string;
   sizes?: string[];
-  fabric?: string;
-  color?: string;
   brand?: string;
   rental_price: number;
   availability?: "Available" | "Limited" | "Unavailable";
@@ -114,7 +108,7 @@ export async function getAdminStats(): Promise<AdminStats> {
 }
 
 export async function getAdminProducts(): Promise<ProductWithRelations[]> {
-  const response = await fetch(`${API_BASE}?page=1&limit=1000`, {
+  const response = await fetch(`${API_BASE}?page=1&limit=50`, {
     credentials: "include",
     headers: await authHeaders(),
   });

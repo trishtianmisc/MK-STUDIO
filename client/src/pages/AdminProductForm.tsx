@@ -15,11 +15,8 @@ export default function AdminProductForm({ categories, product, onDone, onCancel
   const [slug, setSlug] = useState(product?.slug ?? "");
   const [categoryId, setCategoryId] = useState(product?.category_id ?? (categories[0]?.id ?? ""));
   const [rentalPrice, setRentalPrice] = useState(String(product?.rental_price ?? ""));
-  const [description, setDescription] = useState(product?.description ?? "");
-  const [details, setDetails] = useState(product?.details ?? "");
-  const [sizing, setSizing] = useState(product?.sizing ?? "");
-  const [fabric, setFabric] = useState(product?.fabric ?? "");
-  const [color, setColor] = useState(product?.color ?? "");
+  const [style, setStyle] = useState(product?.style ?? "");
+  const [length, setLength] = useState(product?.length ?? "");
   const [brand, setBrand] = useState(product?.brand ?? "");
   const [sizes, setSizes] = useState(product?.sizes?.join(", ") ?? "");
   const [rentalNote, setRentalNote] = useState(product?.rental_note ?? "");
@@ -49,14 +46,8 @@ export default function AdminProductForm({ categories, product, onDone, onCancel
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Image must be under 5 MB");
-      return;
-    }
-    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-      toast.error("Image must be JPEG, PNG, or WebP");
-      return;
-    }
+    if (file.size > 5 * 1024 * 1024) { toast.error("Image must be under 5 MB"); return; }
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) { toast.error("Image must be JPEG, PNG, or WebP"); return; }
     setImageFile(file);
     setImagePreview(URL.createObjectURL(file));
   };
@@ -77,11 +68,7 @@ export default function AdminProductForm({ categories, product, onDone, onCancel
       const arrayBuffer = await imageFile.arrayBuffer();
       const { error: uploadError } = await supabase.storage
         .from("product-images")
-        .upload(storagePath, arrayBuffer, {
-          contentType: imageFile.type,
-          cacheControl: "31536000",
-          upsert: false,
-        });
+        .upload(storagePath, arrayBuffer, { contentType: imageFile.type, cacheControl: "31536000", upsert: false });
       if (uploadError) throw uploadError;
       const { data } = supabase.storage.from("product-images").getPublicUrl(storagePath);
       return data.publicUrl;
@@ -107,11 +94,8 @@ export default function AdminProductForm({ categories, product, onDone, onCancel
         sort_order: Number(sortOrder) || 0,
       };
       if (finalImageUrl) input.image = finalImageUrl;
-      if (description.trim()) input.description = description.trim();
-      if (details.trim()) input.details = details.trim();
-      if (sizing.trim()) input.sizing = sizing.trim();
-      if (fabric.trim()) input.fabric = fabric.trim();
-      if (color.trim()) input.color = color.trim();
+      if (style.trim()) input.style = style.trim();
+      if (length.trim()) input.length = length.trim();
       if (brand.trim()) input.brand = brand.trim();
       if (sizes.trim()) input.sizes = sizes.split(",").map(s => s.trim()).filter(Boolean);
       if (rentalNote.trim()) input.rental_note = rentalNote.trim();
@@ -182,16 +166,13 @@ export default function AdminProductForm({ categories, product, onDone, onCancel
             </div>
           </section>
           <section className="admin-form-card">
-            <div className="admin-form-card-head"><div><span>03</span><h3>Story & details</h3></div><p>Help guests understand what makes this piece special.</p></div>
-            {field("Short description", <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="A softly structured silhouette for evenings that call for a little more…" rows={3} />)}
-            {field("Full details", <textarea value={details} onChange={e => setDetails(e.target.value)} placeholder="Share fit notes, styling suggestions and care details." rows={4} />)}
+            <div className="admin-form-card-head"><div><span>03</span><h3>Details</h3></div><p>Add style, length and other details for this piece.</p></div>
             <div className="admin-form-grid">
-              {field("Fabric", <input value={fabric} onChange={e => setFabric(e.target.value)} placeholder="Silk velvet" />)}
-              {field("Colour", <input value={color} onChange={e => setColor(e.target.value)} placeholder="Burgundy" />)}
+              {field("Style", <input value={style} onChange={e => setStyle(e.target.value)} placeholder="Structured, Textured, Lace..." />)}
+              {field("Length", <input value={length} onChange={e => setLength(e.target.value)} placeholder="Mini, Midi, Maxi, Gown" />)}
             </div>
             {field("Brand", <input value={brand} onChange={e => setBrand(e.target.value)} placeholder="Zara, H&M, Curated by MK Studio..." />)}
-            {field("Sizing notes", <input value={sizing} onChange={e => setSizing(e.target.value)} placeholder="Fits UK 6–12; true to size." />)}
-            {field("Available sizes", <input value={sizes} onChange={e => setSizes(e.target.value)} placeholder="UK 6, UK 8, UK 10, UK 12" />, undefined, "Separate sizes with commas")}
+            {field("Available sizes", <input value={sizes} onChange={e => setSizes(e.target.value)} placeholder="S/M, UK 8, UK 10" />, undefined, "Separate sizes with commas")}
           </section>
         </div>
         <aside className="admin-form-aside">

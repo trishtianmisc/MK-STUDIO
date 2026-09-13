@@ -152,7 +152,7 @@ export default function Home() {
                   <i><Heart size={16} /></i>
                 </button>
                 <div className="rail-product-copy">
-                  <p>{piece.color}</p>
+                  <p>{piece.brand}</p>
                   <h3>{piece.name}</h3>
                   <strong>{formatRentalPrice(piece.rentalPrice)} <small>for 3 days</small></strong>
                   <button onClick={() => goTo(`/catalogue/${piece.slug}`)}>View piece <ArrowUpRight size={15} /></button>

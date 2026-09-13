@@ -37,9 +37,7 @@ export default function ProductDetail() {
             <p className="eyebrow">{product.categoryLabel}</p>
             <h1>{product.name}</h1>
             <p className="product-price">{formatRentalPrice(product.rentalPrice)} <span>for a 3-day rental</span></p>
-            <p className="product-detail-lead">{product.description}</p>
-            <div className="product-detail-meta"><div><span>Brand</span><strong>{product.brand || "Curated by MK Studio"}</strong></div><div><span>Colour</span><strong>{product.color}</strong></div><div><span>Fabric</span><strong>{product.fabric}</strong></div><div><span>Size guide</span><strong>{product.sizing}</strong></div></div>
-            <p className="product-detail-text">{product.details}</p>
+            <div className="product-detail-meta"><div><span>Brand</span><strong>{product.brand || "Curated by MK Studio"}</strong></div><div><span>Style</span><strong>{product.style}</strong></div><div><span>Length</span><strong>{product.length}</strong></div></div>
 
             <section className="rental-config" aria-label="Rental information">
               <div className="rental-config-heading"><div><p className="eyebrow">Rental information</p><h2>Availability & Sizing</h2></div><span>{product.rentalNote}</span></div>

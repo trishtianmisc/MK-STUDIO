@@ -34,10 +34,10 @@ export default function Catalogue() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
-  const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({ min: 0, max: 10000 });
   const [showAllSizes, setShowAllSizes] = useState(false);
-  const [showAllColors, setShowAllColors] = useState(false);
+  const [showAllStyles, setShowAllStyles] = useState(false);
 
   const FILTER_LIMIT = 6;
 
@@ -49,12 +49,12 @@ export default function Catalogue() {
     return Array.from(sizes).sort();
   }, [allProducts]);
 
-  const allColors = useMemo(() => {
-    const colors = new Set<string>();
+  const allStyles = useMemo(() => {
+    const styles = new Set<string>();
     for (const p of allProducts) {
-      if (p.color) colors.add(p.color);
+      if (p.style) styles.add(p.style);
     }
-    return Array.from(colors).sort();
+    return Array.from(styles).sort();
   }, [allProducts]);
 
   const priceBounds = useMemo(() => {
@@ -67,12 +67,12 @@ export default function Catalogue() {
     const text = search.trim().toLowerCase();
     return allProducts.filter((product) =>
       (filter === "all" || product.category === filter) &&
-      (!text || `${product.name} ${product.categoryLabel} ${product.color} ${product.fabric} ${product.brand}`.toLowerCase().includes(text)) &&
+      (!text || `${product.name} ${product.categoryLabel} ${product.style} ${product.length} ${product.brand}`.toLowerCase().includes(text)) &&
       (selectedSizes.length === 0 || product.sizes.some(s => selectedSizes.includes(s))) &&
-      (selectedColors.length === 0 || selectedColors.includes(product.color)) &&
+      (selectedStyles.length === 0 || selectedStyles.includes(product.style)) &&
       product.rentalPrice >= priceRange.min && product.rentalPrice <= priceRange.max
     );
-  }, [allProducts, filter, search, selectedSizes, selectedColors, priceRange]);
+  }, [allProducts, filter, search, selectedSizes, selectedStyles, priceRange]);
 
   const sortedProducts = useMemo(() => {
     if (sort === "az") return [...filteredProducts].sort((a, b) => a.name.localeCompare(b.name));
@@ -103,11 +103,11 @@ export default function Catalogue() {
 
   const hasMore = visibleCount < sortedProducts.length;
   const filteredTotal = sortedProducts.length;
-  const activeFilterCount = selectedSizes.length + selectedColors.length + (priceRange.min > priceBounds.min || priceRange.max < priceBounds.max ? 1 : 0);
+  const activeFilterCount = selectedSizes.length + selectedStyles.length + (priceRange.min > priceBounds.min || priceRange.max < priceBounds.max ? 1 : 0);
 
   useEffect(() => {
     setVisibleCount(PAGE_SIZE);
-  }, [filter, search, sort, selectedSizes, selectedColors, priceRange]);
+  }, [filter, search, sort, selectedSizes, selectedStyles, priceRange]);
 
   useEffect(() => {
     setPriceRange(priceBounds);
@@ -136,13 +136,13 @@ export default function Catalogue() {
     setSelectedSizes(prev => prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]);
   };
 
-  const toggleColor = (color: string) => {
-    setSelectedColors(prev => prev.includes(color) ? prev.filter(c => c !== color) : [...prev, color]);
+  const toggleStyle = (style: string) => {
+    setSelectedStyles(prev => prev.includes(style) ? prev.filter(s => s !== style) : [...prev, style]);
   };
 
   const clearFilters = () => {
     setSelectedSizes([]);
-    setSelectedColors([]);
+    setSelectedStyles([]);
     setPriceRange(priceBounds);
   };
 
@@ -185,16 +185,16 @@ export default function Catalogue() {
                         )}
                       </div>
                     )}
-                    {allColors.length > 0 && (
+                    {allStyles.length > 0 && (
                       <div className="catalogue-filter-section">
-                        <span className="catalogue-filter-heading">Color</span>
-                        <div className={`catalogue-filter-list ${showAllColors ? "is-expanded" : ""}`}>
-                          {(showAllColors ? allColors : allColors.slice(0, FILTER_LIMIT)).map(color => (
-                            <button key={color} className={`catalogue-filter-option ${selectedColors.includes(color) ? "is-active" : ""}`} onClick={() => toggleColor(color)}>{color}</button>
+                        <span className="catalogue-filter-heading">Style</span>
+                        <div className={`catalogue-filter-list ${showAllStyles ? "is-expanded" : ""}`}>
+                          {(showAllStyles ? allStyles : allStyles.slice(0, FILTER_LIMIT)).map(style => (
+                            <button key={style} className={`catalogue-filter-option ${selectedStyles.includes(style) ? "is-active" : ""}`} onClick={() => toggleStyle(style)}>{style}</button>
                           ))}
                         </div>
-                        {allColors.length > FILTER_LIMIT && (
-                          <button className="catalogue-filter-more" onClick={() => setShowAllColors(!showAllColors)}>{showAllColors ? "Show less" : `See all (${allColors.length})`}</button>
+                        {allStyles.length > FILTER_LIMIT && (
+                          <button className="catalogue-filter-more" onClick={() => setShowAllStyles(!showAllStyles)}>{showAllStyles ? "Show less" : `See all (${allStyles.length})`}</button>
                         )}
                       </div>
                     )}
@@ -232,7 +232,7 @@ export default function Catalogue() {
                       <span className="product-view">View piece <ArrowUpRight size={15} /></span>
                     </button>
                     <div className="product-copy">
-                      <div><p>{product.brand && <span className="product-brand">{product.brand}</span>}</p><h2>{product.name}</h2><strong>{formatRentalPrice(product.rentalPrice)} <span>/ 3 days</span></strong></div>
+                      <div>{product.brand && <p className="product-brand">{product.brand}</p>}<h2>{product.name}</h2><strong>{formatRentalPrice(product.rentalPrice)} <span>/ 3 days</span></strong></div>
                       <button onClick={() => setLocation(`/catalogue/${product.slug}`)} aria-label={`View ${product.name}`}><ArrowUpRight size={19} /></button>
                     </div>
                     <button className="product-order-button" onClick={() => setLocation(`/catalogue/${product.slug}`)}>View details <ArrowUpRight size={15} /></button>
@@ -255,7 +255,7 @@ export default function Catalogue() {
           )}
         </section>
       </main>
-      {searchOpen && <div className="search-overlay" role="dialog" aria-modal="true" aria-label="Search the catalogue"><button className="search-dismiss" onClick={() => setSearchOpen(false)} aria-label="Close search"><X size={22} /></button><div><p className="eyebrow eyebrow-gold">Find a piece</p><label><Search size={21} /><input autoFocus value={search} onChange={e => setSearch(e.target.value)} placeholder="Search style, colour, fabric..." /><button onClick={() => setSearchOpen(false)}>Show results <ArrowUpRight size={16} /></button></label><p className="search-helper">Results update beneath the search panel.</p></div></div>}
+      {searchOpen && <div className="search-overlay" role="dialog" aria-modal="true" aria-label="Search the catalogue"><button className="search-dismiss" onClick={() => setSearchOpen(false)} aria-label="Close search"><X size={22} /></button><div><p className="eyebrow eyebrow-gold">Find a piece</p><label><Search size={21} /><input autoFocus value={search} onChange={e => setSearch(e.target.value)} placeholder="Search style, length, brand..." /><button onClick={() => setSearchOpen(false)}>Show results <ArrowUpRight size={16} /></button></label><p className="search-helper">Results update beneath the search panel.</p></div></div>}
     </StoreShell>
   );
 }

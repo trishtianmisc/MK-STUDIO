@@ -26,12 +26,10 @@ describe("createProductSchema", () => {
   it("accepts full input with all fields", () => {
     const result = createProductSchema.safeParse({
       ...validInput,
-      description: "A test description",
-      details: "Details here",
-      sizing: "Fits UK 8-12",
+      style: "Silk",
+      length: "Maxi",
       sizes: ["UK 8", "UK 10", "UK 12"],
-      fabric: "Silk",
-      color: "Red",
+      brand: "Zara",
       availability: "Limited",
       rental_note: "3-day rental",
       is_featured: true,
@@ -90,9 +88,8 @@ describe("createProductSchema", () => {
   it("accepts null for nullable fields", () => {
     const result = createProductSchema.safeParse({
       ...validInput,
-      description: null,
-      details: null,
-      fabric: null,
+      style: null,
+      length: null,
     });
     expect(result.success).toBe(true);
   });

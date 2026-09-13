@@ -9,12 +9,9 @@ export type ShowcaseProduct = {
   category: ProductCategory;
   categoryLabel: string;
   image: string;
-  description: string;
-  details: string;
-  sizing: string;
+  style: string;
+  length: string;
   sizes: string[];
-  fabric: string;
-  color: string;
   brand: string;
   rentalPrice: number;
   availability: AvailabilityStatus;
@@ -30,17 +27,15 @@ export const categoryMeta: Record<string, { label: string; short: string; image:
   "casual": { label: "Casual", short: "For the whole day", image: "/images/my-studio-workwear_671a35a4.jpg" },
   "prom": { label: "Prom", short: "Pre-loved studio pieces", image: "/images/my-studio-mark_4967063e.png" },
   "evening": { label: "Evening", short: "Pre-loved studio pieces", image: "/images/my-studio-mark_4967063e.png" },
-
 };
 
 /**
- * Convert a product with joined category and images from the API
+ * Convert a product with joined category from the API
  * into the existing frontend ShowcaseProduct shape.
  */
 export function toShowcaseProduct(row: ProductWithRelations): ShowcaseProduct {
   const categorySlug = row.categories?.slug ?? "";
   const categoryLabel = row.categories?.name ?? "";
-
   const image = row.image ?? "";
 
   return {
@@ -49,12 +44,9 @@ export function toShowcaseProduct(row: ProductWithRelations): ShowcaseProduct {
     category: categorySlug,
     categoryLabel,
     image,
-    description: row.description ?? "",
-    details: row.details ?? "",
-    sizing: row.sizing ?? "",
+    style: row.style ?? "",
+    length: row.length ?? "",
     sizes: row.sizes ?? [],
-    fabric: row.fabric ?? "",
-    color: row.color ?? "",
     brand: row.brand ?? "",
     rentalPrice: row.rental_price,
     availability: row.availability as AvailabilityStatus,

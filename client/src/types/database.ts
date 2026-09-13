@@ -33,12 +33,9 @@ export interface Database {
           category_id: string;
           name: string;
           slug: string;
-          description: string | null;
-          details: string | null;
-          sizing: string | null;
           sizes: string[];
-          fabric: string | null;
-          color: string | null;
+          style: string | null;
+          length: string | null;
           brand: string | null;
           rental_price: number;
           availability: "Available" | "Limited" | "Unavailable";
