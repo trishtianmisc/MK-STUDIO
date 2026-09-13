@@ -9,6 +9,8 @@ import About from "./pages/About";
 import Catalogue from "./pages/Catalogue";
 import Contact from "./pages/Contact";
 import Home from "./pages/Home";
+import HowRentalWorks from "./pages/HowRentalWorks";
+import ListWithUs from "./pages/ListWithUs";
 import ProductDetail from "./pages/ProductDetail";
 import { Suspense, lazy, useState, useEffect } from "react";
 import type { AdminView } from "./components/AdminLayout";
@@ -138,6 +140,8 @@ function Router() {
         <Route path={"/catalogue"} component={Catalogue} />
         <Route path={"/catalogue/:slug"} component={ProductDetail} />
         <Route path={"/about"} component={About} />
+        <Route path={"/how-rental-works"} component={HowRentalWorks} />
+        <Route path={"/list-with-us"} component={ListWithUs} />
         <Route path={"/contact"} component={Contact} />
         <Route path={"/admin"} component={LazyAdminAccess} />
         <Route path={"/admin/dashboard"} component={LazyProtectedAdminRoute} />

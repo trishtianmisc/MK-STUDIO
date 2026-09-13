@@ -84,7 +84,7 @@ export default function Home() {
         <nav className="rail-nav" aria-label="Main navigation">
           <button onClick={() => goTo("discover")}>Shop the edit</button>
           <button onClick={() => goTo("current-edit")}>New in</button>
-          <button onClick={() => goTo("rental-ritual")}>How it works</button>
+          <button onClick={() => goTo("rail-campaign-grid")}>How it works</button>
         </nav>
         <div className="rail-actions">
           <button className="rail-order-action" onClick={() => goTo("/contact")} aria-label="Enquire about a piece">
@@ -107,7 +107,7 @@ export default function Home() {
         <div className="rail-sidebar-links">
           <button onClick={() => goTo("discover")}>Shop the edit <ChevronRight size={18} /></button>
           <button onClick={() => goTo("current-edit")}>New in <ChevronRight size={18} /></button>
-          <button onClick={() => goTo("rental-ritual")}>How it works <ChevronRight size={18} /></button>
+          <button onClick={() => goTo("rail-campaign-grid")}>How it works <ChevronRight size={18} /></button>
           <button onClick={() => goTo("/contact")}>Contact the studio <ArrowUpRight size={18} /></button>
         </div>
         <div className="rail-sidebar-footer">
@@ -126,7 +126,7 @@ export default function Home() {
           <div className="rail-hero-copy">
             <p className="rail-kicker">The Studio Edit · 01</p>
             <h1 id="rail-hero-heading">Collect memories.<br /><em>Not clutter.</em></h1>
-            <p>For every invitation, sudden plan, and no-repeat mood. Explore an evolving wardrobe of pieces with somewhere to be.</p>
+            <p>At MK Studio, discover a curated collection of timeless pieces available to browse entirely online making it effortless to find the one you love, while embracing a more intentional wardrobe.</p>
             <div className="rail-hero-actions">
               <button className="rail-light-button" onClick={() => goTo("/catalogue")}>Shop the collection <ArrowUpRight size={16} /></button>
               <button className="rail-quiet-link" onClick={() => goTo("discover")}>Explore by moment <ArrowDownRight size={16} /></button>
@@ -206,13 +206,13 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="rail-campaign-grid" aria-label="MK Studio highlights">
+        <section id="rail-campaign-grid" className="rail-campaign-grid" aria-label="MK Studio highlights">
           <article className="rail-campaign rail-campaign-amber">
             <div>
               <p className="rail-kicker rail-kicker-dark">The studio calendar</p>
               <h2>Plans change.<br /><em>Your wardrobe can too.</em></h2>
               <p>Keep the good parts of getting ready. Leave the one-wear question behind.</p>
-              <button className="rail-inline-link" onClick={() => goTo("rental-ritual")}>How the rental works <ArrowUpRight size={16} /></button>
+              <button className="rail-inline-link" onClick={() => goTo("/how-rental-works")}>How the rental works <ArrowUpRight size={16} /></button>
             </div>
             <span className="rail-arch rail-arch-large" aria-hidden="true" />
           </article>
@@ -220,8 +220,8 @@ export default function Home() {
             <img src="/images/mkherosec.png" alt="Jewel-tone occasion dresses from the MK Studio wardrobe" loading="lazy" decoding="async" />
             <div>
               <p className="rail-kicker">From the rail</p>
-              <h2>One piece.<br /><em>More stories.</em></h2>
-              <button className="rail-light-button" onClick={() => goTo("/contact")}>Talk to the studio <ArrowUpRight size={16} /></button>
+              <h2>List.<br /><em>With us.</em></h2>
+              <button className="rail-light-button" onClick={() => goTo("/list-with-us")}>How it works <ArrowUpRight size={16} /></button>
             </div>
           </article>
         </section>

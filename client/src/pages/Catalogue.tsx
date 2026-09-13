@@ -1,36 +1,78 @@
-import { ArrowUpRight, Search, SlidersHorizontal, X } from "lucide-react";
-import { useMemo, useState } from "react";
-import { toast } from "sonner";
+import { ArrowUpRight, Search, SlidersHorizontal, X, ChevronDown } from "lucide-react";
+import { useMemo, useState, useEffect, useCallback, useRef } from "react";
 import { useLocation } from "wouter";
 import { StoreShell } from "@/components/StoreShell";
-import { categoryMeta, formatRentalPrice, toShowcaseProduct, type ShowcaseProduct } from "@/data/catalogue";
+import { formatRentalPrice, toShowcaseProduct } from "@/data/catalogue";
 import { useProducts } from "@/hooks/useProducts";
+import { useCategories } from "@/hooks/useCategories";
 
+const PAGE_SIZE = 20;
 
 type Filter = "all" | string;
 
-
 export default function Catalogue() {
   const [, setLocation] = useLocation();
-  const { products: rawProducts, loading, loadingMore, error, loadMore, hasMore } = useProducts();
+  const { products: rawProducts, loading, error } = useProducts();
+  const { categories } = useCategories();
+  const filterRef = useRef<HTMLDivElement>(null);
 
-  const products = useMemo(
+  const allProducts = useMemo(
     () => rawProducts.map(toShowcaseProduct),
     [rawProducts],
+  );
+
+  const sortedCategories = useMemo(
+    () => [...categories].sort((a, b) => a.sort_order - b.sort_order),
+    [categories],
   );
 
   const [filter, setFilter] = useState<Filter>("all");
   const [searchOpen, setSearchOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<"newest" | "az" | "price-low">("newest");
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
+  const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({ min: 0, max: 10000 });
+  const [showAllSizes, setShowAllSizes] = useState(false);
+  const [showAllColors, setShowAllColors] = useState(false);
+
+  const FILTER_LIMIT = 6;
+
+  const allSizes = useMemo(() => {
+    const sizes = new Set<string>();
+    for (const p of allProducts) {
+      for (const s of p.sizes) sizes.add(s);
+    }
+    return Array.from(sizes).sort();
+  }, [allProducts]);
+
+  const allColors = useMemo(() => {
+    const colors = new Set<string>();
+    for (const p of allProducts) {
+      if (p.color) colors.add(p.color);
+    }
+    return Array.from(colors).sort();
+  }, [allProducts]);
+
+  const priceBounds = useMemo(() => {
+    if (allProducts.length === 0) return { min: 0, max: 10000 };
+    const prices = allProducts.map(p => p.rentalPrice);
+    return { min: 0, max: Math.ceil(Math.max(...prices) / 1000) * 1000 };
+  }, [allProducts]);
 
   const filteredProducts = useMemo(() => {
     const text = search.trim().toLowerCase();
-    return products.filter((product) =>
+    return allProducts.filter((product) =>
       (filter === "all" || product.category === filter) &&
-      (!text || `${product.name} ${product.categoryLabel} ${product.color} ${product.fabric}`.toLowerCase().includes(text)),
+      (!text || `${product.name} ${product.categoryLabel} ${product.color} ${product.fabric}`.toLowerCase().includes(text)) &&
+      (selectedSizes.length === 0 || product.sizes.some(s => selectedSizes.includes(s))) &&
+      (selectedColors.length === 0 || selectedColors.includes(product.color)) &&
+      product.rentalPrice >= priceRange.min && product.rentalPrice <= priceRange.max
     );
-  }, [products, filter, search]);
+  }, [allProducts, filter, search, selectedSizes, selectedColors, priceRange]);
 
   const sortedProducts = useMemo(() => {
     if (sort === "az") return [...filteredProducts].sort((a, b) => a.name.localeCompare(b.name));
@@ -38,9 +80,71 @@ export default function Catalogue() {
     return filteredProducts;
   }, [filteredProducts, sort]);
 
-  const categoryKeys = Object.keys(categoryMeta) as string[];
+  const categoryTotals = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const product of allProducts) {
+      counts[product.category] = (counts[product.category] || 0) + 1;
+    }
+    return counts;
+  }, [allProducts]);
 
+  const categoryDescription = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const cat of categories) {
+      if (cat.description) map[cat.slug] = cat.description;
+    }
+    return map;
+  }, [categories]);
 
+  const displayedProducts = useMemo(
+    () => sortedProducts.slice(0, visibleCount),
+    [sortedProducts, visibleCount],
+  );
+
+  const hasMore = visibleCount < sortedProducts.length;
+  const filteredTotal = sortedProducts.length;
+  const activeFilterCount = selectedSizes.length + selectedColors.length + (priceRange.min > priceBounds.min || priceRange.max < priceBounds.max ? 1 : 0);
+
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [filter, search, sort, selectedSizes, selectedColors, priceRange]);
+
+  useEffect(() => {
+    setPriceRange(priceBounds);
+  }, [priceBounds]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
+        setFilterOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const loadMore = useCallback(() => {
+    if (loadingMore) return;
+    setLoadingMore(true);
+    setTimeout(() => {
+      setVisibleCount(prev => prev + PAGE_SIZE);
+      setLoadingMore(false);
+    }, 300);
+  }, [loadingMore]);
+
+  const toggleSize = (size: string) => {
+    setSelectedSizes(prev => prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]);
+  };
+
+  const toggleColor = (color: string) => {
+    setSelectedColors(prev => prev.includes(color) ? prev.filter(c => c !== color) : [...prev, color]);
+  };
+
+  const clearFilters = () => {
+    setSelectedSizes([]);
+    setSelectedColors([]);
+    setPriceRange(priceBounds);
+  };
 
   return (
     <StoreShell current="catalogue">
@@ -49,18 +153,67 @@ export default function Catalogue() {
           <p className="eyebrow">The MK Studio catalogue</p>
           <h1>Pieces with a<br /><em>next destination.</em></h1>
           <p>Browse our curated rental collection. Each piece is selected for its quality and timeless appeal. Contact the studio to check availability for your dates.</p>
-          <button className="catalogue-order-link" onClick={() => setLocation("/contact")}>Enquire about a piece <ArrowUpRight size={15} /></button>
         </section>
 
         <section className="catalogue-content" aria-label="Catalogue products">
           <div className="catalogue-toolbar">
             <div className="filter-list" role="group" aria-label="Filter catalogue">
-              <button className={filter === "all" ? "is-active" : ""} onClick={() => setFilter("all")}>All looks <span>{products.length}</span></button>
-              {categoryKeys.map((key) => (
-                <button className={filter === key ? "is-active" : ""} onClick={() => setFilter(key)} key={key}>{categoryMeta[key].label}</button>
+              <button className={filter === "all" ? "is-active" : ""} onClick={() => setFilter("all")}>All looks <span>{allProducts.length}</span></button>
+              {sortedCategories.map((cat) => (
+                <button className={filter === cat.slug ? "is-active" : ""} onClick={() => setFilter(cat.slug)} key={cat.slug}>{cat.name} <span>{categoryTotals[cat.slug] || 0}</span></button>
               ))}
             </div>
-            <label className="sort-control"><SlidersHorizontal size={15} /><span>Sort</span><select value={sort} onChange={e => setSort(e.target.value as "newest" | "az" | "price-low")}><option value="newest">Featured</option><option value="az">A–Z</option><option value="price-low">Price: low to high</option></select></label>
+            <div className="catalogue-toolbar-actions">
+              <div className="catalogue-filter-dropdown" ref={filterRef}>
+                <button className="catalogue-filter-trigger" onClick={() => setFilterOpen(!filterOpen)}>
+                  <SlidersHorizontal size={14} />
+                  <span>Filter{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}</span>
+                  <ChevronDown size={14} className={filterOpen ? "is-open" : ""} />
+                </button>
+                {filterOpen && (
+                  <div className="catalogue-filter-panel">
+                    {allSizes.length > 0 && (
+                      <div className="catalogue-filter-section">
+                        <span className="catalogue-filter-heading">Size</span>
+                        <div className={`catalogue-filter-list ${showAllSizes ? "is-expanded" : ""}`}>
+                          {(showAllSizes ? allSizes : allSizes.slice(0, FILTER_LIMIT)).map(size => (
+                            <button key={size} className={`catalogue-filter-option ${selectedSizes.includes(size) ? "is-active" : ""}`} onClick={() => toggleSize(size)}>{size}</button>
+                          ))}
+                        </div>
+                        {allSizes.length > FILTER_LIMIT && (
+                          <button className="catalogue-filter-more" onClick={() => setShowAllSizes(!showAllSizes)}>{showAllSizes ? "Show less" : `See all (${allSizes.length})`}</button>
+                        )}
+                      </div>
+                    )}
+                    {allColors.length > 0 && (
+                      <div className="catalogue-filter-section">
+                        <span className="catalogue-filter-heading">Color</span>
+                        <div className={`catalogue-filter-list ${showAllColors ? "is-expanded" : ""}`}>
+                          {(showAllColors ? allColors : allColors.slice(0, FILTER_LIMIT)).map(color => (
+                            <button key={color} className={`catalogue-filter-option ${selectedColors.includes(color) ? "is-active" : ""}`} onClick={() => toggleColor(color)}>{color}</button>
+                          ))}
+                        </div>
+                        {allColors.length > FILTER_LIMIT && (
+                          <button className="catalogue-filter-more" onClick={() => setShowAllColors(!showAllColors)}>{showAllColors ? "Show less" : `See all (${allColors.length})`}</button>
+                        )}
+                      </div>
+                    )}
+                    <div className="catalogue-filter-section">
+                      <span className="catalogue-filter-heading">Price</span>
+                      <div className="catalogue-filter-price">
+                        <input type="number" value={priceRange.min} onChange={e => setPriceRange({ ...priceRange, min: Number(e.target.value) })} placeholder="Min" />
+                        <span>–</span>
+                        <input type="number" value={priceRange.max} onChange={e => setPriceRange({ ...priceRange, max: Number(e.target.value) })} placeholder="Max" />
+                      </div>
+                    </div>
+                    {activeFilterCount > 0 && (
+                      <button className="catalogue-filter-clear" onClick={clearFilters}>Clear all</button>
+                    )}
+                  </div>
+                )}
+              </div>
+              <label className="sort-control"><span>Sort</span><select value={sort} onChange={e => setSort(e.target.value as "newest" | "az" | "price-low")}><option value="newest">Featured</option><option value="az">A–Z</option><option value="price-low">Price: low to high</option></select></label>
+            </div>
           </div>
 
           {loading && <div className="catalogue-empty"><p>Loading catalogue...</p></div>}
@@ -68,9 +221,9 @@ export default function Catalogue() {
 
           {!loading && !error && (
             <>
-              <div className="catalogue-context"><p>{filter === "all" ? "The full studio edit" : categoryMeta[filter]?.short ?? ""}</p><span>{sortedProducts.length} {sortedProducts.length === 1 ? "piece" : "pieces"}</span></div>
+              <div className="catalogue-context"><p>{filter === "all" ? "The full studio edit" : categoryDescription[filter] ?? ""}</p><span>{displayedProducts.length} of {filteredTotal} {filteredTotal === 1 ? "piece" : "pieces"}</span></div>
               <div className="product-grid">
-                {sortedProducts.map((product, index) => (
+                {displayedProducts.map((product, index) => (
                   <article className="product-card" key={product.slug} style={{ transitionDelay: `${index * 35}ms` }}>
                     <button className="product-image" onClick={() => setLocation(`/catalogue/${product.slug}`)} aria-label={`View ${product.name}`}>
                       <img src={product.image} alt={product.name} loading="lazy" decoding="async" />
@@ -88,12 +241,16 @@ export default function Catalogue() {
               </div>
               {hasMore && (
                 <div className="catalogue-load-more">
+                  <p className="catalogue-load-more-count">You've viewed {displayedProducts.length} out of {filteredTotal} results</p>
+                  <div className="catalogue-load-more-bar">
+                    <span style={{ width: `${(displayedProducts.length / filteredTotal) * 100}%` }} />
+                  </div>
                   <button onClick={loadMore} disabled={loadingMore}>
                     {loadingMore ? "Loading..." : "Load more"}
                   </button>
                 </div>
               )}
-              {sortedProducts.length === 0 && <div className="catalogue-empty"><Search size={22} /><h2>No pieces found</h2><p>Try a different search phrase or return to the full edit.</p><button onClick={() => { setSearch(""); setFilter("all"); }}>Reset catalogue</button></div>}
+              {sortedProducts.length === 0 && <div className="catalogue-empty"><Search size={22} /><h2>No pieces found</h2><p>Try adjusting your filters or return to the full edit.</p><button onClick={() => { setSearch(""); setFilter("all"); clearFilters(); }}>Reset catalogue</button></div>}
             </>
           )}
         </section>
