@@ -31,22 +31,30 @@ export type PaginatedResult<T> = {
 export async function getPublicProducts(
   page = 1,
   limit = 20,
+  category?: string,
 ): Promise<PaginatedResult<ProductWithRelations>> {
   const offset = (page - 1) * limit;
 
-  const { count } = await supabase
+  let countQuery = supabase
     .from("products")
     .select("id", { count: "exact", head: true })
     .eq("is_public", true);
 
-  const total = count ?? 0;
-
-  const { data, error } = await supabase
+  let dataQuery = supabase
     .from("products")
     .select(SELECT_WITH_RELATIONS)
     .eq("is_public", true)
-    .order("sort_order")
-    .range(offset, offset + limit - 1);
+    .order("sort_order");
+
+  if (category) {
+    countQuery = countQuery.eq("category_id", category);
+    dataQuery = dataQuery.eq("category_id", category);
+  }
+
+  const { count } = await countQuery;
+  const total = count ?? 0;
+
+  const { data, error } = await dataQuery.range(offset, offset + limit - 1);
 
   if (error) throw error;
   return {

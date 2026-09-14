@@ -80,8 +80,10 @@ async function authHeaders(): Promise<Record<string, string>> {
 // PUBLIC READS
 // =============================================================================
 
-export async function getProducts(page = 1, limit = 20): Promise<PaginatedResult<ProductWithRelations>> {
-  return fetchJson<PaginatedResult<ProductWithRelations>>(`${API_BASE}?page=${page}&limit=${limit}`);
+export async function getProducts(page = 1, limit = 20, category?: string): Promise<PaginatedResult<ProductWithRelations>> {
+  const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+  if (category) params.set("category", category);
+  return fetchJson<PaginatedResult<ProductWithRelations>>(`${API_BASE}?${params}`);
 }
 
 // =============================================================================

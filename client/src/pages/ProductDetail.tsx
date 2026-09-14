@@ -41,7 +41,7 @@ export default function ProductDetail() {
 
             <section className="rental-config" aria-label="Rental information">
               <div className="rental-config-heading"><div><p className="eyebrow">Rental information</p><h2>Availability & Sizing</h2></div><span>{product.rentalNote}</span></div>
-              <div className="size-row"><span>Available sizes</span><div>{product.sizes.map(option => <button key={option} className={size === option ? "is-selected" : ""} onClick={() => setSize(option)}>{option.replace("UK ", "")}</button>)}</div></div>
+              <div className="size-row"><span>Sizes</span><div>{product.sizes.map(option => <button key={option} className={size === option ? "is-selected" : ""} onClick={() => setSize(option)}>{option.replace("UK ", "")}</button>)}</div></div>
               {product.availability === "Unavailable" && (
                 <div className="availability-status">
                   <div>

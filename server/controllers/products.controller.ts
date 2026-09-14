@@ -25,6 +25,7 @@ export async function listProducts(req: Request, res: Response) {
   try {
     const page = Math.max(1, parseInt(req.query.page as string) || 1);
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
+    const category = (req.query.category as string) || undefined;
     const hasAuth = req.headers.authorization?.startsWith("Bearer ");
 
     if (hasAuth) {
@@ -43,7 +44,7 @@ export async function listProducts(req: Request, res: Response) {
       }
     }
 
-    const result = await productService.getPublicProducts(page, limit);
+    const result = await productService.getPublicProducts(page, limit, category);
     res.json(result);
   } catch (err) {
     console.error("[Products List]", err);

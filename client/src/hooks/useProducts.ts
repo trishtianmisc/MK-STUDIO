@@ -1,10 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getProducts, getProductBySlug, getFeaturedProducts, type ProductWithRelations } from "@/services/products";
 
-export function useProducts() {
+const PAGE_LIMIT = 20;
+
+export function useProducts(category?: string) {
   const [products, setProducts] = useState<ProductWithRelations[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [total, setTotal] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const mountedRef = useRef(true);
 
   useEffect(() => {
@@ -17,13 +23,14 @@ export function useProducts() {
     setLoading(true);
     setError(null);
 
-    const fetchAll = async () => {
+    const fetchFirstPage = async () => {
       try {
-        const firstPage = await getProducts(1, 50);
-        const items = Array.isArray(firstPage) ? firstPage : (firstPage as any).data ?? [];
-
+        const result = await getProducts(1, PAGE_LIMIT, category);
         if (!cancelled) {
-          setProducts(items);
+          setProducts(result.data);
+          setTotal(result.total);
+          setTotalPages(result.totalPages);
+          setCurrentPage(1);
         }
       } catch (err: any) {
         if (!cancelled) setError(err.message || "Failed to load products");
@@ -32,11 +39,30 @@ export function useProducts() {
       }
     };
 
-    fetchAll();
+    fetchFirstPage();
     return () => { cancelled = true; };
-  }, []);
+  }, [category]);
 
-  return { products, loading, error, total: products.length };
+  const loadMore = useCallback(async () => {
+    if (loadingMore || currentPage >= totalPages) return;
+    setLoadingMore(true);
+    try {
+      const nextPage = currentPage + 1;
+      const result = await getProducts(nextPage, PAGE_LIMIT, category);
+      if (mountedRef.current) {
+        setProducts(prev => [...prev, ...result.data]);
+        setCurrentPage(nextPage);
+      }
+    } catch (err: any) {
+      if (mountedRef.current) setError(err.message || "Failed to load more products");
+    } finally {
+      if (mountedRef.current) setLoadingMore(false);
+    }
+  }, [loadingMore, currentPage, totalPages, category]);
+
+  const hasMore = currentPage < totalPages;
+
+  return { products, loading, loadingMore, error, total, hasMore, loadMore };
 }
 
 export function useProduct(slug: string | null) {

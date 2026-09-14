@@ -1,25 +1,17 @@
 import { ArrowUpRight, Search, SlidersHorizontal, X, ChevronDown } from "lucide-react";
-import { useMemo, useState, useEffect, useCallback, useRef } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { StoreShell } from "@/components/StoreShell";
 import { formatRentalPrice, toShowcaseProduct } from "@/data/catalogue";
 import { useProducts } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
 
-const PAGE_SIZE = 20;
-
 type Filter = "all" | string;
 
 export default function Catalogue() {
   const [, setLocation] = useLocation();
-  const { products: rawProducts, loading, error } = useProducts();
   const { categories } = useCategories();
   const filterRef = useRef<HTMLDivElement>(null);
-
-  const allProducts = useMemo(
-    () => rawProducts.map(toShowcaseProduct),
-    [rawProducts],
-  );
 
   const sortedCategories = useMemo(
     () => [...categories].sort((a, b) => a.sort_order - b.sort_order),
@@ -30,14 +22,20 @@ export default function Catalogue() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<"newest" | "az" | "price-low">("newest");
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
-  const [loadingMore, setLoadingMore] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({ min: 0, max: 10000 });
   const [showAllSizes, setShowAllSizes] = useState(false);
   const [showAllStyles, setShowAllStyles] = useState(false);
+
+  const categoryFilter = filter === "all" ? undefined : sortedCategories.find(c => c.slug === filter)?.id;
+  const { products: rawProducts, loading, loadingMore, error, total: apiTotal, hasMore, loadMore } = useProducts(categoryFilter);
+
+  const allProducts = useMemo(
+    () => rawProducts.map(toShowcaseProduct),
+    [rawProducts],
+  );
 
   const FILTER_LIMIT = 6;
 
@@ -96,18 +94,8 @@ export default function Catalogue() {
     return map;
   }, [categories]);
 
-  const displayedProducts = useMemo(
-    () => sortedProducts.slice(0, visibleCount),
-    [sortedProducts, visibleCount],
-  );
-
-  const hasMore = visibleCount < sortedProducts.length;
   const filteredTotal = sortedProducts.length;
   const activeFilterCount = selectedSizes.length + selectedStyles.length + (priceRange.min > priceBounds.min || priceRange.max < priceBounds.max ? 1 : 0);
-
-  useEffect(() => {
-    setVisibleCount(PAGE_SIZE);
-  }, [filter, search, sort, selectedSizes, selectedStyles, priceRange]);
 
   useEffect(() => {
     setPriceRange(priceBounds);
@@ -122,15 +110,6 @@ export default function Catalogue() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const loadMore = useCallback(() => {
-    if (loadingMore) return;
-    setLoadingMore(true);
-    setTimeout(() => {
-      setVisibleCount(prev => prev + PAGE_SIZE);
-      setLoadingMore(false);
-    }, 300);
-  }, [loadingMore]);
 
   const toggleSize = (size: string) => {
     setSelectedSizes(prev => prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]);
@@ -158,9 +137,9 @@ export default function Catalogue() {
         <section className="catalogue-content" aria-label="Catalogue products">
           <div className="catalogue-toolbar">
             <div className="filter-list" role="group" aria-label="Filter catalogue">
-              <button className={filter === "all" ? "is-active" : ""} onClick={() => setFilter("all")}>All looks <span>{allProducts.length}</span></button>
+              <button className={filter === "all" ? "is-active" : ""} onClick={() => setFilter("all")}>All looks</button>
               {sortedCategories.map((cat) => (
-                <button className={filter === cat.slug ? "is-active" : ""} onClick={() => setFilter(cat.slug)} key={cat.slug}>{cat.name} <span>{categoryTotals[cat.slug] || 0}</span></button>
+                <button className={filter === cat.slug ? "is-active" : ""} onClick={() => setFilter(cat.slug)} key={cat.slug}>{cat.name}</button>
               ))}
             </div>
             <div className="catalogue-toolbar-actions">
@@ -221,9 +200,9 @@ export default function Catalogue() {
 
           {!loading && !error && (
             <>
-              <div className="catalogue-context"><p>{filter === "all" ? "The full studio edit" : categoryDescription[filter] ?? ""}</p><span>{displayedProducts.length} of {filteredTotal} {filteredTotal === 1 ? "piece" : "pieces"}</span></div>
+              <div className="catalogue-context"><p>{filter === "all" ? "The full studio edit" : categoryDescription[filter] ?? ""}</p><span>{sortedProducts.length} {filteredTotal === 1 ? "piece" : "pieces"}</span></div>
               <div className="product-grid">
-                {displayedProducts.map((product, index) => (
+                {sortedProducts.map((product, index) => (
                   <article className="product-card" key={product.slug} style={{ transitionDelay: `${index * 35}ms` }}>
                     <button className="product-image" onClick={() => setLocation(`/catalogue/${product.slug}`)} aria-label={`View ${product.name}`}>
                       <img src={product.image} alt={product.name} loading="lazy" decoding="async" />
@@ -241,9 +220,9 @@ export default function Catalogue() {
               </div>
               {hasMore && (
                 <div className="catalogue-load-more">
-                  <p className="catalogue-load-more-count">You've viewed {displayedProducts.length} out of {filteredTotal} results</p>
+                  <p className="catalogue-load-more-count">You've viewed {rawProducts.length} out of {apiTotal} results</p>
                   <div className="catalogue-load-more-bar">
-                    <span style={{ width: `${(displayedProducts.length / filteredTotal) * 100}%` }} />
+                    <span style={{ width: `${(rawProducts.length / apiTotal) * 100}%` }} />
                   </div>
                   <button onClick={loadMore} disabled={loadingMore}>
                     {loadingMore ? "Loading..." : "Load more"}
