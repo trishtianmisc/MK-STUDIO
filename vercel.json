@@ -2,6 +2,7 @@
   "buildCommand": "pnpm run build",
   "outputDirectory": "dist/public",
   "framework": null,
+  "regions": ["sin1"],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/index.js" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
