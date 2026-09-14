@@ -110,7 +110,7 @@ export async function getAdminStats(): Promise<AdminStats> {
 }
 
 export async function getAdminProducts(): Promise<ProductWithRelations[]> {
-  const response = await fetch(`${API_BASE}?page=1&limit=50`, {
+  const response = await fetch(`${API_BASE}?page=1&limit=300`, {
     credentials: "include",
     headers: await authHeaders(),
   });

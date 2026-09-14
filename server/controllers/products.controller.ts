@@ -22,6 +22,7 @@ export async function getAdminStats(_req: Request, res: Response) {
  * Admin (with Bearer token): returns all products.
  */
 export async function listProducts(req: Request, res: Response) {
+  const t0 = performance.now();
   try {
     const page = Math.max(1, parseInt(req.query.page as string) || 1);
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
@@ -38,6 +39,7 @@ export async function listProducts(req: Request, res: Response) {
         const admin = await isAdmin(user.id);
         if (admin) {
           const products = await productService.getAllProducts();
+          console.log(`[Products List] GET /api/products (admin) ${(performance.now() - t0).toFixed(0)}ms`);
           res.json(products);
           return;
         }
@@ -45,6 +47,7 @@ export async function listProducts(req: Request, res: Response) {
     }
 
     const result = await productService.getPublicProducts(page, limit, category);
+    console.log(`[Products List] GET /api/products page=${page} limit=${limit} category=${category ?? "all"} ${(performance.now() - t0).toFixed(0)}ms`);
     res.json(result);
   } catch (err) {
     console.error("[Products List]", err);

@@ -51,12 +51,21 @@ export async function getPublicProducts(
     dataQuery = dataQuery.eq("category_id", category);
   }
 
+  const tCountStart = performance.now();
   const { count } = await countQuery;
+  const tCountMs = performance.now() - tCountStart;
   const total = count ?? 0;
 
+  
+
+  const tDataStart = performance.now();
   const { data, error } = await dataQuery.range(offset, offset + limit - 1);
+  const tDataMs = performance.now() - tDataStart;
 
   if (error) throw error;
+
+  console.log(`[Products Query] count=${total} ${tCountMs.toFixed(0)}ms | data=${data?.length ?? 0} rows ${tDataMs.toFixed(0)}ms | page=${page} limit=${limit} category=${category ?? "all"}`);
+
   return {
     data: (data ?? []) as unknown as ProductWithRelations[],
     total,
