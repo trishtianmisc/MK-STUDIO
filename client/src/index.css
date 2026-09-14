@@ -388,7 +388,7 @@
 .ct-reveal.is-revealed { opacity: 1; transform: translateY(0); }
 
 /* ── Hero ── */
-.ct-hero { position: relative; min-height: 540px; background: #3a1e14; color: #f7f3ec; overflow: hidden; display: flex; align-items: flex-end; }
+.ct-hero { position: relative; min-height: 540px; background: #3a1e14; color: #f7f3ec; overflow: hidden; display: flex; align-items: center; }
 .ct-hero-visual { position: absolute; inset: 0; }
 .ct-hero-visual img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; display: block; filter: saturate(.72) contrast(1.05) brightness(.55); }
 .ct-hero-vignette { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(58,30,20,.15) 0%, rgba(58,30,20,.42) 55%, rgba(58,30,20,.85) 100%); }
@@ -425,7 +425,7 @@
 .ct-form-eyebrow { color: #c9ad73; font-size: 10px; letter-spacing: .17em; text-transform: uppercase; font-weight: 500; margin: 0 0 28px; }
 .ct-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .ct-form label { display: grid; gap: 7px; margin-top: 18px; color: rgba(247,243,236,.6); font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .11em; }
-.ct-form input, .ct-form select, .ct-form textarea { width: 100%; background: transparent; border: 0; border-bottom: 1px solid rgba(247,243,236,.3); border-radius: 0; outline: 0; padding: 8px 0 10px; color: #f7f3ec; font: 14px/1.4 "DM Sans", Arial, sans-serif; letter-spacing: 0; text-transform: none; transition: border-color .3s; }
+.ct-form input, .ct-form select, .ct-form textarea { width: 100%; background: transparent; border: 0; border: 2px solid #23150f;border-bottom: 2px solid #23150f; border-radius: 0; outline: 0; padding: 8px 0 10px; color: #f7f3ec; font: 14px/1.4 "DM Sans", Arial, sans-serif; letter-spacing: 0; text-transform: none; transition: border-color .3s; }
 .ct-form input:focus, .ct-form select:focus, .ct-form textarea:focus { border-color: #c9ad73; }
 .ct-form input::placeholder, .ct-form textarea::placeholder { color: rgba(247,243,236,.3); }
 .ct-form option { color: #2a1914; }
