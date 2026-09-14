@@ -52,19 +52,29 @@ export async function getPublicProducts(
   }
 
   const tCountStart = performance.now();
-  const { count } = await countQuery;
-  const tCountMs = performance.now() - tCountStart;
-  const total = count ?? 0;
-
-  
-
   const tDataStart = performance.now();
-  const { data, error } = await dataQuery.range(offset, offset + limit - 1);
+
+  const countPromise = countQuery;
+  const dataPromise = dataQuery.range(offset, offset + limit - 1);
+
+  const [countResult, dataResult] = await Promise.all([countPromise, dataPromise]);
+  const tCountMs = performance.now() - tCountStart;
   const tDataMs = performance.now() - tDataStart;
+  const tTotalMs = Math.max(tCountMs, tDataMs);
+
+  const { count } = countResult;
+  const { data, error } = dataResult;
 
   if (error) throw error;
 
-  console.log(`[Products Query] count=${total} ${tCountMs.toFixed(0)}ms | data=${data?.length ?? 0} rows ${tDataMs.toFixed(0)}ms | page=${page} limit=${limit} category=${category ?? "all"}`);
+  const total = count ?? 0;
+
+  console.log(
+    `[Products Query] count=${total} ${tCountMs.toFixed(0)}ms | ` +
+    `data=${data?.length ?? 0} rows ${tDataMs.toFixed(0)}ms | ` +
+    `wall=${tTotalMs.toFixed(0)}ms | ` +
+    `page=${page} limit=${limit} category=${category ?? "all"}`
+  );
 
   return {
     data: (data ?? []) as unknown as ProductWithRelations[],
