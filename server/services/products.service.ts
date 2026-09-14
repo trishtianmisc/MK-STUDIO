@@ -51,16 +51,20 @@ export async function getPublicProducts(
     dataQuery = dataQuery.eq("category_id", category);
   }
 
-  const tCountStart = performance.now();
-  const tDataStart = performance.now();
+  const tWallStart = performance.now();
 
-  const countPromise = countQuery;
-  const dataPromise = dataQuery.range(offset, offset + limit - 1);
+  const countPromise = countQuery.then((r) => {
+    const ms = performance.now() - tWallStart;
+    return { ...r, _ms: ms };
+  });
+
+  const dataPromise = dataQuery.range(offset, offset + limit - 1).then((r) => {
+    const ms = performance.now() - tWallStart;
+    return { ...r, _ms: ms };
+  });
 
   const [countResult, dataResult] = await Promise.all([countPromise, dataPromise]);
-  const tCountMs = performance.now() - tCountStart;
-  const tDataMs = performance.now() - tDataStart;
-  const tTotalMs = Math.max(tCountMs, tDataMs);
+  const tWallMs = performance.now() - tWallStart;
 
   const { count } = countResult;
   const { data, error } = dataResult;
@@ -70,9 +74,9 @@ export async function getPublicProducts(
   const total = count ?? 0;
 
   console.log(
-    `[Products Query] count=${total} ${tCountMs.toFixed(0)}ms | ` +
-    `data=${data?.length ?? 0} rows ${tDataMs.toFixed(0)}ms | ` +
-    `wall=${tTotalMs.toFixed(0)}ms | ` +
+    `[Products Query] count=${total} ${countResult._ms.toFixed(0)}ms | ` +
+    `data=${data?.length ?? 0} rows ${dataResult._ms.toFixed(0)}ms | ` +
+    `wall=${tWallMs.toFixed(0)}ms | ` +
     `page=${page} limit=${limit} category=${category ?? "all"}`
   );
 
