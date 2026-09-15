@@ -1,0 +1,11 @@
+# https://mkstudiocollective.com/robots.txt
+
+User-agent: *
+Allow: /
+
+# Disallow admin and private areas
+Disallow: /admin
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://mkstudiocollective.com/sitemap.xml

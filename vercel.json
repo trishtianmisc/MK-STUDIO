@@ -5,6 +5,7 @@
   "regions": ["sin1"],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/index.js" },
+    { "source": "/sitemap.xml", "destination": "/api/index.js" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }

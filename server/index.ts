@@ -9,6 +9,7 @@ import productsRoutes from "./routes/products.routes.js";
 import categoriesRoutes from "./routes/categories.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import availabilityRoutes from "./routes/availability.routes.js";
+import sitemapRoutes from "./routes/sitemap.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -65,6 +66,9 @@ export function createApp() {
   app.get("/api/health", (_req, res) => {
     res.json({ status: "ok" });
   });
+
+  // SEO routes — /sitemap.xml rewritten to serverless function by vercel.json
+  app.use(sitemapRoutes);
 
   // Handle client-side routing - serve index.html for all non-API routes
   app.get("*", (_req, res) => {
