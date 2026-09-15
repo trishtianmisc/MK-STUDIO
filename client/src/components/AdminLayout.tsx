@@ -41,7 +41,7 @@ export default function AdminLayout({ view, setView, children }: Props) {
       <section className="admin-preview-intro">
         <div>
           <p>ADMIN AREA</p>
-          <h1>{view === "dashboard" ? <>Studio rental<br />overview.</> : view === "rentals" ? <><br />Rental<br />management.</> : <>{view === "products" ? "Product catalogue" : "Product categories"}<br /><em>management.</em></>}</h1>
+          <h1>{view === "dashboard" ? <>Studio rental<br />overview.</> : view === "rentals" ? <>Rental<br />management.</> : <>{view === "products" ? "Product catalogue" : "Product categories"}<br /><em>management.</em></>}</h1>
         </div>
       </section>
 
