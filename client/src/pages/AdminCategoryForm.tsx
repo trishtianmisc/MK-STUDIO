@@ -98,7 +98,7 @@ export default function AdminCategoryForm({ category, onDone, onCancel }: Props)
 
         <div style={fieldStyle}>
           <label style={labelStyle}>Image path</label>
-          <input style={inputStyle} value={image} onChange={e => setImage(e.target.value)} placeholder="/images/my-studio-wedding_fb88aaa2.jpg" />
+          <input style={inputStyle} value={image} onChange={e => setImage(e.target.value)} placeholder="/images/my-studio-wedding_fb88aaa2.webp" />
         </div>
 
         <div style={fieldStyle}>

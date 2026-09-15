@@ -39,7 +39,7 @@ export default function Contact() {
 
         <section className="ct-hero">
           <div className="ct-hero-visual">
-            <img src="/images/mkherosec2.png" alt="MK Studio" loading="eager" decoding="async" />
+            <img src="/images/mkherosec2.webp" alt="MK Studio" loading="eager" decoding="async" />
             <div className="ct-hero-vignette" />
           </div>
           <div className="ct-hero-content">

@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
-import { categoryMeta, formatRentalPrice, toShowcaseProduct } from "@/data/catalogue";
+import { formatRentalPrice, toShowcaseProduct } from "@/data/catalogue";
 import { useProducts } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
 
@@ -161,14 +161,14 @@ function Products({ preview, products }: { preview: (action: string) => void; pr
   );
 }
 
-function Categories({ preview, products, categories }: { preview: (action: string) => void; products: ReturnType<typeof toShowcaseProduct>[]; categories: { id: string; slug: string; name: string }[] }) {
+function Categories({ preview, products, categories }: { preview: (action: string) => void; products: ReturnType<typeof toShowcaseProduct>[]; categories: { id: string; slug: string; name: string; description: string | null }[] }) {
   return (
     <div className="admin-simple-grid">
       {categories.map((category) => (
         <article key={category.slug}>
           <span>{category.name}</span>
           <strong>{products.filter(product => product.category === category.slug).length} products</strong>
-          <p>{categoryMeta[category.slug]?.short ?? ""}</p>
+          <p>{category.description ?? ""}</p>
           <button onClick={() => preview(`Editing ${category.name}`)}><Edit3 size={15} /> Edit category</button>
         </article>
       ))}

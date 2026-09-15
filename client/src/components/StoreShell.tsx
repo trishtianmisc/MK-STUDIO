@@ -22,7 +22,7 @@ export function StoreShell({ children, current }: StoreShellProps) {
           <Menu size={21} />
         </button>
         <button className="brand-lockup" onClick={() => go("/")} aria-label="Return to MK Studio home">
-          <img src="/images/mklogo.png" alt="" className="brand-mark" />
+          <img src="/images/mklogo.webp" alt="" className="brand-mark" />
         </button>
         <nav className="store-nav" aria-label="Main navigation">
           <button className={current === "catalogue" ? "is-current" : ""} onClick={() => go("/catalogue")}>Catalogue</button>
@@ -41,7 +41,7 @@ export function StoreShell({ children, current }: StoreShellProps) {
       <nav className={`store-sidebar ${open ? "is-open" : ""}`} aria-label="Mobile navigation">
         <div className="store-sidebar-head">
           <button className="brand-lockup" onClick={() => go("/")} aria-label="Return to MK Studio home">
-            <img src="/images/mklogo.png" alt="" className="brand-mark" />
+            <img src="/images/mklogo.webp" alt="" className="brand-mark" />
           </button>
           <button className="store-sidebar-close" onClick={() => setOpen(false)} aria-label="Close navigation">
             <X size={20} />

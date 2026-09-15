@@ -34,7 +34,7 @@ export default function About() {
 
         <section className="os-opening">
           <div className="os-opening-bg">
-            <img src="/images/StoryBG1.png" alt="MK Studio wardrobe" loading="eager" decoding="async" />
+            <img src="/images/StoryBG1.webp" alt="MK Studio wardrobe" loading="eager" decoding="async" />
             <div className="os-opening-vignette" />
           </div>
           <Reveal className="os-opening-content">
@@ -45,7 +45,7 @@ export default function About() {
         <section className="os-intro">
           <Reveal className="os-intro-inner">
             <div className="os-intro-logo">
-              <img src="/images/mklogo.png" alt="MK Studio" />
+              <img src="/images/mklogo.webp" alt="MK Studio" />
             </div>
             <div className="os-intro-copy">
               <p className="os-intro-eyebrow">Founded by Mia &amp; Kaye</p>
@@ -77,7 +77,7 @@ export default function About() {
           </Reveal>
           <Reveal className="os-studio-right" delay={100}>
             <div className="os-studio-img">
-              <img src="/images/MKBrown.png" alt="MK Studio selection process" loading="lazy" decoding="async" />
+              <img src="/images/MKBrown.webp" alt="MK Studio selection process" loading="lazy" decoding="async" />
             </div>
             <div className="os-studio-label">
               <span className="os-studio-label-num">64</span>

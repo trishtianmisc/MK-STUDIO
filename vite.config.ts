@@ -26,6 +26,7 @@ export default defineConfig({
       "src/**/*.test.{ts,tsx}",
       "../server/**/*.test.ts",
     ],
+    setupFiles: ["src/test-setup.ts"],
   },
   server: {
     port: 3000,

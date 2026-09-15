@@ -21,14 +21,6 @@ export type ShowcaseProduct = {
 
 export const formatRentalPrice = (price: number) => new Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP", maximumFractionDigits: 0 }).format(price);
 
-export const categoryMeta: Record<string, { label: string; short: string; image: string }> = {
-  "wedding-guest": { label: "Wedding guest", short: "For the invitation", image: "/images/my-studio-wedding_fb88aaa2.jpg" },
-  "formal": { label: "Formal", short: "For after dark", image: "/images/my-studio-date-night_9391da5f.jpg" },
-  "casual": { label: "Casual", short: "For the whole day", image: "/images/my-studio-workwear_671a35a4.jpg" },
-  "prom": { label: "Prom", short: "Pre-loved studio pieces", image: "/images/my-studio-mark_4967063e.png" },
-  "evening": { label: "Evening", short: "Pre-loved studio pieces", image: "/images/my-studio-mark_4967063e.png" },
-};
-
 /**
  * Convert a product with joined category from the API
  * into the existing frontend ShowcaseProduct shape.

@@ -98,7 +98,7 @@ export default function HowRentalWorks() {
           <RevealBlock>
             <div className="hrw-strip-inner">
               <div className="hrw-strip-img">
-                <img src="/images/MKBrown.png" alt="MK Studio collection" loading="lazy" decoding="async" />
+                <img src="/images/MKBrown.webp" alt="MK Studio collection" loading="lazy" decoding="async" />
               </div>
               <div className="hrw-strip-copy">
                 <p className="hrw-strip-eyebrow">Get in touch</p>

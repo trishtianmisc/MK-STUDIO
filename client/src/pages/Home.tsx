@@ -13,11 +13,11 @@ import { formatRentalPrice, toShowcaseProduct } from "@/data/catalogue";
 import { useFeaturedProducts } from "@/hooks/useProducts";
 
 const discoveryDoors = [
-  { label: "Closet cleanup that pays", image: "/images/Instruc1.jpg" },
-  { label: "Choose what deserves another moment", image: "/images/Instruc2.jpg" },
-  { label: "Send it our way", image: "/images/Instruc3.jpg" },
-  { label: "Your dress gets worn, you get rewarded", image: "/images/Instuc4.jpg" },
-  { label: "List with us", image: "/images/Instruc5.jpg" },
+  { label: "Closet cleanup that pays", image: "/images/Instruc1.webp" },
+  { label: "Choose what deserves another moment", image: "/images/Instruc2.webp" },
+  { label: "Send it our way", image: "/images/Instruc3.webp" },
+  { label: "Your dress gets worn, you get rewarded", image: "/images/Instuc4.webp" },
+  { label: "List with us", image: "/images/Instruc5.webp" },
 ];
 
 export default function Home() {
@@ -80,7 +80,7 @@ export default function Home() {
           <Menu size={20} />
         </button>
         <button className="rail-brand" onClick={() => goTo("home")}> 
-          <img src="/images/mklogowhite.png" alt="" />
+          <img src="/images/mklogowhite.webp" alt="" />
         </button>
         <nav className="rail-nav" aria-label="Main navigation">
           <button onClick={() => goTo("discover")}>Shop the edit</button>
@@ -99,7 +99,7 @@ export default function Home() {
       <nav className={`rail-sidebar ${menuOpen ? "is-open" : ""}`} aria-label="Mobile navigation">
         <div className="rail-sidebar-head">
           <button className="rail-brand" onClick={() => goTo("home")}>
-            <img src="/images/mklogowhite.png" alt="" />
+            <img src="/images/mklogowhite.webp" alt="" />
           </button>
           <button className="rail-sidebar-close" onClick={() => setMenuOpen(false)} aria-label="Close menu">
             <X size={20} />

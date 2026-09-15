@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { categoryMeta, toShowcaseProduct, formatRentalPrice } from "./catalogue";
+import { toShowcaseProduct, formatRentalPrice } from "./catalogue";
 import type { ProductWithRelations } from "@/services/products";
 
 const mockProductRow: ProductWithRelations = {
@@ -51,15 +51,6 @@ describe("MK Studio catalogue adapter", () => {
     const result = toShowcaseProduct(row);
     expect(result.category).toBe("");
     expect(result.categoryLabel).toBe("");
-  });
-
-  it("has all four catalogue occasions in categoryMeta", () => {
-    const keys = Object.keys(categoryMeta);
-    expect(keys).toContain("wedding-guest");
-    expect(keys).toContain("formal");
-    expect(keys).toContain("casual");
-    expect(keys).toContain("prom");
-    expect(keys).toContain("evening");
   });
 
   it("formats rental price as PHP currency", () => {
