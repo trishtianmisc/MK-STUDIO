@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect, useCallback, useRef } from "react";
+import { motion } from "framer-motion";
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -124,28 +125,66 @@ export default function Home() {
           />
           <div className="rail-hero-shade" />
           <div className="rail-hero-copy">
-            <p className="rail-kicker">The Studio Edit · 01</p>
-            <h1 id="rail-hero-heading">Collect memories.<br /><em>Not clutter.</em></h1>
-            <p>At MK Studio, discover a curated collection of timeless pieces available to browse entirely online making it effortless to find the one you love, while embracing a more intentional wardrobe.</p>
-            <div className="rail-hero-actions">
+            <motion.p
+              className="rail-kicker"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              The Studio Edit · 01
+            </motion.p>
+            <motion.h1
+              id="rail-hero-heading"
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.25 }}
+            >
+              Collect memories.<br /><em>Not clutter.</em>
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.45 }}
+            >
+              At MK Studio, discover a curated collection of timeless pieces available to browse entirely online making it effortless to find the one you love, while embracing a more intentional wardrobe.
+            </motion.p>
+            <motion.div
+              className="rail-hero-actions"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+            >
               <button className="rail-light-button" onClick={() => goTo("/catalogue")}>Shop the collection <ArrowUpRight size={16} /></button>
               <button className="rail-quiet-link" onClick={() => goTo("discover")}>Explore by moment <ArrowDownRight size={16} /></button>
-            </div>
+            </motion.div>
           </div>
           <div className="rail-hero-meta">Curated dressing<br />for real plans</div>
         </section>
 
          <section id="current-edit" className="rail-current-edit" aria-labelledby="current-edit-heading">
-          <div className="rail-edit-heading">
+          <motion.div
+            className="rail-edit-heading"
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5 }}
+          >
             <div>
               <p className="rail-kicker rail-kicker-dark">Just added to the rail</p>
               <h2 id="current-edit-heading">The current edit.</h2>
             </div>
             <button className="rail-inline-link" onClick={() => goTo("/catalogue")}>View all pieces <ArrowUpRight size={16} /></button>
-          </div>
+          </motion.div>
           <div className="rail-product-grid">
-            {!loading && currentEdit.map((piece) => (
-              <article className="rail-product-card" key={piece.slug}>
+            {!loading && currentEdit.map((piece, i) => (
+              <motion.article
+                className="rail-product-card"
+                key={piece.slug}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.45, delay: i * 0.1 }}
+              >
                 <button className="rail-product-image" onClick={() => goTo(`/catalogue/${piece.slug}`)} aria-label={`View ${piece.name}`}>
                   <img src={piece.image} alt={piece.name} loading="lazy" decoding="async" />
                   <span>{piece.categoryLabel}</span>
@@ -157,7 +196,7 @@ export default function Home() {
                   <strong>{formatRentalPrice(piece.rentalPrice)} <small>for 3 days</small></strong>
                   <button onClick={() => goTo(`/catalogue/${piece.slug}`)}>View piece <ArrowUpRight size={15} /></button>
                 </div>
-              </article>
+              </motion.article>
             ))}
           </div>
         </section>
