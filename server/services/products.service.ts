@@ -14,7 +14,7 @@ export type ProductWithRelations = ProductRow & {
 const SELECT_WITH_RELATIONS = "*, categories(*)" as const;
 
 /** Lightweight select for admin list view — drops heavy fields not shown in the table */
-const SELECT_ADMIN_LIST = "id, category_id, name, slug, style, length, brand, rental_price, availability, is_featured, image, sort_order, is_public, created_at, updated_at, categories(id, slug, name)" as const;
+const SELECT_ADMIN_LIST = "id, category_id, name, slug, style, length, brand, rental_price, additional_day_price, availability, is_featured, image, sort_order, is_public, created_at, updated_at, categories(id, slug, name)" as const;
 
 export type PaginatedResult<T> = {
   data: T[];
