@@ -126,7 +126,7 @@ export default function ListWithUs() {
           <RevealBlock>
             <div className="lwu-visual-inner">
               <div className="lwu-visual-img">
-                <img src="/images/dress-studio-02_f044b274.webp" alt="MK Studio curated collection" loading="lazy" decoding="async" />
+                <img src="/images/beige.png" alt="MK Studio curated collection" loading="lazy" decoding="async" />
               </div>
               <div className="lwu-visual-copy">
                 <p className="lwu-visual-eyebrow">Your piece, our platform</p>

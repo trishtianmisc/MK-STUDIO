@@ -299,9 +299,9 @@
 /* ── Visual strip ── */
 .lwu-visual { padding: 0 6vw 100px; }
 .lwu-visual-inner { display: grid; grid-template-columns: .83fr 1fr; gap: 9vw; align-items: center; }
-.lwu-visual-img { min-height: 480px; background: #c7b6a6; overflow: hidden; position: relative; padding: 10px; }
+.lwu-visual-img { justify-self: end; width: 80%; min-height: 480px; background: #c7b6a6; overflow: hidden; position: relative; padding: 10px; }
 .lwu-visual-img::after { content: ""; position: absolute; inset: 18px; border: 1px solid rgba(201,173,115,.72); pointer-events: none; }
-.lwu-visual-img img { width: 100%; height: 100%; min-height: 460px; object-fit: cover; display: block; filter: contrast(1.04) saturate(.88) sepia(.06); }
+.lwu-visual-img img { width: 100%; height: 70%; min-height: 460px; object-fit: cover; display: block; filter: contrast(1.04) saturate(.88) sepia(.06); }
 .lwu-visual-eyebrow { color: #8c7669; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; font-weight: 500; margin-bottom: 14px; }
 .lwu-visual-copy h2 { margin: 0; font-family: "Cormorant Garamond", Georgia, serif; font-size: clamp(3.4rem, 5vw, 5.8rem); font-weight: 500; line-height: .8; letter-spacing: -.065em; color: #2a1914; }
 .lwu-visual-copy h2 em { font-weight: 400; color: #7b1633; }

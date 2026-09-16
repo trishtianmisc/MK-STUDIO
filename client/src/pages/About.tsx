@@ -48,7 +48,7 @@ export default function About() {
               <img src="/images/mklogo.webp" alt="MK Studio" />
             </div>
             <div className="os-intro-copy">
-              <p className="os-intro-eyebrow">Founded by Mia &amp; Kaye</p>
+              <p className="os-intro-eyebrow">Founded by TWO SISTERS</p>
               <p>MK Studio Collective began with a simple thought: why should beautiful pieces be worn once, only to spend the rest of their lives sitting in a closet?</p>
               <p>We created a shared closet where pieces can be worn, loved, and lived in again — making beautiful fashion more accessible without the need to constantly own more.</p>
               <p>Some pieces are ours. Some are shared by people in our collective. Together, they become a wardrobe made for birthdays, weddings, dinners, vacations, and all the moments worth dressing up for.</p>

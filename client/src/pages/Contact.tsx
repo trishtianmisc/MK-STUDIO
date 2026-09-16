@@ -64,23 +64,17 @@ export default function Contact() {
                     <Mail size={16} />
                     <div>
                       <span>Email</span>
-                      <a href="mailto:mksolutionscebu.@gmail.com">mksolutionscebu.@gmail.com</a>
+                      <a href="mailto:mksolutionscebu@gmail.com">mksolutionscebu@gmail.com</a>
                     </div>
                   </article>
                   <article className="ct-info-item">
                     <Phone size={16} />
                     <div>
                       <span>Phone</span>
-                      <a href="tel:+09951813723">+0995 181 3723</a>
+                      <a href="tel:+09951813723">+63 995 181 3723</a>
                     </div>
                   </article>
-                  <article className="ct-info-item">
-                    <MapPin size={16} />
-                    <div>
-                      <span>Studio visits</span>
-                      <p>By appointment only<br />Location details on confirmation</p>
-                    </div>
-                  </article>
+                  
                   <article className="ct-info-item">
                     <Instagram size={16} />
                     <div>
@@ -102,7 +96,7 @@ export default function Contact() {
                   </div>
                   <label>What are you getting ready for?<select name="occasion" defaultValue=""><option value="" disabled>Select an occasion</option><option>Wedding guest</option><option>Date night</option><option>Studio to dinner</option><option>Styling appointment</option><option>Something else</option></select></label>
                   <label>Tell us a little more<textarea name="message" rows={4} placeholder="The date, the mood, the detail…" /></label>
-                  <button className="ct-form-btn" type="submit">{sent ? "Message preview sent" : "Send enquiry"} <ArrowUpRight size={15} /></button>
+                  <button className="ct-form-btn" type="submit">{sent ? "Message preview sent" : "Send Inquiry"} <ArrowUpRight size={15} /></button>
                   <p className="ct-form-note">This is a frontend-only contact form. Email sending can be added when the backend phase begins.</p>
                 </form>
               </Reveal>

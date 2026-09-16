@@ -88,8 +88,8 @@ export default function Home() {
           <button onClick={() => goTo("rail-campaign-grid")}>How it works</button>
         </nav>
         <div className="rail-actions">
-          <button className="rail-order-action" onClick={() => goTo("/contact")} aria-label="Enquire about a piece">
-            Enquire
+          <button className="rail-order-action" onClick={() => goTo("/contact")} aria-label="Inquire about a piece">
+            Inquire
           </button>
         </div>
       </header>
@@ -112,7 +112,7 @@ export default function Home() {
           <button onClick={() => goTo("/contact")}>Contact the studio <ArrowUpRight size={18} /></button>
         </div>
         <div className="rail-sidebar-footer">
-          <button className="rail-order-action" onClick={() => goTo("/contact")}>Enquire</button>
+          <button className="rail-order-action" onClick={() => goTo("/contact")}>Inquire</button>
         </div>
       </nav>
 

@@ -32,7 +32,7 @@ export function StoreShell({ children, current }: StoreShellProps) {
           <button className={current === "contact" ? "is-current" : ""} onClick={() => go("/contact")}>Contact</button>
         </nav>
         <div className="store-actions">
-          <button className="store-cta" onClick={() => go("/contact")}>Enquire</button>
+          <button className="store-cta" onClick={() => go("/contact")}>Inquire</button>
         </div>
       </header>
 
@@ -55,7 +55,7 @@ export function StoreShell({ children, current }: StoreShellProps) {
           <button className={current === "contact" ? "is-current" : ""} onClick={() => go("/contact")}>Contact <ArrowUpRight size={16} /></button>
         </div>
         <div className="store-sidebar-footer">
-          <button className="store-cta" onClick={() => go("/contact")}>Enquire</button>
+          <button className="store-cta" onClick={() => go("/contact")}>Inquire</button>
         </div>
       </nav>
 
