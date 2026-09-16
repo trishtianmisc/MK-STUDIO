@@ -64,7 +64,7 @@ export default function ListWithUs() {
               {
                 num: "03",
                 title: "Protected at every step",
-                body: "Every piece is insured during rental periods. Minor wear and tear is covered — your dress stays safe.",
+                body: "We will require a security deposit for every rental.",
               },
             ].map((b, i) => (
               <RevealBlock key={b.num} delay={i * 100}>

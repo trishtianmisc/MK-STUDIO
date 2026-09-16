@@ -34,7 +34,7 @@ export default function About() {
 
         <section className="os-opening">
           <div className="os-opening-bg">
-            <img src="/images/StoryBG1.webp" alt="MK Studio wardrobe" loading="eager" decoding="async" />
+            <img src="/images/bglist.png" alt="MK Studio wardrobe" loading="eager" decoding="async" />
             <div className="os-opening-vignette" />
           </div>
           <Reveal className="os-opening-content">

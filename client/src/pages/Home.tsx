@@ -120,7 +120,7 @@ export default function Home() {
         <section className="rail-hero" aria-labelledby="rail-hero-heading">
           <img
             className="rail-hero-image"
-            src="/images/BG1.webp"
+            src="/images/BG1.png"
             alt="A woman in a coral evening dress walking through a sunset-lit boutique hotel arcade"
           />
           <div className="rail-hero-shade" />
@@ -208,7 +208,7 @@ export default function Home() {
           <img
             ref={imageRef}
             className="rail-discover-image"
-            src="/images/BG3.webp"
+            src="/images/BG3.png"
             alt="A woman in a coral evening dress walking through a sunset-lit boutique hotel arcade"
           />
           <div className="rail-discover-content">
