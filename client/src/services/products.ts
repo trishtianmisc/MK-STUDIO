@@ -12,6 +12,7 @@ export interface ProductWithRelations {
   sizes: string[];
   brand: string | null;
   rental_price: number;
+  additional_day_price: number | null;
   availability: "Available" | "Limited" | "Unavailable";
   rental_note: string | null;
   is_featured: boolean;
@@ -49,6 +50,7 @@ export interface CreateProductInput {
   sizes?: string[];
   brand?: string;
   rental_price: number;
+  additional_day_price?: number | null;
   availability?: "Available" | "Limited" | "Unavailable";
   rental_note?: string;
   is_featured?: boolean;

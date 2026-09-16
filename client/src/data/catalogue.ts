@@ -14,6 +14,7 @@ export type ShowcaseProduct = {
   sizes: string[];
   brand: string;
   rentalPrice: number;
+  additionalDayPrice: number | null;
   availability: AvailabilityStatus;
   rentalNote: string;
   featured?: boolean;
@@ -41,6 +42,7 @@ export function toShowcaseProduct(row: ProductWithRelations): ShowcaseProduct {
     sizes: row.sizes ?? [],
     brand: row.brand ?? "",
     rentalPrice: row.rental_price,
+    additionalDayPrice: row.additional_day_price ?? null,
     availability: row.availability as AvailabilityStatus,
     rentalNote: row.rental_note ?? "",
     featured: row.is_featured,

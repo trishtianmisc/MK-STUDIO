@@ -15,6 +15,7 @@ export default function AdminProductForm({ categories, product, onDone, onCancel
   const [slug, setSlug] = useState(product?.slug ?? "");
   const [categoryId, setCategoryId] = useState(product?.category_id ?? (categories[0]?.id ?? ""));
   const [rentalPrice, setRentalPrice] = useState(String(product?.rental_price ?? ""));
+  const [additionalDayPrice, setAdditionalDayPrice] = useState(String(product?.additional_day_price ?? ""));
   const [style, setStyle] = useState(product?.style ?? "");
   const [length, setLength] = useState(product?.length ?? "");
   const [brand, setBrand] = useState(product?.brand ?? "");
@@ -88,6 +89,7 @@ export default function AdminProductForm({ categories, product, onDone, onCancel
         name: name.trim(),
         slug: slug.trim(),
         rental_price: Number(rentalPrice),
+        additional_day_price: additionalDayPrice !== "" ? Number(additionalDayPrice) : null,
         availability,
         is_featured: isFeatured,
         is_public: isPublic,
@@ -162,6 +164,7 @@ export default function AdminProductForm({ categories, product, onDone, onCancel
             {field("Category *", <select value={categoryId} onChange={e => setCategoryId(e.target.value)}><option value="">Select a category</option>{categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</select>, errors.category)}
             <div className="admin-form-grid">
               {field("Rental price (PHP) *", <div className="admin-input-prefix"><span>₱</span><input type="number" min="0" value={rentalPrice} onChange={e => setRentalPrice(e.target.value)} placeholder="1,800" /></div>, errors.rentalPrice)}
+              {field("Additional day (PHP)", <div className="admin-input-prefix"><span>₱</span><input type="number" min="0" value={additionalDayPrice} onChange={e => setAdditionalDayPrice(e.target.value)} placeholder="500" /></div>, undefined, "Extra cost per day beyond 3 days")}
               {field("Sort order", <input type="number" min="0" value={sortOrder} onChange={e => setSortOrder(e.target.value)} placeholder="0" />, undefined, "Lower numbers appear first")}
             </div>
           </section>
