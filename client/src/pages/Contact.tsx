@@ -28,10 +28,34 @@ function Reveal({ children, className = "", delay }: {
 
 export default function Contact() {
   const [sent, setSent] = useState(false);
-  const submit = (event: FormEvent<HTMLFormElement>) => {
+  const [loading, setLoading] = useState(false);
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSent(true);
-    toast("Message preview sent", { description: "This form is frontend-only and does not send information yet." });
+    setLoading(true);
+    const form = event.currentTarget;
+    const data = new FormData(form);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.get("name"),
+          email: data.get("email"),
+          occasion: data.get("occasion") || "",
+          message: data.get("message") || "",
+        }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({ error: "Something went wrong" }));
+        throw new Error(body.error || "Something went wrong");
+      }
+      setSent(true);
+      toast.success("Inquiry sent!", { description: "We'll get back to you within 48 hours." });
+    } catch (err: any) {
+      toast.error("Failed to send", { description: err.message || "Please try again later." });
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <StoreShell current="contact">
@@ -96,8 +120,9 @@ export default function Contact() {
                   </div>
                   <label>What are you getting ready for?<select name="occasion" defaultValue=""><option value="" disabled>Select an occasion</option><option>Wedding guest</option><option>Date night</option><option>Studio to dinner</option><option>Styling appointment</option><option>Something else</option></select></label>
                   <label>Tell us a little more<textarea name="message" rows={4} placeholder="The date, the mood, the detail…" /></label>
-                  <button className="ct-form-btn" type="submit">{sent ? "Message preview sent" : "Send Inquiry"} <ArrowUpRight size={15} /></button>
-                  <p className="ct-form-note">This is a frontend-only contact form. Email sending can be added when the backend phase begins.</p>
+                  <button className="ct-form-btn" type="submit" disabled={sent || loading}>
+                    {sent ? "Inquiry Sent" : loading ? "Sending..." : "Send Inquiry"} <ArrowUpRight size={15} />
+                  </button>
                 </form>
               </Reveal>
             </div>

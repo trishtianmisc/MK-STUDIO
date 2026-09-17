@@ -17,4 +17,6 @@ export const env = {
   SUPABASE_ANON_KEY: requireEnv("SUPABASE_ANON_KEY"),
   SUPABASE_SERVICE_ROLE_KEY: requireEnv("SUPABASE_SERVICE_ROLE_KEY"),
   CORS_ORIGIN: optionalEnv("CORS_ORIGIN", "http://localhost:3000"),
+  RESEND_API_KEY: optionalEnv("RESEND_API_KEY", ""),
+  CONTACT_EMAIL: optionalEnv("CONTACT_EMAIL", "mksolutionscebu@gmail.com"),
 } as const;
