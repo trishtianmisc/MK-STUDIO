@@ -3,8 +3,6 @@ import { Resend } from "resend";
 import { contactSchema } from "../../shared/schemas/contact.js";
 import { env } from "../config/env.js";
 
-const resend = new Resend(env.RESEND_API_KEY);
-
 export async function sendInquiry(req: Request, res: Response) {
   const parsed = contactSchema.safeParse(req.body);
   if (!parsed.success) {
@@ -20,12 +18,15 @@ export async function sendInquiry(req: Request, res: Response) {
     return;
   }
 
+  const resend = new Resend(env.RESEND_API_KEY);
+  const contactEmail = process.env.CONTACT_EMAIL || "ctrishtian4@gmail.com";
+
   const occasionLine = occasion && occasion !== "" ? `<p><strong>Occasion:</strong> ${occasion}</p>` : "";
   const messageLine = message ? `<p><strong>Message:</strong></p><p>${message.replace(/\n/g, "<br/>")}</p>` : "";
 
   const { error } = await resend.emails.send({
-    from: "MK Studio <hello@mkstudiocollective.com>",
-    to: env.CONTACT_EMAIL,
+    from: "MK Studio <inquiry@mkstudiocollective.com>",
+    to: contactEmail,
     replyTo: email,
     subject: `New Inquiry from ${name}`,
     html: `

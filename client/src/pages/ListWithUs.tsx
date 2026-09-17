@@ -96,7 +96,7 @@ export default function ListWithUs() {
               {
                 num: "01",
                 title: "Submit your piece",
-                body: "Send us a message with photos and details about your dress. We'll get back to you within 48 hours.",
+                body: "Send us a message with photos and details about your dress. We'll get back to you within 24 hours.",
               },
               {
                 num: "02",

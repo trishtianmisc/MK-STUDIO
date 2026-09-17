@@ -50,7 +50,7 @@ export default function Contact() {
         throw new Error(body.error || "Something went wrong");
       }
       setSent(true);
-      toast.success("Inquiry sent!", { description: "We'll get back to you within 48 hours." });
+      toast.success("Inquiry sent!", { description: "We'll get back to you within 24 hours." });
     } catch (err: any) {
       toast.error("Failed to send", { description: err.message || "Please try again later." });
     } finally {
@@ -118,7 +118,7 @@ export default function Contact() {
                     <label>Your name<input required name="name" placeholder="Name" /></label>
                     <label>Email address<input required type="email" name="email" placeholder="you@example.com" /></label>
                   </div>
-                  <label>What are you getting ready for?<select name="occasion" defaultValue=""><option value="" disabled>Select an occasion</option><option>Wedding guest</option><option>Date night</option><option>Studio to dinner</option><option>Styling appointment</option><option>Something else</option></select></label>
+                  <label>What are you getting ready for?<select name="occasion" defaultValue=""><option value="" disabled>Select an occasion</option><option>Vacation</option><option>The Moment</option><option>Party</option><option>Formal</option><option>The Pearl</option><option>Something else</option></select></label>
                   <label>Tell us a little more<textarea name="message" rows={4} placeholder="The date, the mood, the detail…" /></label>
                   <button className="ct-form-btn" type="submit" disabled={sent || loading}>
                     {sent ? "Inquiry Sent" : loading ? "Sending..." : "Send Inquiry"} <ArrowUpRight size={15} />
