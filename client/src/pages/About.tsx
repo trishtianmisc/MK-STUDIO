@@ -79,10 +79,7 @@ export default function About() {
             <div className="os-studio-img">
               <img src="/images/MKBrown.webp" alt="MK Studio selection process" loading="lazy" decoding="async" />
             </div>
-            <div className="os-studio-label">
-              <span className="os-studio-label-num">64</span>
-              <span className="os-studio-label-text">Dresses in the current collection</span>
-            </div>
+        
           </Reveal>
         </section>
 
