@@ -1,4 +1,4 @@
-import { Edit3, Plus, Trash2, Eye, EyeOff, Star, Search, SlidersHorizontal, PackageOpen, Calendar } from "lucide-react";
+import { Edit3, Plus, Trash2, Eye, EyeOff, Star, Search, SlidersHorizontal, PackageOpen, Calendar, Upload } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -7,8 +7,9 @@ import { getCategories, type Category } from "@/services/categories";
 import { formatRentalPrice } from "@/data/catalogue";
 import AdminProductForm from "./AdminProductForm";
 import AdminAvailabilityModal from "./AdminAvailabilityModal";
+import AdminBulkUpload from "./AdminBulkUpload";
 
-type AdminProductView = "list" | "add" | "edit" | "availability";
+type AdminProductView = "list" | "add" | "edit" | "availability" | "bulk-upload";
 
 export default function AdminProducts() {
   const [products, setProducts] = useState<ProductWithRelations[]>([]);
@@ -38,9 +39,10 @@ export default function AdminProducts() {
   if (view === "add") return <AdminProductForm categories={categories} onDone={() => { setView("list"); refresh(); }} onCancel={() => setView("list")} />;
   if (view === "edit" && editingProduct) return <AdminProductForm categories={categories} product={editingProduct} onDone={() => { setView("list"); setEditingProduct(null); refresh(); }} onCancel={() => { setView("list"); setEditingProduct(null); }} />;
   if (view === "availability" && availabilityProduct) return <AdminAvailabilityModal product={availabilityProduct} onDone={() => { setView("list"); setAvailabilityProduct(null); refresh(); }} onCancel={() => { setView("list"); setAvailabilityProduct(null); }} />;
+  if (view === "bulk-upload") return <AdminBulkUpload categories={categories} onDone={() => { setView("list"); refresh(); }} onCancel={() => setView("list")} />;
 
   return <>
-    <div className="admin-section-toolbar"><div><span className="admin-section-kicker">Catalogue library</span><h2>All products <b>{products.length}</b></h2></div><button className="admin-primary-button" onClick={() => setView("add")}><Plus size={16} /> Add product</button></div>
+    <div className="admin-section-toolbar"><div><span className="admin-section-kicker">Catalogue library</span><h2>All products <b>{products.length}</b></h2></div><div style={{ display: "flex", gap: 8 }}><button className="admin-secondary-button" onClick={() => setView("bulk-upload")}><Upload size={16} /> Bulk upload</button><button className="admin-primary-button" onClick={() => setView("add")}><Plus size={16} /> Add product</button></div></div>
     <div className="admin-metric-strip"><div><span>Total pieces</span><strong>{products.length}</strong></div><div><span>Published</span><strong>{products.filter(p => p.is_public).length}</strong></div><div><span>Featured</span><strong>{products.filter(p => p.is_featured).length}</strong></div><div><span>Categories</span><strong>{categories.length}</strong></div></div>
     <div className="admin-list-panel">
       <div className="admin-list-controls"><label className="admin-search"><Search size={16} /><input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search products or categories" /></label><label className="admin-filter"><SlidersHorizontal size={15} /><select value={filter} onChange={e => setFilter(e.target.value)}><option>All products</option><option>Published</option><option>Hidden</option><option>Featured</option></select></label></div>

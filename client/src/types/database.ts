@@ -41,6 +41,7 @@ export interface Database {
           additional_day_price: number | null;
           availability: "Available" | "Limited" | "Unavailable";
           rental_note: string | null;
+          closet: string;
           is_featured: boolean;
           image: string | null;
           sort_order: number;

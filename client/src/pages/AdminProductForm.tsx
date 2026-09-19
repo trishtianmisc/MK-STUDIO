@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { createProduct, updateProduct, type ProductWithRelations, type CreateProductInput } from "@/services/products";
 import type { Category } from "@/services/categories";
 import { supabase } from "@/lib/supabase";
+import { optimizeImage } from "@/lib/image-optimizer";
 
 interface Props { categories: Category[]; product?: ProductWithRelations; onDone: () => void; onCancel: () => void; }
 
@@ -21,6 +22,7 @@ export default function AdminProductForm({ categories, product, onDone, onCancel
   const [brand, setBrand] = useState(product?.brand ?? "");
   const [sizes, setSizes] = useState(product?.sizes?.join(", ") ?? "");
   const [rentalNote, setRentalNote] = useState(product?.rental_note ?? "");
+  const [closet, setCloset] = useState(product?.closet ?? "MK STUDIO");
   const [availability, setAvailability] = useState<"Available" | "Limited" | "Unavailable">(product?.availability ?? "Available");
   const [isFeatured, setIsFeatured] = useState(product?.is_featured ?? false);
   const [isPublic, setIsPublic] = useState(product?.is_public ?? true);
@@ -44,13 +46,19 @@ export default function AdminProductForm({ categories, product, onDone, onCancel
     return !Object.keys(e).length;
   };
 
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) { toast.error("Image must be under 5 MB"); return; }
     if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) { toast.error("Image must be JPEG, PNG, or WebP"); return; }
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
+    try {
+      const optimized = await optimizeImage(file);
+      setImageFile(optimized);
+      setImagePreview(URL.createObjectURL(optimized));
+    } catch {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
   };
 
   const removeImage = () => {
@@ -101,6 +109,7 @@ export default function AdminProductForm({ categories, product, onDone, onCancel
       if (brand.trim()) input.brand = brand.trim();
       if (sizes.trim()) input.sizes = sizes.split(",").map(s => s.trim()).filter(Boolean);
       if (rentalNote.trim()) input.rental_note = rentalNote.trim();
+      if (closet.trim()) input.closet = closet.trim();
       if (isEdit && product) {
         await updateProduct(product.id, input);
         toast.success("Product updated");
@@ -185,6 +194,7 @@ export default function AdminProductForm({ categories, product, onDone, onCancel
             <label className="admin-toggle-row"><span><strong>Featured piece</strong><small>Highlight on the homepage</small></span><input type="checkbox" checked={isFeatured} onChange={e => setIsFeatured(e.target.checked)} /><i /></label>
             {field("Availability", <select value={availability} onChange={e => setAvailability(e.target.value as typeof availability)}><option>Available</option><option>Limited</option><option>Unavailable</option></select>)}
             {field("Rental note", <input value={rentalNote} onChange={e => setRentalNote(e.target.value)} placeholder="3-day rental · Care included" />)}
+            {field("Closet", <input value={closet} onChange={e => setCloset(e.target.value)} placeholder="MK STUDIO" />, undefined, "Collection or closet this piece belongs to")}
           </div>
           <div className="admin-form-actions">
             <button type="submit" className="admin-primary-button" disabled={submitting || uploadingImage}>

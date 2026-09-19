@@ -17,6 +17,7 @@ export type ShowcaseProduct = {
   additionalDayPrice: number | null;
   availability: AvailabilityStatus;
   rentalNote: string;
+  closet: string;
   featured?: boolean;
 };
 
@@ -45,6 +46,7 @@ export function toShowcaseProduct(row: ProductWithRelations): ShowcaseProduct {
     additionalDayPrice: row.additional_day_price ?? null,
     availability: row.availability as AvailabilityStatus,
     rentalNote: row.rental_note ?? "",
+    closet: row.closet ?? "MK STUDIO",
     featured: row.is_featured,
   };
 }
