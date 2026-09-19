@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getProducts, getProductBySlug, getFeaturedProducts, type ProductWithRelations } from "@/services/products";
+import { getProducts, getProductBySlug, getFeaturedProducts, type ProductWithRelations, type ProductFilters } from "@/services/products";
 
 const PAGE_LIMIT = 20;
 
-export function useProducts(category?: string) {
+export function useProducts(category?: string, filters?: ProductFilters) {
   const [products, setProducts] = useState<ProductWithRelations[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -25,7 +25,7 @@ export function useProducts(category?: string) {
 
     const fetchFirstPage = async () => {
       try {
-        const result = await getProducts(1, PAGE_LIMIT, category);
+        const result = await getProducts(1, PAGE_LIMIT, category, filters);
         if (!cancelled) {
           setProducts(result.data);
           setTotal(result.total);
@@ -41,14 +41,14 @@ export function useProducts(category?: string) {
 
     fetchFirstPage();
     return () => { cancelled = true; };
-  }, [category]);
+  }, [category, filters]);
 
   const loadMore = useCallback(async () => {
     if (loadingMore || currentPage >= totalPages) return;
     setLoadingMore(true);
     try {
       const nextPage = currentPage + 1;
-      const result = await getProducts(nextPage, PAGE_LIMIT, category);
+      const result = await getProducts(nextPage, PAGE_LIMIT, category, filters);
       if (mountedRef.current) {
         setProducts(prev => [...prev, ...result.data]);
         setCurrentPage(nextPage);
@@ -58,7 +58,7 @@ export function useProducts(category?: string) {
     } finally {
       if (mountedRef.current) setLoadingMore(false);
     }
-  }, [loadingMore, currentPage, totalPages, category]);
+  }, [loadingMore, currentPage, totalPages, category, filters]);
 
   const hasMore = currentPage < totalPages;
 

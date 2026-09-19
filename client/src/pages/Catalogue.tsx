@@ -5,6 +5,7 @@ import { StoreShell } from "@/components/StoreShell";
 import { formatRentalPrice, toShowcaseProduct } from "@/data/catalogue";
 import { useProducts } from "@/hooks/useProducts";
 import { useCategories } from "@/hooks/useCategories";
+import { getFilterOptions, type FilterOptions, type ProductFilters } from "@/services/products";
 
 type Filter = "all" | string;
 
@@ -18,73 +19,72 @@ export default function Catalogue() {
     [categories],
   );
 
+  // Category tab filter (applies immediately)
   const [filter, setFilter] = useState<Filter>("all");
+
+  // Search
   const [searchOpen, setSearchOpen] = useState(false);
   const [search, setSearch] = useState("");
+
+  // Sort
   const [sort, setSort] = useState<"newest" | "az" | "price-low">("newest");
+
+  // Filter panel open state
   const [filterOpen, setFilterOpen] = useState(false);
-  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
-  const [selectedStyles, setSelectedStyles] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState<{ min: number; max: number }>({ min: 0, max: 10000 });
+
+  // Staging filters (user selections before confirming)
+  const [stagingSizes, setStagingSizes] = useState<string[]>([]);
+  const [stagingStyles, setStagingStyles] = useState<string[]>([]);
+  const [stagingPrice, setStagingPrice] = useState<{ min: number; max: number }>({ min: 0, max: 10000 });
+
+  // Applied filters (sent to API)
+  const [appliedFilters, setAppliedFilters] = useState<ProductFilters>({});
+
+  // Filter options from server
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>({ sizes: [], styles: [], priceBounds: { min: 0, max: 10000 } });
+
+  // Show all sizes/styles in panel
   const [showAllSizes, setShowAllSizes] = useState(false);
   const [showAllStyles, setShowAllStyles] = useState(false);
 
+  const FILTER_LIMIT = 6;
+
+  // Fetch filter options on mount
+  useEffect(() => {
+    getFilterOptions().then(setFilterOptions).catch(() => {});
+  }, []);
+
+  // Sync staging price bounds when filter options load
+  useEffect(() => {
+    setStagingPrice(filterOptions.priceBounds);
+  }, [filterOptions]);
+
+  // Category filter ID
   const categoryFilter = filter === "all" ? undefined : sortedCategories.find(c => c.slug === filter)?.id;
-  const { products: rawProducts, loading, loadingMore, error, total: apiTotal, hasMore, loadMore } = useProducts(categoryFilter);
+
+  // Fetch products with applied filters
+  const { products: rawProducts, loading, loadingMore, error, total: apiTotal, hasMore, loadMore } = useProducts(categoryFilter, appliedFilters);
 
   const allProducts = useMemo(
     () => rawProducts.map(toShowcaseProduct),
     [rawProducts],
   );
 
-  const FILTER_LIMIT = 6;
-
-  const allSizes = useMemo(() => {
-    const sizes = new Set<string>();
-    for (const p of allProducts) {
-      for (const s of p.sizes) sizes.add(s);
-    }
-    return Array.from(sizes).sort();
-  }, [allProducts]);
-
-  const allStyles = useMemo(() => {
-    const styles = new Set<string>();
-    for (const p of allProducts) {
-      if (p.style) styles.add(p.style);
-    }
-    return Array.from(styles).sort();
-  }, [allProducts]);
-
-  const priceBounds = useMemo(() => {
-    if (allProducts.length === 0) return { min: 0, max: 10000 };
-    const prices = allProducts.map(p => p.rentalPrice);
-    return { min: 0, max: Math.ceil(Math.max(...prices) / 1000) * 1000 };
-  }, [allProducts]);
-
-  const filteredProducts = useMemo(() => {
+  // Client-side search filter (applied on top of server results)
+  const searchFilteredProducts = useMemo(() => {
     const text = search.trim().toLowerCase();
-    return allProducts.filter((product) =>
-      (filter === "all" || product.category === filter) &&
-      (!text || `${product.name} ${product.categoryLabel} ${product.style} ${product.length} ${product.brand}`.toLowerCase().includes(text)) &&
-      (selectedSizes.length === 0 || product.sizes.some(s => selectedSizes.includes(s))) &&
-      (selectedStyles.length === 0 || selectedStyles.includes(product.style)) &&
-      product.rentalPrice >= priceRange.min && product.rentalPrice <= priceRange.max
+    if (!text) return allProducts;
+    return allProducts.filter(p =>
+      `${p.name} ${p.categoryLabel} ${p.style} ${p.length} ${p.brand}`.toLowerCase().includes(text)
     );
-  }, [allProducts, filter, search, selectedSizes, selectedStyles, priceRange]);
+  }, [allProducts, search]);
 
+  // Client-side sort
   const sortedProducts = useMemo(() => {
-    if (sort === "az") return [...filteredProducts].sort((a, b) => a.name.localeCompare(b.name));
-    if (sort === "price-low") return [...filteredProducts].sort((a, b) => a.rentalPrice - b.rentalPrice);
-    return filteredProducts;
-  }, [filteredProducts, sort]);
-
-  const categoryTotals = useMemo(() => {
-    const counts: Record<string, number> = {};
-    for (const product of allProducts) {
-      counts[product.category] = (counts[product.category] || 0) + 1;
-    }
-    return counts;
-  }, [allProducts]);
+    if (sort === "az") return [...searchFilteredProducts].sort((a, b) => a.name.localeCompare(b.name));
+    if (sort === "price-low") return [...searchFilteredProducts].sort((a, b) => a.rentalPrice - b.rentalPrice);
+    return searchFilteredProducts;
+  }, [searchFilteredProducts, sort]);
 
   const categoryDescription = useMemo(() => {
     const map: Record<string, string> = {};
@@ -94,13 +94,25 @@ export default function Catalogue() {
     return map;
   }, [categories]);
 
-  const filteredTotal = sortedProducts.length;
-  const activeFilterCount = selectedSizes.length + selectedStyles.length + (priceRange.min > priceBounds.min || priceRange.max < priceBounds.max ? 1 : 0);
+  // Count active applied filters
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (appliedFilters.sizes && appliedFilters.sizes.length > 0) count += appliedFilters.sizes.length;
+    if (appliedFilters.style) count++;
+    if (appliedFilters.priceMin != null || appliedFilters.priceMax != null) count++;
+    return count;
+  }, [appliedFilters]);
 
-  useEffect(() => {
-    setPriceRange(priceBounds);
-  }, [priceBounds]);
+  // Count staging filters (for badge before confirm)
+  const stagingFilterCount = useMemo(() => {
+    let count = 0;
+    if (stagingSizes.length > 0) count += stagingSizes.length;
+    if (stagingStyles.length > 0) count += stagingStyles.length;
+    if (stagingPrice.min > filterOptions.priceBounds.min || stagingPrice.max < filterOptions.priceBounds.max) count++;
+    return count;
+  }, [stagingSizes, stagingStyles, stagingPrice, filterOptions]);
 
+  // Click outside to close filter panel
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
@@ -111,19 +123,42 @@ export default function Catalogue() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const toggleSize = (size: string) => {
-    setSelectedSizes(prev => prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]);
+  const toggleStagingSize = (size: string) => {
+    setStagingSizes(prev => prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]);
   };
 
-  const toggleStyle = (style: string) => {
-    setSelectedStyles(prev => prev.includes(style) ? prev.filter(s => s !== style) : [...prev, style]);
+  const toggleStagingStyle = (style: string) => {
+    setStagingStyles(prev => prev.includes(style) ? prev.filter(s => s !== style) : [...prev, style]);
   };
 
-  const clearFilters = () => {
-    setSelectedSizes([]);
-    setSelectedStyles([]);
-    setPriceRange(priceBounds);
+  const confirmFilters = () => {
+    const filters: ProductFilters = {};
+    if (stagingSizes.length > 0) filters.sizes = stagingSizes;
+    if (stagingStyles.length > 0) filters.style = stagingStyles[0]; // Server takes single style
+    if (stagingPrice.min > filterOptions.priceBounds.min) filters.priceMin = stagingPrice.min;
+    if (stagingPrice.max < filterOptions.priceBounds.max) filters.priceMax = stagingPrice.max;
+    setAppliedFilters(Object.keys(filters).length > 0 ? filters : {});
+    setFilterOpen(false);
   };
+
+  const clearStagingFilters = () => {
+    setStagingSizes([]);
+    setStagingStyles([]);
+    setStagingPrice(filterOptions.priceBounds);
+  };
+
+  const clearAllFilters = () => {
+    setStagingSizes([]);
+    setStagingStyles([]);
+    setStagingPrice(filterOptions.priceBounds);
+    setAppliedFilters({});
+  };
+
+  const hasUnconfirmedChanges =
+    JSON.stringify(stagingSizes) !== JSON.stringify(appliedFilters.sizes ?? []) ||
+    stagingStyles[0] !== (appliedFilters.style ?? (stagingStyles.length > 0 ? undefined : undefined)) ||
+    stagingPrice.min !== (appliedFilters.priceMin ?? filterOptions.priceBounds.min) ||
+    stagingPrice.max !== (appliedFilters.priceMax ?? filterOptions.priceBounds.max);
 
   return (
     <StoreShell current="catalogue">
@@ -151,43 +186,48 @@ export default function Catalogue() {
                 </button>
                 {filterOpen && (
                   <div className="catalogue-filter-panel">
-                    {allSizes.length > 0 && (
+                    {filterOptions.sizes.length > 0 && (
                       <div className="catalogue-filter-section">
                         <span className="catalogue-filter-heading">Size</span>
                         <div className={`catalogue-filter-list ${showAllSizes ? "is-expanded" : ""}`}>
-                          {(showAllSizes ? allSizes : allSizes.slice(0, FILTER_LIMIT)).map(size => (
-                            <button key={size} className={`catalogue-filter-option ${selectedSizes.includes(size) ? "is-active" : ""}`} onClick={() => toggleSize(size)}>{size}</button>
+                          {(showAllSizes ? filterOptions.sizes : filterOptions.sizes.slice(0, FILTER_LIMIT)).map(size => (
+                            <button key={size} className={`catalogue-filter-option ${stagingSizes.includes(size) ? "is-active" : ""}`} onClick={() => toggleStagingSize(size)}>{size}</button>
                           ))}
                         </div>
-                        {allSizes.length > FILTER_LIMIT && (
-                          <button className="catalogue-filter-more" onClick={() => setShowAllSizes(!showAllSizes)}>{showAllSizes ? "Show less" : `See all (${allSizes.length})`}</button>
+                        {filterOptions.sizes.length > FILTER_LIMIT && (
+                          <button className="catalogue-filter-more" onClick={() => setShowAllSizes(!showAllSizes)}>{showAllSizes ? "Show less" : `See all (${filterOptions.sizes.length})`}</button>
                         )}
                       </div>
                     )}
-                    {allStyles.length > 0 && (
+                    {filterOptions.styles.length > 0 && (
                       <div className="catalogue-filter-section">
                         <span className="catalogue-filter-heading">Style</span>
                         <div className={`catalogue-filter-list ${showAllStyles ? "is-expanded" : ""}`}>
-                          {(showAllStyles ? allStyles : allStyles.slice(0, FILTER_LIMIT)).map(style => (
-                            <button key={style} className={`catalogue-filter-option ${selectedStyles.includes(style) ? "is-active" : ""}`} onClick={() => toggleStyle(style)}>{style}</button>
+                          {(showAllStyles ? filterOptions.styles : filterOptions.styles.slice(0, FILTER_LIMIT)).map(style => (
+                            <button key={style} className={`catalogue-filter-option ${stagingStyles.includes(style) ? "is-active" : ""}`} onClick={() => toggleStagingStyle(style)}>{style}</button>
                           ))}
                         </div>
-                        {allStyles.length > FILTER_LIMIT && (
-                          <button className="catalogue-filter-more" onClick={() => setShowAllStyles(!showAllStyles)}>{showAllStyles ? "Show less" : `See all (${allStyles.length})`}</button>
+                        {filterOptions.styles.length > FILTER_LIMIT && (
+                          <button className="catalogue-filter-more" onClick={() => setShowAllStyles(!showAllStyles)}>{showAllStyles ? "Show less" : `See all (${filterOptions.styles.length})`}</button>
                         )}
                       </div>
                     )}
                     <div className="catalogue-filter-section">
                       <span className="catalogue-filter-heading">Price</span>
                       <div className="catalogue-filter-price">
-                        <input type="number" value={priceRange.min} onChange={e => setPriceRange({ ...priceRange, min: Number(e.target.value) })} placeholder="Min" />
+                        <input type="number" value={stagingPrice.min} onChange={e => setStagingPrice({ ...stagingPrice, min: Number(e.target.value) })} placeholder="Min" />
                         <span>–</span>
-                        <input type="number" value={priceRange.max} onChange={e => setPriceRange({ ...priceRange, max: Number(e.target.value) })} placeholder="Max" />
+                        <input type="number" value={stagingPrice.max} onChange={e => setStagingPrice({ ...stagingPrice, max: Number(e.target.value) })} placeholder="Max" />
                       </div>
                     </div>
-                    {activeFilterCount > 0 && (
-                      <button className="catalogue-filter-clear" onClick={clearFilters}>Clear all</button>
-                    )}
+                    <div className="catalogue-filter-actions">
+                      {stagingFilterCount > 0 && (
+                        <button className="catalogue-filter-clear" onClick={clearStagingFilters}>Clear all</button>
+                      )}
+                      <button className="catalogue-filter-confirm" onClick={confirmFilters}>
+                        Confirm{stagingFilterCount > 0 ? ` (${stagingFilterCount})` : ""}
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -195,12 +235,21 @@ export default function Catalogue() {
             </div>
           </div>
 
+          {activeFilterCount > 0 && (
+            <div className="catalogue-active-filters">
+              <span>Filtered by:</span>
+              {appliedFilters.sizes?.map(s => <button key={s} className="catalogue-active-chip" onClick={() => { setStagingSizes(prev => prev.filter(x => x !== s)); setAppliedFilters(prev => ({ ...prev, sizes: prev.sizes?.filter(x => x !== s) })); }}>{s} <X size={12} /></button>)}
+              {appliedFilters.style && <button className="catalogue-active-chip" onClick={() => { setStagingStyles([]); setAppliedFilters(prev => { const { style, ...rest } = prev; return rest; }); }}>{appliedFilters.style} <X size={12} /></button>}
+              <button className="catalogue-filter-clear" onClick={clearAllFilters}>Clear all</button>
+            </div>
+          )}
+
           {loading && <div className="catalogue-empty"><p>Loading catalogue...</p></div>}
           {error && <div className="catalogue-empty"><p>{error}</p></div>}
 
           {!loading && !error && (
             <>
-              <div className="catalogue-context"><p>{filter === "all" ? "The full studio edit" : categoryDescription[filter] ?? ""}</p><span>{sortedProducts.length} {filteredTotal === 1 ? "piece" : "pieces"}</span></div>
+              <div className="catalogue-context"><p>{filter === "all" ? "The full studio edit" : categoryDescription[filter] ?? ""}</p><span>{sortedProducts.length} {sortedProducts.length === 1 ? "piece" : "pieces"}</span></div>
               <div className="product-grid">
                 {sortedProducts.map((product, index) => (
                   <article className="product-card" key={product.slug} style={{ transitionDelay: `${index * 35}ms` }}>
@@ -229,7 +278,7 @@ export default function Catalogue() {
                   </button>
                 </div>
               )}
-              {sortedProducts.length === 0 && <div className="catalogue-empty"><Search size={22} /><h2>No pieces found</h2><p>Try adjusting your filters or return to the full edit.</p><button onClick={() => { setSearch(""); setFilter("all"); clearFilters(); }}>Reset catalogue</button></div>}
+              {sortedProducts.length === 0 && <div className="catalogue-empty"><Search size={22} /><h2>No pieces found</h2><p>Try adjusting your filters or return to the full edit.</p><button onClick={() => { setSearch(""); setFilter("all"); clearAllFilters(); }}>Reset catalogue</button></div>}
             </>
           )}
         </section>

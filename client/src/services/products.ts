@@ -84,10 +84,35 @@ async function authHeaders(): Promise<Record<string, string>> {
 // PUBLIC READS
 // =============================================================================
 
-export async function getProducts(page = 1, limit = 20, category?: string): Promise<PaginatedResult<ProductWithRelations>> {
+export interface ProductFilters {
+  sizes?: string[];
+  style?: string;
+  priceMin?: number;
+  priceMax?: number;
+}
+
+export async function getProducts(page = 1, limit = 20, category?: string, filters?: ProductFilters): Promise<PaginatedResult<ProductWithRelations>> {
   const params = new URLSearchParams({ page: String(page), limit: String(limit) });
   if (category) params.set("category", category);
+  if (filters?.sizes && filters.sizes.length > 0) params.set("sizes", filters.sizes.join(","));
+  if (filters?.style) params.set("style", filters.style);
+  if (filters?.priceMin != null) params.set("priceMin", String(filters.priceMin));
+  if (filters?.priceMax != null) params.set("priceMax", String(filters.priceMax));
   return fetchJson<PaginatedResult<ProductWithRelations>>(`${API_BASE}?${params}`);
+}
+
+// =============================================================================
+// FILTER OPTIONS
+// =============================================================================
+
+export interface FilterOptions {
+  sizes: string[];
+  styles: string[];
+  priceBounds: { min: number; max: number };
+}
+
+export async function getFilterOptions(): Promise<FilterOptions> {
+  return fetchJson<FilterOptions>(`${API_BASE}/filter-options`);
 }
 
 // =============================================================================

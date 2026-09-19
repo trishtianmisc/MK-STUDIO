@@ -24,14 +24,23 @@ export type PaginatedResult<T> = {
   totalPages: number;
 };
 
+export type ProductFilters = {
+  sizes?: string[];
+  style?: string;
+  priceMin?: number;
+  priceMax?: number;
+};
+
 /**
  * Get all public products (for anonymous/public access).
  * Includes category and image data.
+ * Supports server-side filtering by sizes, style, and price range.
  */
 export async function getPublicProducts(
   page = 1,
   limit = 20,
   category?: string,
+  filters?: ProductFilters,
 ): Promise<PaginatedResult<ProductWithRelations>> {
   const offset = (page - 1) * limit;
 
@@ -49,6 +58,26 @@ export async function getPublicProducts(
   if (category) {
     countQuery = countQuery.eq("category_id", category);
     dataQuery = dataQuery.eq("category_id", category);
+  }
+
+  if (filters?.sizes && filters.sizes.length > 0) {
+    countQuery = countQuery.overlaps("sizes", filters.sizes);
+    dataQuery = dataQuery.overlaps("sizes", filters.sizes);
+  }
+
+  if (filters?.style) {
+    countQuery = countQuery.eq("style", filters.style);
+    dataQuery = dataQuery.eq("style", filters.style);
+  }
+
+  if (filters?.priceMin != null) {
+    countQuery = countQuery.gte("rental_price", filters.priceMin);
+    dataQuery = dataQuery.gte("rental_price", filters.priceMin);
+  }
+
+  if (filters?.priceMax != null) {
+    countQuery = countQuery.lte("rental_price", filters.priceMax);
+    dataQuery = dataQuery.lte("rental_price", filters.priceMax);
   }
 
   const tWallStart = performance.now();
@@ -271,6 +300,46 @@ export async function countProductsByCategory(categoryId: string): Promise<numbe
 
   if (error) throw error;
   return count ?? 0;
+}
+
+/**
+ * Get all unique sizes, styles, and price bounds from public products.
+ * Used to populate filter options independently of pagination.
+ */
+export async function getFilterOptions(): Promise<{
+  sizes: string[];
+  styles: string[];
+  priceBounds: { min: number; max: number };
+}> {
+  const { data, error } = await supabase
+    .from("products")
+    .select("sizes, style, rental_price")
+    .eq("is_public", true);
+
+  if (error) throw error;
+
+  const sizeSet = new Set<string>();
+  const styleSet = new Set<string>();
+  let minPrice = Infinity;
+  let maxPrice = 0;
+
+  for (const row of data ?? []) {
+    if (row.sizes) {
+      for (const s of row.sizes) sizeSet.add(s);
+    }
+    if (row.style) styleSet.add(row.style);
+    if (row.rental_price < minPrice) minPrice = row.rental_price;
+    if (row.rental_price > maxPrice) maxPrice = row.rental_price;
+  }
+
+  return {
+    sizes: Array.from(sizeSet).sort(),
+    styles: Array.from(styleSet).sort(),
+    priceBounds: {
+      min: minPrice === Infinity ? 0 : minPrice,
+      max: maxPrice === 0 ? 10000 : Math.ceil(maxPrice / 1000) * 1000,
+    },
+  };
 }
 
 /**

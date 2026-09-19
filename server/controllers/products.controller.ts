@@ -17,6 +17,20 @@ export async function getAdminStats(_req: Request, res: Response) {
 }
 
 /**
+ * GET /api/products/filter-options
+ * Public: returns all unique sizes, styles, and price bounds.
+ */
+export async function getFilterOptions(_req: Request, res: Response) {
+  try {
+    const options = await productService.getFilterOptions();
+    res.json(options);
+  } catch (err) {
+    console.error("[Filter Options]", err);
+    res.status(500).json({ error: "Failed to fetch filter options" });
+  }
+}
+
+/**
  * GET /api/products
  * Public: returns only public products.
  * Admin (with Bearer token): returns all products.
@@ -28,6 +42,17 @@ export async function listProducts(req: Request, res: Response) {
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string) || 20));
     const category = (req.query.category as string) || undefined;
     const hasAuth = req.headers.authorization?.startsWith("Bearer ");
+
+    // Parse filter params
+    const sizes = req.query.sizes ? (req.query.sizes as string).split(",").filter(Boolean) : undefined;
+    const style = (req.query.style as string) || undefined;
+    const priceMin = req.query.priceMin ? parseInt(req.query.priceMin as string) : undefined;
+    const priceMax = req.query.priceMax ? parseInt(req.query.priceMax as string) : undefined;
+
+    const filters: productService.ProductFilters | undefined =
+      (sizes && sizes.length > 0) || style || priceMin != null || priceMax != null
+        ? { sizes, style, priceMin, priceMax }
+        : undefined;
 
     if (hasAuth) {
       // Verify admin status — if not admin, fall back to public view
@@ -46,8 +71,8 @@ export async function listProducts(req: Request, res: Response) {
       }
     }
 
-    const result = await productService.getPublicProducts(page, limit, category);
-    console.log(`[Products List] GET /api/products page=${page} limit=${limit} category=${category ?? "all"} ${(performance.now() - t0).toFixed(0)}ms`);
+    const result = await productService.getPublicProducts(page, limit, category, filters);
+    console.log(`[Products List] GET /api/products page=${page} limit=${limit} category=${category ?? "all"} sizes=${sizes ?? "all"} style=${style ?? "all"} ${(performance.now() - t0).toFixed(0)}ms`);
     res.json(result);
   } catch (err) {
     console.error("[Products List]", err);

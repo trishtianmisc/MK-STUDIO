@@ -10,6 +10,7 @@ router.get("/admin/stats", requireAuth, requireAdmin, productsController.getAdmi
 
 // Public routes (no auth required)
 router.get("/", productsController.listProducts);
+router.get("/filter-options", productsController.getFilterOptions);
 router.get("/featured", productsController.listFeaturedProducts);
 router.get("/:slug", productsController.getProductBySlug);
 
