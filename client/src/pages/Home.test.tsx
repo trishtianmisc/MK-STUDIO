@@ -57,51 +57,55 @@ describe("Collection Rail homepage", () => {
     expect(setLocation).toHaveBeenLastCalledWith("/catalogue");
   });
 
+  it("states the Cebu dress rental service and fulfilment options above the fold", () => {
+    render(<Home />);
+
+    const hero = document.querySelector(".rail-hero") as HTMLElement;
+    expect(hero).not.toBeNull();
+    expect(hero.textContent).toContain("Cebu dress rental");
+    expect(hero.textContent).toContain(
+      "Cebu's online shared closet for weddings, parties, vacations and everything worth dressing up for.",
+    );
+    expect(hero.textContent).toContain("Pickup available · Delivery within Cebu");
+  });
+
   it("opens the mobile navigation and routes its contact action", () => {
     render(<Home />);
 
-    fireEvent.click(screen.getByRole("button", { name: /toggle main menu/i }));
+    fireEvent.click(screen.getByRole("button", { name: /open main menu/i }));
     fireEvent.click(screen.getByRole("button", { name: /contact the studio/i }));
 
     expect(setLocation).toHaveBeenLastCalledWith("/contact");
   });
 
-  it("keeps the remaining header, discovery, product, order, and footer links connected", () => {
+  it("keeps the header, product, and footer links connected", () => {
     Object.defineProperty(HTMLElement.prototype, "scrollIntoView", {
       configurable: true,
       value: scrollIntoView,
     });
     render(<Home />);
 
-    fireEvent.click(screen.getByRole("button", { name: /shop the edit/i }));
+    fireEvent.click(screen.getAllByRole("button", { name: "Shop the edit" })[0]);
     expect(scrollIntoView).toHaveBeenCalled();
 
-    fireEvent.click(screen.getByRole("button", { name: /the wedding edit/i }));
-    expect(setLocation).toHaveBeenLastCalledWith("/catalogue");
-
-    fireEvent.click(screen.getByRole("button", { name: /view the velvet evening slip/i }));
+    fireEvent.click(screen.getByRole("button", { name: "View The Velvet Evening Slip" }));
     expect(setLocation).toHaveBeenLastCalledWith("/catalogue/velvet-evening-slip");
 
     fireEvent.click(screen.getByRole("button", { name: "Contact" }));
     expect(setLocation).toHaveBeenLastCalledWith("/contact");
   });
 
-  it("connects every remaining header, discovery-door, and footer destination", () => {
+  it("connects the remaining header and footer destinations", () => {
     Object.defineProperty(HTMLElement.prototype, "scrollIntoView", {
       configurable: true,
       value: scrollIntoView,
     });
     render(<Home />);
 
-    fireEvent.click(screen.getByRole("button", { name: "New in" }));
+    fireEvent.click(screen.getAllByRole("button", { name: "New in" })[0]);
     expect(scrollIntoView).toHaveBeenCalled();
-    fireEvent.click(screen.getByRole("button", { name: "How it works" }));
+    fireEvent.click(screen.getAllByRole("button", { name: "How it works" })[0]);
     expect(scrollIntoView).toHaveBeenCalledTimes(2);
-
-    fireEvent.click(screen.getByRole("button", { name: /after dark/i }));
-    expect(setLocation).toHaveBeenLastCalledWith("/catalogue");
-    fireEvent.click(screen.getByRole("button", { name: /studio days/i }));
-    expect(setLocation).toHaveBeenLastCalledWith("/catalogue");
 
     fireEvent.click(screen.getByRole("button", { name: "Catalogue" }));
     expect(setLocation).toHaveBeenLastCalledWith("/catalogue");
