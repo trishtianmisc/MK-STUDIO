@@ -144,11 +144,12 @@ export default function Home() {
             </motion.h1>
           
             <motion.p
+              className="rail-hero-lead"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.5 }}
             >
-MK Studio is Cebu’s online shared closet for every special occasion. Discover curated pieces for weddings, parties, vacations, and more. Find timeless styles you’ll love, all from the comfort of your home.
+              MK Studio is Cebu’s online shared closet for every special occasion. Discover curated pieces for weddings, parties, vacations, and more. Find timeless styles you’ll love, all from the comfort of your home.
             </motion.p>
             <motion.div
               className="rail-hero-actions"
@@ -297,7 +298,7 @@ MK Studio is Cebu’s online shared closet for every special occasion. Discover 
 
       <footer className="rail-footer">
         <div><span>MK Studio</span><p>For every RSVP, reset, and reason to dress differently.</p></div>
-        <nav><button onClick={() => goTo("/catalogue")}>Catalogue</button><button onClick={() => goTo("/about")}>Our story</button><button onClick={() => goTo("/contact")}>Contact</button></nav>
+        <nav><button onClick={() => goTo("/catalogue")}>Catalogue</button><button onClick={() => goTo("/about")}>Our story</button><button onClick={() => goTo("/faq")}>FAQ</button><button onClick={() => goTo("/contact")}>Contact</button></nav>
         <p>© 2026 MK Studio</p>
       </footer>
     </div>

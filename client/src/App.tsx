@@ -8,6 +8,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import About from "./pages/About";
 import Catalogue from "./pages/Catalogue";
 import Contact from "./pages/Contact";
+import Faq from "./pages/Faq";
 import Home from "./pages/Home";
 import HowRentalWorks from "./pages/HowRentalWorks";
 import ListWithUs from "./pages/ListWithUs";
@@ -143,6 +144,7 @@ function Router() {
         <Route path={"/how-rental-works"} component={HowRentalWorks} />
         <Route path={"/list-with-us"} component={ListWithUs} />
         <Route path={"/contact"} component={Contact} />
+        <Route path={"/faq"} component={Faq} />
         <Route path={"/admin"} component={LazyAdminAccess} />
         <Route path={"/admin/dashboard"} component={LazyProtectedAdminRoute} />
         <Route path={"/404"} component={NotFound} />

@@ -256,7 +256,8 @@ export default function Catalogue() {
                     <button className="product-image" onClick={() => setLocation(`/catalogue/${product.slug}`)} aria-label={`View ${product.name}`}>
                       <img src={product.image} alt={product.name} loading="lazy" decoding="async" />
                       <span className="product-category">{product.categoryLabel}</span>
-                      <span className={`availability-badge availability-${product.availability.toLowerCase()}`}>{product.availability}</span>
+
+                      <span className={`availability-badge availability-${product.availability.toLowerCase()}`}>Size ({product.sizes})</span>
                       <span className="product-view">View piece <ArrowUpRight size={15} /></span>
                     </button>
                     <div className="product-copy">

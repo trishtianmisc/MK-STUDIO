@@ -4,7 +4,7 @@ import { useLocation } from "wouter";
 
 type StoreShellProps = {
   children: ReactNode;
-  current?: "catalogue" | "about" | "how-rental-works" | "list-with-us" | "contact" | "admin";
+  current?: "catalogue" | "about" | "how-rental-works" | "list-with-us" | "faq" | "contact" | "admin";
 };
 
 export function StoreShell({ children, current }: StoreShellProps) {
@@ -29,6 +29,7 @@ export function StoreShell({ children, current }: StoreShellProps) {
           <button className={current === "about" ? "is-current" : ""} onClick={() => go("/about")}>Our story</button>
           <button className={current === "how-rental-works" ? "is-current" : ""} onClick={() => go("/how-rental-works")}>How rental works</button>
           <button className={current === "list-with-us" ? "is-current" : ""} onClick={() => go("/list-with-us")}>List with us</button>
+          <button className={current === "faq" ? "is-current" : ""} onClick={() => go("/faq")}>FAQ</button>
           <button className={current === "contact" ? "is-current" : ""} onClick={() => go("/contact")}>Contact</button>
         </nav>
         <div className="store-actions">
@@ -52,6 +53,7 @@ export function StoreShell({ children, current }: StoreShellProps) {
           <button className={current === "about" ? "is-current" : ""} onClick={() => go("/about")}>Our story <ArrowUpRight size={16} /></button>
           <button className={current === "how-rental-works" ? "is-current" : ""} onClick={() => go("/how-rental-works")}>How rental works <ArrowUpRight size={16} /></button>
           <button className={current === "list-with-us" ? "is-current" : ""} onClick={() => go("/list-with-us")}>List with us <ArrowUpRight size={16} /></button>
+          <button className={current === "faq" ? "is-current" : ""} onClick={() => go("/faq")}>FAQ <ArrowUpRight size={16} /></button>
           <button className={current === "contact" ? "is-current" : ""} onClick={() => go("/contact")}>Contact <ArrowUpRight size={16} /></button>
         </div>
         <div className="store-sidebar-footer">
@@ -67,6 +69,7 @@ export function StoreShell({ children, current }: StoreShellProps) {
           <button onClick={() => go("/about")}>Our story</button>
           <button onClick={() => go("/how-rental-works")}>How rental works</button>
           <button onClick={() => go("/list-with-us")}>List with us</button>
+          <button onClick={() => go("/faq")}>FAQ</button>
           <button onClick={() => go("/contact")}>Contact</button>
         </div>
         <div className="store-footer-meta"><span>© 2026 MK Studio</span></div>

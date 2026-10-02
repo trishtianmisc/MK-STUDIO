@@ -52,7 +52,7 @@ export default function ProductDetail() {
               )}
               {rawProduct && product.availability !== "Unavailable" && <AvailabilityCalendar slug={rawProduct.slug} />}
               {product.availability !== "Unavailable" && (
-                <button className="editorial-button editorial-button-dark rental-add-button" onClick={() => setLocation("/contact")}>Inquire for rental <MessageSquare size={16} /></button>
+                <button className="editorial-button editorial-button-dark rental-add-button" onClick={() => window.open("https://docs.google.com/forms/d/e/1FAIpQLSeFnOyIXPYX_qvs_M7MWI20rHxJmuPCRSgMvn85F_nr_-LsEQ/viewform", "_blank", "noopener,noreferrer")}>Inquire for rental <MessageSquare size={16} /></button>
               )}
             </section>
           </article>

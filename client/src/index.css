@@ -570,7 +570,7 @@
 @media (max-width: 680px) { .rail-service-bar { padding: 8px 5vw; font-size: 7px; }.rail-service-bar span:last-child { display: none; }.rail-header { height: 64px; padding: 0 5vw; }.rail-menu-trigger { display: inline-grid; place-items: center; justify-self: start; }.rail-brand { justify-self: center; font-size: 23px; }.rail-brand img { width: 157px; height: 47px; }.rail-nav { display: none; }.rail-actions { gap: 10px; }.rail-actions > button:first-child, .rail-order-action span { display: none; }.rail-mobile-menu { position: fixed; top: 97px; left: 0; right: 0; z-index: 34; display: grid; padding: 13px 5vw 23px; background: #fff9f0; border-bottom: 1px solid rgba(42,36,34,.15); box-shadow: 0 15px 28px rgba(42,36,34,.13); }.rail-mobile-menu button { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid rgba(42,36,34,.12); color: var(--espresso); font-size: 10px; font-weight: 700; letter-spacing: .11em; text-transform: uppercase; }.rail-hero { min-height: 670px; }.rail-hero-image { object-position: 64% center; }.rail-hero-shade { background: linear-gradient(90deg, rgba(34,26,25,.93), rgba(47,30,27,.56) 75%, rgba(30,20,18,.12)); }.rail-hero-copy { margin: 0; padding: 73px 9vw 80px; }.rail-hero h1 { font-size: clamp(4.4rem, 19vw, 6.2rem); }.rail-hero-copy > p:not(.rail-kicker) { margin: 27px 0; font-size: 13px; }.rail-hero-meta { display: none; }.rail-discover, .rail-current-edit { }.rail-section-intro, .rail-edit-heading { align-items: flex-start; flex-direction: column; gap: 22px; }.rail-section-intro h2, .rail-edit-heading h2 { font-size: clamp(3.6rem, 16vw, 5rem); }.rail-section-intro > p { font-size: 12px; }.rail-door-carousel { height: 420px; margin-top: 43px; }.rail-door { width: 260px; min-height: 380px; }.rail-current-edit { padding-bottom: 80px; }.rail-product-grid { margin-top: 39px; }.rail-product-copy h3 { font-size: 23px; }.rail-campaign-grid { grid-template-columns: 1fr; }.rail-campaign { min-height: 500px; }.rail-campaign-amber { padding: 68px 9vw; }.rail-campaign h2 { font-size: clamp(3.6rem, 15vw, 5.2rem); }.rail-campaign-image > div { left: 9vw; bottom: 54px; }.rail-ritual { padding: 75px 6vw; }.rail-ritual-top { align-items: flex-start; flex-direction: column; gap: 18px; }.rail-ritual h2 { font-size: clamp(4rem, 17vw, 5.7rem); }.rail-steps { grid-template-columns: 1fr; margin: 49px 0 38px; }.rail-steps article, .rail-steps article + article { min-height: auto; padding: 25px 0; border-right: 0; border-bottom: 1px solid rgba(255,249,240,.27); }.rail-steps article:last-child { border-bottom: 0; }.rail-steps span { margin-bottom: 22px; }.rail-footer { grid-template-columns: 1fr; gap: 29px; padding: 43px 5vw 27px; }.rail-footer > p { grid-column: 1; } }
 
 /* Homepage hero — above-the-fold service positioning */
-.rail-hero-copy > p.rail-hero-lead { max-width: 540px; margin: 30px 0 18px; color: #fff9f0; font-size: 17px; line-height: 1.55; font-weight: 500; letter-spacing: -.012em; }
+.rail-hero-copy > p.rail-hero-lead { max-width: 540px; margin: 30px 0 18px; color: #fff9f0c7; font-size: 14px; line-height: 1.7;letter-spacing: -.012em; }
 .rail-hero-copy > p.rail-hero-lead + p { margin-top: 0; max-width: 470px; }
 .rail-hero-copy > p.rail-hero-logistics { display: inline-flex; align-items: center; gap: 8px; margin: 26px 0 0; color: rgba(255,249,240,.74); font-size: 9.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
 .rail-hero-copy > p.rail-hero-logistics svg { flex: 0 0 auto; color: #e5c17e; }
@@ -584,3 +584,45 @@
 
 /* Catalogue filter confirm + active filters */
 .catalogue-filter-actions{display:flex;gap:8px;align-items:center;justify-content:space-between;padding-top:8px;border-top:1px solid rgba(42,25,20,.1)}.catalogue-filter-confirm{padding:8px 16px;background:#7b1633;color:#f7f3ec;border:0;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .15s}.catalogue-filter-confirm:hover{background:#5e1028}.catalogue-active-filters{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px 0;font-size:10px;color:#8c7669;letter-spacing:.08em;text-transform:uppercase;font-weight:600}.catalogue-active-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;background:#7b1633;color:#f7f3ec;border:0;font-size:9px;font-weight:600;letter-spacing:.06em;cursor:pointer;transition:background .15s}.catalogue-active-chip:hover{background:#5e1028}
+
+/* Rental FAQ */
+.faq-page{background:var(--background);color:var(--espresso);min-height:70vh}
+.faq-hero{position:relative;overflow:hidden;padding:92px 6vw 66px;text-align:center}
+.faq-hero:after{content:"";position:absolute;width:46vw;height:46vw;right:-15vw;top:-26vw;border:1px solid rgba(42,36,34,.14);border-radius:50%;box-shadow:0 0 0 44px rgba(42,36,34,.028),0 0 0 108px rgba(42,36,34,.018);pointer-events:none}
+.faq-hero h1{margin:20px 0 0;font:400 clamp(40px,5.6vw,68px)/.97 Cormorant Garamond,serif;letter-spacing:-.02em;color:var(--espresso)}
+.faq-hero h1 em{font-style:italic;color:var(--coral)}
+.faq-hero .eyebrow{justify-content:center;display:inline-flex}
+.faq-hero-lead{max-width:640px;margin:24px auto 0;font-size:15px;line-height:1.7;color:var(--smoke)}
+.faq-content{max-width:840px;margin:0 auto;padding:10px 6vw 96px}
+.faq-list{border-top:1px solid var(--border)}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-question-heading{margin:0}
+.faq-question{display:flex;width:100%;align-items:center;justify-content:space-between;gap:20px;padding:24px 0;background:none;border:0;cursor:pointer;text-align:left;font:400 clamp(19px,2vw,25px)/1.3 Cormorant Garamond,serif;letter-spacing:-.01em;color:var(--espresso);transition:color .2s}
+.faq-question:hover{color:var(--coral)}
+.faq-question:focus-visible{outline:2px solid var(--coral);outline-offset:4px}
+.faq-icon{flex:0 0 auto;color:var(--smoke);transition:transform .3s var(--ease-out),color .2s}
+.faq-item.is-open .faq-icon{transform:rotate(180deg);color:var(--coral)}
+.faq-answer{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s var(--ease-out)}
+.faq-item.is-open .faq-answer{grid-template-rows:1fr}
+.faq-answer-inner{overflow:hidden;min-height:0}
+.faq-answer-inner p,.faq-answer-inner li{font-size:15px;line-height:1.75;color:var(--smoke)}
+.faq-answer-inner p{margin:0 0 16px}
+.faq-answer-inner p:last-child{margin-bottom:0}
+.faq-answer-inner ol{margin:0 0 16px;padding-left:20px}
+.faq-answer-inner li{margin-bottom:6px}
+.faq-answer-inner a{color:var(--coral);text-decoration:underline;text-underline-offset:3px}
+.faq-answer-inner a:hover{color:var(--primary)}
+.faq-item.is-open .faq-answer-inner{padding-bottom:26px}
+.faq-note{max-width:760px;margin:44px auto 0;padding:20px 24px;background:rgba(42,36,34,.035);border-left:2px solid var(--champagne);font-size:13px;line-height:1.7;color:var(--smoke)}
+.faq-note strong{display:block;margin-bottom:6px;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--espresso)}
+.faq-note a{color:var(--coral);text-decoration:underline;text-underline-offset:3px}
+.faq-cta{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-top:44px;padding-top:32px;border-top:1px solid var(--border)}
+.faq-cta p{margin:0;font:400 clamp(20px,2.2vw,26px)/1.3 Cormorant Garamond,serif;color:var(--espresso)}
+@media(max-width:760px){
+  .faq-hero{padding:70px 6vw 48px}
+  .faq-content{padding:0 6vw 72px}
+  .faq-question{padding:20px 0}
+  .faq-answer-inner p,.faq-answer-inner li{font-size:14.5px}
+  .faq-note{padding:18px 18px}
+  .faq-cta{gap:16px;margin-top:36px}
+}

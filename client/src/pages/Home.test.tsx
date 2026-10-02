@@ -64,7 +64,7 @@ describe("Collection Rail homepage", () => {
     expect(hero).not.toBeNull();
     expect(hero.textContent).toContain("Cebu dress rental");
     expect(hero.textContent).toContain(
-      "Cebu's online shared closet for weddings, parties, vacations and everything worth dressing up for.",
+      "online shared closet for every special occasion",
     );
     expect(hero.textContent).toContain("Pickup available · Delivery within Cebu");
   });
