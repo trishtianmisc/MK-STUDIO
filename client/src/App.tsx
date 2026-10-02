@@ -1,5 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useSeo } from "@/hooks/useSeo";
+import { resolveSeo } from "@/lib/seo";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -8,6 +10,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import About from "./pages/About";
 import Catalogue from "./pages/Catalogue";
 import Contact from "./pages/Contact";
+import Faq from "./pages/Faq";
 import Home from "./pages/Home";
 import HowRentalWorks from "./pages/HowRentalWorks";
 import ListWithUs from "./pages/ListWithUs";
@@ -33,8 +36,9 @@ function AdminFallback() {
   );
 }
 
-function ScrollToTop() {
+function RouteEffects() {
   const [location] = useLocation();
+  useSeo(resolveSeo(location));
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [location]);
@@ -134,7 +138,7 @@ function LazyProtectedAdminRoute() {
 function Router() {
   return (
     <>
-      <ScrollToTop />
+      <RouteEffects />
       <Switch>
         <Route path={"/"} component={Home} />
         <Route path={"/catalogue"} component={Catalogue} />
@@ -143,6 +147,7 @@ function Router() {
         <Route path={"/how-rental-works"} component={HowRentalWorks} />
         <Route path={"/list-with-us"} component={ListWithUs} />
         <Route path={"/contact"} component={Contact} />
+        <Route path={"/faq"} component={Faq} />
         <Route path={"/admin"} component={LazyAdminAccess} />
         <Route path={"/admin/dashboard"} component={LazyProtectedAdminRoute} />
         <Route path={"/404"} component={NotFound} />

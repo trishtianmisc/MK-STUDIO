@@ -5,6 +5,7 @@ import {
   ArrowUpRight,
   ChevronRight,
   Heart,
+  MapPin,
   Menu,
   X,
 } from "lucide-react";
@@ -131,7 +132,7 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
-              The Studio Edit · 01
+              Cebu dress rental · The Studio Edit · 01
             </motion.p>
             <motion.h1
               id="rail-hero-heading"
@@ -141,12 +142,14 @@ export default function Home() {
             >
               Collect memories.<br /><em>Not clutter.</em>
             </motion.h1>
+          
             <motion.p
+              className="rail-hero-lead"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.45 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
             >
-              At MK Studio, discover a curated collection of timeless pieces available to browse entirely online making it effortless to find the one you love, while embracing a more intentional wardrobe.
+              MK Studio is Cebu’s online shared closet for every special occasion. Discover curated pieces for weddings, parties, vacations, and more. Find timeless styles you’ll love, all from the comfort of your home.
             </motion.p>
             <motion.div
               className="rail-hero-actions"
@@ -157,6 +160,15 @@ export default function Home() {
               <button className="rail-light-button" onClick={() => goTo("/catalogue")}>Shop the collection <ArrowUpRight size={16} /></button>
               <button className="rail-quiet-link" onClick={() => goTo("discover")}>Explore by moment <ArrowDownRight size={16} /></button>
             </motion.div>
+            <motion.p
+              className="rail-hero-logistics"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.7 }}
+            >
+              <MapPin size={13} aria-hidden="true" />
+              Pickup available · Delivery within Cebu
+            </motion.p>
           </div>
           <div className="rail-hero-meta">Curated dressing<br />for real plans</div>
         </section>
@@ -286,7 +298,7 @@ export default function Home() {
 
       <footer className="rail-footer">
         <div><span>MK Studio</span><p>For every RSVP, reset, and reason to dress differently.</p></div>
-        <nav><button onClick={() => goTo("/catalogue")}>Catalogue</button><button onClick={() => goTo("/about")}>Our story</button><button onClick={() => goTo("/contact")}>Contact</button></nav>
+        <nav><button onClick={() => goTo("/catalogue")}>Catalogue</button><button onClick={() => goTo("/about")}>Our story</button><button onClick={() => goTo("/faq")}>FAQ</button><button onClick={() => goTo("/contact")}>Contact</button></nav>
         <p>© 2026 MK Studio</p>
       </footer>
     </div>
