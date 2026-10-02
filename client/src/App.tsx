@@ -1,5 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useSeo } from "@/hooks/useSeo";
+import { resolveSeo } from "@/lib/seo";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -34,8 +36,9 @@ function AdminFallback() {
   );
 }
 
-function ScrollToTop() {
+function RouteEffects() {
   const [location] = useLocation();
+  useSeo(resolveSeo(location));
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [location]);
@@ -135,7 +138,7 @@ function LazyProtectedAdminRoute() {
 function Router() {
   return (
     <>
-      <ScrollToTop />
+      <RouteEffects />
       <Switch>
         <Route path={"/"} component={Home} />
         <Route path={"/catalogue"} component={Catalogue} />

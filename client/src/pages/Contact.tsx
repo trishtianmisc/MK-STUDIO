@@ -95,7 +95,7 @@ export default function Contact() {
                     <Phone size={16} />
                     <div>
                       <span>Phone</span>
-                      <a href="tel:+09951813723">+63 995 181 3723</a>
+                      <a href="tel:+639951813723">+63 995 181 3723</a>
                     </div>
                   </article>
                   

@@ -6,6 +6,8 @@ import { StoreShell } from "@/components/StoreShell";
 import AvailabilityCalendar from "@/components/AvailabilityCalendar";
 import { formatRentalPrice, toShowcaseProduct } from "@/data/catalogue";
 import { useProduct } from "@/hooks/useProducts";
+import { useSeo } from "@/hooks/useSeo";
+import { SEO_BY_PATH } from "@/lib/seo";
 
 
 
@@ -18,6 +20,14 @@ export default function ProductDetail() {
   const product = useMemo(() => (rawProduct ? toShowcaseProduct(rawProduct) : null), [rawProduct]);
   const [size, setSize] = useState(product?.sizes[0] ?? "");
 
+  useSeo(
+    product
+      ? {
+          title: `${product.name} | Dress Rental Cebu | MK Studio Collective`,
+          description: `Rent ${product.name} in Cebu from MK Studio Collective. Check sizes, availability and pricing, then reserve with pickup in Talamban or delivery.`,
+        }
+      : SEO_BY_PATH["/catalogue"],
+  );
 
   if (loading) return <StoreShell current="catalogue"><main className="not-found-page"><p className="eyebrow">Catalogue</p><h1>Loading...</h1></main></StoreShell>;
 
