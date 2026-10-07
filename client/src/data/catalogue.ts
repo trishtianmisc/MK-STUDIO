@@ -11,6 +11,8 @@ export type ShowcaseProduct = {
   image: string;
   style: string;
   length: string;
+  waistIn: number | null;
+  dressLengthIn: number | null;
   sizes: string[];
   brand: string;
   rentalPrice: number;
@@ -40,6 +42,8 @@ export function toShowcaseProduct(row: ProductWithRelations): ShowcaseProduct {
     image,
     style: row.style ?? "",
     length: row.length ?? "",
+    waistIn: row.waist_in ?? null,
+    dressLengthIn: row.dress_length_in ?? null,
     sizes: row.sizes ?? [],
     brand: row.brand ?? "",
     rentalPrice: row.rental_price,

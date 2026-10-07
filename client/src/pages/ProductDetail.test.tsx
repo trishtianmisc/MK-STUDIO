@@ -74,3 +74,45 @@ describe("ProductDetail SEO", () => {
     expect(metaContent("name", "description")).toContain("Browse over 100 rental dresses in Cebu");
   });
 });
+
+describe("ProductDetail measurements", () => {
+  beforeEach(() => {
+    useProductMock.mockReset();
+  });
+
+  afterEach(() => {
+    cleanup();
+    document.title = "";
+  });
+
+  const metaText = (container: HTMLElement) =>
+    container.querySelector(".product-detail-meta")?.textContent ?? "";
+
+  it("shows waist and garment length in inches", () => {
+    useProductMock.mockReturnValue({
+      product: { ...valentina, waist_in: 26, dress_length_in: 48 },
+      loading: false,
+      error: null,
+    });
+    const { container } = render(<ProductDetail />);
+
+    const text = metaText(container);
+    expect(text).toContain("Length (in)48 in");
+    expect(text).toContain("Waist26 in");
+    expect(text).toContain("LengthMaxi");
+  });
+
+  it("hides both rows when measurements are not stored", () => {
+    useProductMock.mockReturnValue({
+      product: { ...valentina, waist_in: null, dress_length_in: null },
+      loading: false,
+      error: null,
+    });
+    const { container } = render(<ProductDetail />);
+
+    const text = metaText(container);
+    expect(text).not.toContain("Length (in)");
+    expect(text).not.toContain("Waist");
+    expect(text).toContain("Length");
+  });
+});

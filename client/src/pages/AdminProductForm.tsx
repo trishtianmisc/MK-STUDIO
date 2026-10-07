@@ -19,6 +19,8 @@ export default function AdminProductForm({ categories, product, onDone, onCancel
   const [additionalDayPrice, setAdditionalDayPrice] = useState(String(product?.additional_day_price ?? ""));
   const [style, setStyle] = useState(product?.style ?? "");
   const [length, setLength] = useState(product?.length ?? "");
+  const [waistIn, setWaistIn] = useState(product?.waist_in != null ? String(product.waist_in) : "");
+  const [dressLengthIn, setDressLengthIn] = useState(product?.dress_length_in != null ? String(product.dress_length_in) : "");
   const [brand, setBrand] = useState(product?.brand ?? "");
   const [sizes, setSizes] = useState(product?.sizes?.join(", ") ?? "");
   const [rentalNote, setRentalNote] = useState(product?.rental_note ?? "");
@@ -42,6 +44,8 @@ export default function AdminProductForm({ categories, product, onDone, onCancel
     if (!slug.trim() || !/^[a-z0-9-]+$/.test(slug)) e.slug = "Use lowercase letters, numbers and hyphens";
     if (!categoryId) e.category = "Choose a category";
     if (!rentalPrice || Number(rentalPrice) < 0) e.rentalPrice = "Enter a valid price";
+    if (waistIn !== "" && (!Number.isInteger(Number(waistIn)) || Number(waistIn) < 1 || Number(waistIn) > 100)) e.waistIn = "Enter whole inches between 1 and 100";
+    if (dressLengthIn !== "" && (!Number.isInteger(Number(dressLengthIn)) || Number(dressLengthIn) < 1 || Number(dressLengthIn) > 100)) e.dressLengthIn = "Enter whole inches between 1 and 100";
     setErrors(e);
     return !Object.keys(e).length;
   };
@@ -106,6 +110,8 @@ export default function AdminProductForm({ categories, product, onDone, onCancel
       if (finalImageUrl) input.image = finalImageUrl;
       if (style.trim()) input.style = style.trim();
       if (length.trim()) input.length = length.trim();
+      input.waist_in = waistIn !== "" ? Number(waistIn) : null;
+      input.dress_length_in = dressLengthIn !== "" ? Number(dressLengthIn) : null;
       if (brand.trim()) input.brand = brand.trim();
       if (sizes.trim()) input.sizes = sizes.split(",").map(s => s.trim()).filter(Boolean);
       if (rentalNote.trim()) input.rental_note = rentalNote.trim();
@@ -182,6 +188,8 @@ export default function AdminProductForm({ categories, product, onDone, onCancel
             <div className="admin-form-grid">
               {field("Style", <input value={style} onChange={e => setStyle(e.target.value)} placeholder="Structured, Textured, Lace..." />)}
               {field("Length", <input value={length} onChange={e => setLength(e.target.value)} placeholder="Mini, Midi, Maxi, Gown" />)}
+              {field("Waist (in)", <input type="number" min="1" max="100" value={waistIn} onChange={e => setWaistIn(e.target.value)} placeholder="26" />, errors.waistIn, "Waist measurement in inches")}
+              {field("Length (in)", <input type="number" min="1" max="100" value={dressLengthIn} onChange={e => setDressLengthIn(e.target.value)} placeholder="48" />, errors.dressLengthIn, "Garment length in inches, shoulder to hem")}
             </div>
             {field("Brand", <input value={brand} onChange={e => setBrand(e.target.value)} placeholder="Zara, H&M, Curated by MK Studio..." />)}
             {field("Available sizes", <input value={sizes} onChange={e => setSizes(e.target.value)} placeholder="S/M, UK 8, UK 10" />, undefined, "Separate sizes with commas")}

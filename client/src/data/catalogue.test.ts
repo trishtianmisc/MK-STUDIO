@@ -9,6 +9,8 @@ const mockProductRow: ProductWithRelations = {
   slug: "test-dress",
   style: "Silk",
   length: "Maxi",
+  waist_in: 26,
+  dress_length_in: 58,
   sizes: ["UK 8", "UK 10", "UK 12"],
   brand: "Zara",
   rental_price: 1500,
@@ -44,6 +46,15 @@ describe("MK Studio catalogue adapter", () => {
     expect(result.featured).toBe(true);
     expect(result.image).toBe("/images/test.jpg");
     expect(result.sizes).toEqual(["UK 8", "UK 10", "UK 12"]);
+    expect(result.waistIn).toBe(26);
+    expect(result.dressLengthIn).toBe(58);
+  });
+
+  it("maps missing measurements to null", () => {
+    const row = { ...mockProductRow, waist_in: null, dress_length_in: null };
+    const result = toShowcaseProduct(row);
+    expect(result.waistIn).toBeNull();
+    expect(result.dressLengthIn).toBeNull();
   });
 
   it("handles missing category gracefully", () => {
