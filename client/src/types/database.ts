@@ -36,6 +36,8 @@ export interface Database {
           sizes: string[];
           style: string | null;
           length: string | null;
+          waist_in: number | null;
+          dress_length_in: number | null;
           brand: string | null;
           rental_price: number;
           additional_day_price: number | null;

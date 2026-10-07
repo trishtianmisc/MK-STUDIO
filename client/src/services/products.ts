@@ -9,6 +9,8 @@ export interface ProductWithRelations {
   slug: string;
   style: string | null;
   length: string | null;
+  waist_in: number | null;
+  dress_length_in: number | null;
   sizes: string[];
   brand: string | null;
   rental_price: number;
@@ -48,6 +50,8 @@ export interface CreateProductInput {
   slug: string;
   style?: string;
   length?: string;
+  waist_in?: number | null;
+  dress_length_in?: number | null;
   sizes?: string[];
   brand?: string;
   rental_price: number;

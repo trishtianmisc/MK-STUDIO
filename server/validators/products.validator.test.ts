@@ -115,3 +115,45 @@ describe("updateProductSchema", () => {
     expect(updateProductSchema.safeParse({ rental_price: -1 }).success).toBe(false);
   });
 });
+
+describe("measurement fields", () => {
+  const validInput = {
+    category_id: "123e4567-e89b-4123-a456-426614174000",
+    slug: "test-product",
+    name: "Test Product",
+    rental_price: 1500,
+  };
+
+  it("accepts whole-inch measurements on create", () => {
+    const result = createProductSchema.safeParse({
+      ...validInput,
+      waist_in: 26,
+      dress_length_in: 48,
+    });
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.waist_in).toBe(26);
+      expect(result.data.dress_length_in).toBe(48);
+    }
+  });
+
+  it("accepts null and omitted measurements", () => {
+    expect(createProductSchema.safeParse({ ...validInput, waist_in: null, dress_length_in: null }).success).toBe(true);
+    expect(createProductSchema.safeParse(validInput).success).toBe(true);
+    expect(updateProductSchema.safeParse({ waist_in: null, dress_length_in: null }).success).toBe(true);
+  });
+
+  it("rejects fractional, zero, negative and out-of-range inches", () => {
+    expect(createProductSchema.safeParse({ ...validInput, waist_in: 26.5 }).success).toBe(false);
+    expect(createProductSchema.safeParse({ ...validInput, waist_in: 0 }).success).toBe(false);
+    expect(createProductSchema.safeParse({ ...validInput, dress_length_in: -4 }).success).toBe(false);
+    expect(createProductSchema.safeParse({ ...validInput, dress_length_in: 150 }).success).toBe(false);
+    expect(updateProductSchema.safeParse({ waist_in: 26.5 }).success).toBe(false);
+    expect(updateProductSchema.safeParse({ dress_length_in: 0 }).success).toBe(false);
+  });
+
+  it("rejects string measurements", () => {
+    expect(createProductSchema.safeParse({ ...validInput, waist_in: "26" }).success).toBe(false);
+    expect(updateProductSchema.safeParse({ dress_length_in: "48" }).success).toBe(false);
+  });
+});
