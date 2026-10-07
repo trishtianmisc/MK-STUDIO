@@ -48,10 +48,11 @@ export async function listProducts(req: Request, res: Response) {
     const style = (req.query.style as string) || undefined;
     const priceMin = req.query.priceMin ? parseInt(req.query.priceMin as string) : undefined;
     const priceMax = req.query.priceMax ? parseInt(req.query.priceMax as string) : undefined;
+    const q = (req.query.q as string) || undefined;
 
     const filters: productService.ProductFilters | undefined =
-      (sizes && sizes.length > 0) || style || priceMin != null || priceMax != null
-        ? { sizes, style, priceMin, priceMax }
+      (sizes && sizes.length > 0) || style || priceMin != null || priceMax != null || q
+        ? { sizes, style, priceMin, priceMax, q }
         : undefined;
 
     if (hasAuth) {
@@ -72,7 +73,7 @@ export async function listProducts(req: Request, res: Response) {
     }
 
     const result = await productService.getPublicProducts(page, limit, category, filters);
-    console.log(`[Products List] GET /api/products page=${page} limit=${limit} category=${category ?? "all"} sizes=${sizes ?? "all"} style=${style ?? "all"} ${(performance.now() - t0).toFixed(0)}ms`);
+    console.log(`[Products List] GET /api/products page=${page} limit=${limit} category=${category ?? "all"} sizes=${sizes ?? "all"} style=${style ?? "all"} q=${q ?? "-"} ${(performance.now() - t0).toFixed(0)}ms`);
     res.json(result);
   } catch (err) {
     console.error("[Products List]", err);

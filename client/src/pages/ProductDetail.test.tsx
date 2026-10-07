@@ -97,9 +97,9 @@ describe("ProductDetail measurements", () => {
     const { container } = render(<ProductDetail />);
 
     const text = metaText(container);
-    expect(text).toContain("Length (in)48 in");
-    expect(text).toContain("Waist26 in");
-    expect(text).toContain("LengthMaxi");
+    expect(text).toContain("Length48 inches");
+    expect(text).toContain("Waist26 inches");
+    expect(text).toContain("HemlineMaxi");
   });
 
   it("hides both rows when measurements are not stored", () => {
@@ -111,8 +111,8 @@ describe("ProductDetail measurements", () => {
     const { container } = render(<ProductDetail />);
 
     const text = metaText(container);
-    expect(text).not.toContain("Length (in)");
+    expect(text).not.toContain("Length");
     expect(text).not.toContain("Waist");
-    expect(text).toContain("Length");
+    expect(text).toContain("Hemline");
   });
 });

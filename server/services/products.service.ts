@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabase.js";
+import { buildSearchOr, sanitizeSearchTerm } from "./product-search.js";
 import type { Database } from "../types/database.js";
 
 type ProductRow = Database["public"]["Tables"]["products"]["Row"];
@@ -29,6 +30,7 @@ export type ProductFilters = {
   style?: string;
   priceMin?: number;
   priceMax?: number;
+  q?: string;
 };
 
 /**
@@ -80,6 +82,22 @@ export async function getPublicProducts(
     dataQuery = dataQuery.lte("rental_price", filters.priceMax);
   }
 
+  // Free-text search. PostgREST cannot OR across the joined categories table,
+  // so matching category ids are resolved first and folded into the same group.
+  const searchTerm = sanitizeSearchTerm(filters?.q);
+  if (searchTerm) {
+    const { data: matchedCategories } = await supabase
+      .from("categories")
+      .select("id")
+      .ilike("name", `%${searchTerm}%`);
+
+    const orClause = buildSearchOr(searchTerm, (matchedCategories ?? []).map((row) => row.id));
+    if (orClause) {
+      countQuery = countQuery.or(orClause);
+      dataQuery = dataQuery.or(orClause);
+    }
+  }
+
   const tWallStart = performance.now();
 
   const countPromise = countQuery.then((r) => {
@@ -106,7 +124,7 @@ export async function getPublicProducts(
     `[Products Query] count=${total} ${countResult._ms.toFixed(0)}ms | ` +
     `data=${data?.length ?? 0} rows ${dataResult._ms.toFixed(0)}ms | ` +
     `wall=${tWallMs.toFixed(0)}ms | ` +
-    `page=${page} limit=${limit} category=${category ?? "all"}`
+    `page=${page} limit=${limit} category=${category ?? "all"} q=${searchTerm || "-"}`
   );
 
   return {

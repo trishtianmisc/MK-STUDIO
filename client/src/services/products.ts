@@ -93,6 +93,7 @@ export interface ProductFilters {
   style?: string;
   priceMin?: number;
   priceMax?: number;
+  q?: string;
 }
 
 export async function getProducts(page = 1, limit = 20, category?: string, filters?: ProductFilters): Promise<PaginatedResult<ProductWithRelations>> {
@@ -102,6 +103,7 @@ export async function getProducts(page = 1, limit = 20, category?: string, filte
   if (filters?.style) params.set("style", filters.style);
   if (filters?.priceMin != null) params.set("priceMin", String(filters.priceMin));
   if (filters?.priceMax != null) params.set("priceMax", String(filters.priceMax));
+  if (filters?.q) params.set("q", filters.q);
   return fetchJson<PaginatedResult<ProductWithRelations>>(`${API_BASE}?${params}`);
 }
 

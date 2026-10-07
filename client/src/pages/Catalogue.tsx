@@ -25,6 +25,13 @@ export default function Catalogue() {
   // Search
   const [searchOpen, setSearchOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  // Debounce so typing does not fire a request per keystroke
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search.trim()), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   // Sort
   const [sort, setSort] = useState<"newest" | "az" | "price-low">("newest");
@@ -62,29 +69,26 @@ export default function Catalogue() {
   // Category filter ID
   const categoryFilter = filter === "all" ? undefined : sortedCategories.find(c => c.slug === filter)?.id;
 
+  // Search runs server-side so it covers every piece, not just loaded pages
+  const queryFilters = useMemo<ProductFilters>(
+    () => ({ ...appliedFilters, q: debouncedSearch || undefined }),
+    [appliedFilters, debouncedSearch],
+  );
+
   // Fetch products with applied filters
-  const { products: rawProducts, loading, loadingMore, error, total: apiTotal, hasMore, loadMore } = useProducts(categoryFilter, appliedFilters);
+  const { products: rawProducts, loading, loadingMore, error, total: apiTotal, hasMore, loadMore } = useProducts(categoryFilter, queryFilters);
 
   const allProducts = useMemo(
     () => rawProducts.map(toShowcaseProduct),
     [rawProducts],
   );
 
-  // Client-side search filter (applied on top of server results)
-  const searchFilteredProducts = useMemo(() => {
-    const text = search.trim().toLowerCase();
-    if (!text) return allProducts;
-    return allProducts.filter(p =>
-      `${p.name} ${p.categoryLabel} ${p.style} ${p.length} ${p.brand}`.toLowerCase().includes(text)
-    );
-  }, [allProducts, search]);
-
-  // Client-side sort
+  // Client-side sort (text matching happens server-side via `q`)
   const sortedProducts = useMemo(() => {
-    if (sort === "az") return [...searchFilteredProducts].sort((a, b) => a.name.localeCompare(b.name));
-    if (sort === "price-low") return [...searchFilteredProducts].sort((a, b) => a.rentalPrice - b.rentalPrice);
-    return searchFilteredProducts;
-  }, [searchFilteredProducts, sort]);
+    if (sort === "az") return [...allProducts].sort((a, b) => a.name.localeCompare(b.name));
+    if (sort === "price-low") return [...allProducts].sort((a, b) => a.rentalPrice - b.rentalPrice);
+    return allProducts;
+  }, [allProducts, sort]);
 
   const categoryDescription = useMemo(() => {
     const map: Record<string, string> = {};
@@ -122,6 +126,16 @@ export default function Catalogue() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Escape closes the search overlay
+  useEffect(() => {
+    if (!searchOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSearchOpen(false);
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [searchOpen]);
 
   const toggleStagingSize = (size: string) => {
     setStagingSizes(prev => prev.includes(size) ? prev.filter(s => s !== size) : [...prev, size]);
@@ -178,6 +192,10 @@ export default function Catalogue() {
               ))}
             </div>
             <div className="catalogue-toolbar-actions">
+              <button className="catalogue-search-trigger" onClick={() => setSearchOpen(true)} aria-label="Open catalogue search">
+                <Search size={14} />
+                <span>Search</span>
+              </button>
               <div className="catalogue-filter-dropdown" ref={filterRef}>
                 <button className="catalogue-filter-trigger" onClick={() => setFilterOpen(!filterOpen)}>
                   <SlidersHorizontal size={14} />
@@ -249,7 +267,7 @@ export default function Catalogue() {
 
           {!loading && !error && (
             <>
-              <div className="catalogue-context"><p>{filter === "all" ? "The full studio edit" : categoryDescription[filter] ?? ""}</p><span>{sortedProducts.length} {sortedProducts.length === 1 ? "piece" : "pieces"}</span></div>
+              <div className="catalogue-context"><p>{debouncedSearch ? `Results for “${debouncedSearch}”` : filter === "all" ? "The full studio edit" : categoryDescription[filter] ?? ""}</p><span>{apiTotal} {apiTotal === 1 ? "piece" : "pieces"}</span></div>
               <div className="product-grid">
                 {sortedProducts.map((product, index) => (
                   <article className="product-card" key={product.slug} style={{ transitionDelay: `${index * 35}ms` }}>
@@ -279,12 +297,12 @@ export default function Catalogue() {
                   </button>
                 </div>
               )}
-              {sortedProducts.length === 0 && <div className="catalogue-empty"><Search size={22} /><h2>No pieces found</h2><p>Try adjusting your filters or return to the full edit.</p><button onClick={() => { setSearch(""); setFilter("all"); clearAllFilters(); }}>Reset catalogue</button></div>}
+              {sortedProducts.length === 0 && <div className="catalogue-empty"><Search size={22} /><h2>No pieces found</h2><p>{debouncedSearch ? "Try a different word, or clear the search to see the full edit." : "Try adjusting your filters or return to the full edit."}</p><button onClick={() => { setSearch(""); setDebouncedSearch(""); setFilter("all"); clearAllFilters(); }}>Reset catalogue</button></div>}
             </>
           )}
         </section>
       </main>
-      {searchOpen && <div className="search-overlay" role="dialog" aria-modal="true" aria-label="Search the catalogue"><button className="search-dismiss" onClick={() => setSearchOpen(false)} aria-label="Close search"><X size={22} /></button><div><p className="eyebrow eyebrow-gold">Find a piece</p><label><Search size={21} /><input autoFocus value={search} onChange={e => setSearch(e.target.value)} placeholder="Search style, length, brand..." /><button onClick={() => setSearchOpen(false)}>Show results <ArrowUpRight size={16} /></button></label><p className="search-helper">Results update beneath the search panel.</p></div></div>}
+      {searchOpen && <div className="search-overlay" role="dialog" aria-modal="true" aria-label="Search the catalogue"><button className="search-dismiss" onClick={() => setSearchOpen(false)} aria-label="Close search"><X size={22} /></button><div><p className="eyebrow eyebrow-gold">Find a piece</p><label><Search size={21} /><input autoFocus value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => { if (e.key === "Enter") setSearchOpen(false); }} placeholder="Name, style, size..." /><div>{search && <button onClick={() => { setSearch(""); setDebouncedSearch(""); }}>Clear</button>}<button onClick={() => setSearchOpen(false)}>Show results <ArrowUpRight size={16} /></button></div></label><p className="search-helper">Searches name, style, length, brand, category, size and measurements.</p></div></div>}
     </StoreShell>
   );
 }
