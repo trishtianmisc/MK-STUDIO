@@ -5,6 +5,7 @@ import { resolveSeo } from "@/lib/seo";
 import NotFound from "@/pages/NotFound";
 import { Route, Switch, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
+import FeedbackWidget from "./components/FeedbackWidget";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import About from "./pages/About";
@@ -25,6 +26,7 @@ const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminProducts = lazy(() => import("./pages/AdminProducts"));
 const AdminCategories = lazy(() => import("./pages/AdminCategories"));
 const AdminRentals = lazy(() => import("./pages/AdminRentals"));
+const AdminFeedback = lazy(() => import("./pages/AdminFeedback"));
 
 function AdminFallback() {
   return (
@@ -98,6 +100,7 @@ function ProtectedAdminRoute() {
         <div style={view !== "products" ? { display: "none" } : undefined}><AdminProducts /></div>
         <div style={view !== "categories" ? { display: "none" } : undefined}><AdminCategories /></div>
         <div style={view !== "rentals" ? { display: "none" } : undefined}><AdminRentals /></div>
+        <div style={view !== "feedback" ? { display: "none" } : undefined}><AdminFeedback /></div>
       </AdminLayoutWrapper>
     </Suspense>
   );
@@ -166,6 +169,7 @@ function App() {
           <TooltipProvider>
             <Toaster />
             <Analytics />
+            <FeedbackWidget />
             <Router />
           </TooltipProvider>
         </AuthProvider>

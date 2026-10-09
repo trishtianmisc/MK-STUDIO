@@ -10,6 +10,7 @@ import categoriesRoutes from "./routes/categories.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import availabilityRoutes from "./routes/availability.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
+import feedbackRoutes from "./routes/feedback.routes.js";
 import sitemapRoutes from "./routes/sitemap.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
@@ -63,6 +64,7 @@ export function createApp() {
   app.use("/api/categories", categoriesRoutes);
   app.use("/api", availabilityRoutes);
   app.use("/api", contactRoutes);
+  app.use("/api", feedbackRoutes);
 
   // Health check
   app.get("/api/health", (_req, res) => {

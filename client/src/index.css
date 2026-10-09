@@ -438,6 +438,38 @@
 .ct-form-btn { display: inline-flex; align-items: center; gap: 7px; margin-top: 30px; padding: 14px 32px; background: #c9ad73; color: #2a1914; border: none; cursor: pointer; font-family: "DM Sans", Arial, sans-serif; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; transition: background-color .3s, color .3s; }
 .ct-form-btn:hover { background: #f7f3ec; }
 .ct-form-note { margin: 16px 0 0; color: rgba(247,243,236,.45); font-size: 10px; line-height: 1.5; }
+.ct-form-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+/* ── Feedback widget ── */
+.fb-stars { display: flex; gap: 10px; margin-top: 4px; }
+.fb-stars button { display: inline-flex; padding: 0; background: none; border: 0; cursor: pointer; color: rgba(247,243,236,.32); transition: color .2s, transform .2s; }
+.fb-stars button.is-on { color: #c9ad73; }
+.fb-stars button:hover:not(:disabled) { transform: scale(1.08); }
+.fb-stars-label { margin: 12px 0 0; color: #c9ad73; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; }
+.fb-widget { position: fixed; z-index: 900; right: 22px; bottom: 22px; display: flex; align-items: center; gap: 12px; }
+.fb-widget-btn { width: 56px; height: 56px; flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; border: 0; border-radius: 50%; background: #c9ad73; color: #2a1914; cursor: pointer; box-shadow: 0 10px 28px rgba(35,21,15,.28); transition: transform .2s, background-color .2s; }
+.fb-widget-btn:hover { transform: scale(1.06); background: #d7bd88; }
+.fb-widget-tip { position: relative; display: inline-flex; align-items: center; gap: 8px; padding: 11px 12px 11px 16px; background: #fff; color: #2a1914; border-radius: 999px; box-shadow: 0 8px 24px rgba(35,21,15,.16); font: 600 12px/1 "DM Sans", Arial, sans-serif; animation: fb-tip-in .28s ease; }
+.fb-widget-tip:after { content: ""; position: absolute; right: -5px; top: 50%; width: 11px; height: 11px; background: #fff; transform: translateY(-50%) rotate(45deg); border-radius: 2px; }
+.fb-widget-tip-close { display: inline-flex; padding: 2px; border: 0; background: none; color: #8c7669; cursor: pointer; }
+.fb-widget-tip-close:hover { color: #2a1914; }
+@keyframes fb-tip-in { from { opacity: 0; transform: translateX(6px); } to { opacity: 1; transform: none; } }
+
+/* ── Feedback modal ── */
+.fb-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(35,21,15,.55); }
+.fb-modal { position: fixed; z-index: 1001; top: 50%; left: 50%; transform: translate(-50%, -50%); width: min(440px, calc(100vw - 32px)); max-height: calc(100vh - 48px); overflow: auto; padding: 34px 32px; background: #23150f; color: #f7f3ec; box-shadow: 0 26px 80px rgba(0,0,0,.35); }
+.fb-modal-eyebrow { margin: 0 0 18px; color: #c9ad73; font-size: 10px; letter-spacing: .17em; text-transform: uppercase; font-weight: 500; }
+.fb-modal-title { margin: 0; font: 500 42px/.85 "Cormorant Garamond", Georgia, serif; letter-spacing: -.04em; }
+.fb-modal-title em { font-style: italic; }
+.fb-modal-lead { margin: 14px 0 0; color: rgba(247,243,236,.6); font-size: 12px; line-height: 1.6; }
+.fb-modal-note { margin: 16px 0 0; color: rgba(247,243,236,.55); font-size: 12px; line-height: 1.6; }
+.fb-modal-form label { display: grid; gap: 7px; margin-top: 18px; color: rgba(247,243,236,.6); font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: .11em; }
+.fb-modal-form textarea { width: 100%; background: transparent; border: 0; border-bottom: 2px solid #c9ad73; border-radius: 0; outline: 0; padding: 8px 0 10px; color: #f7f3ec; font: 14px/1.4 "DM Sans", Arial, sans-serif; text-transform: none; resize: vertical; }
+.fb-modal-form textarea::placeholder { color: rgba(247,243,236,.3); }
+.fb-modal-btn { display: inline-flex; align-items: center; gap: 7px; margin-top: 26px; padding: 13px 28px; background: #c9ad73; color: #2a1914; border: none; cursor: pointer; font-family: "DM Sans", Arial, sans-serif; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; transition: background-color .3s; }
+.fb-modal-btn:hover:not(:disabled) { background: #f7f3ec; }
+.fb-modal-btn:disabled { opacity: .45; cursor: not-allowed; }
+@media (max-width: 760px) { .fb-widget { right: 14px; bottom: 14px; gap: 8px; } .fb-widget-tip { padding: 9px 10px 9px 13px; font-size: 11px; } .fb-modal { padding: 28px 22px; } }
 
 /* ── Social ── */
 .ct-social { padding: 0 6vw 90px; }
