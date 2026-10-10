@@ -1,9 +1,9 @@
-import { ArrowLeft, LayoutDashboard, ImagePlus, ClipboardList, Calendar, MessageSquare, LogOut } from "lucide-react";
+import { ArrowLeft, LayoutDashboard, ImagePlus, ClipboardList, Calendar, CalendarDays, MessageSquare, LogOut } from "lucide-react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
 import type { ReactNode } from "react";
 
-export type AdminView = "dashboard" | "products" | "categories" | "rentals" | "feedback";
+export type AdminView = "dashboard" | "products" | "categories" | "rentals" | "calendar" | "feedback";
 
 interface Props {
   view: AdminView;
@@ -25,6 +25,7 @@ export default function AdminLayout({ view, setView, children }: Props) {
     { id: "products", label: "Products", icon: ImagePlus },
     { id: "categories", label: "Categories", icon: ClipboardList },
     { id: "rentals", label: "Rentals", icon: Calendar },
+    { id: "calendar", label: "Calendar", icon: CalendarDays },
     { id: "feedback", label: "Feedback", icon: MessageSquare },
   ];
 
@@ -42,7 +43,7 @@ export default function AdminLayout({ view, setView, children }: Props) {
       <section className="admin-preview-intro">
         <div>
           <p>ADMIN AREA</p>
-          <h1>{view === "dashboard" ? <>Studio rental<br />overview.</> : view === "rentals" ? <>Rental<br />management.</> : view === "feedback" ? <>Customer<br />feedback.</> : <>{view === "products" ? "Product catalogue" : "Product categories"}<br /><em>management.</em></>}</h1>
+          <h1>{view === "dashboard" ? <>Studio rental<br />overview.</> : view === "rentals" ? <>Rental<br />management.</> : view === "calendar" ? <>Monthly rental<br /><em>calendar.</em></> : view === "feedback" ? <>Customer<br />feedback.</> : <>{view === "products" ? "Product catalogue" : "Product categories"}<br /><em>management.</em></>}</h1>
         </div>
       </section>
 

@@ -26,6 +26,7 @@ const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 const AdminProducts = lazy(() => import("./pages/AdminProducts"));
 const AdminCategories = lazy(() => import("./pages/AdminCategories"));
 const AdminRentals = lazy(() => import("./pages/AdminRentals"));
+const AdminCalendar = lazy(() => import("./pages/AdminCalendar"));
 const AdminFeedback = lazy(() => import("./pages/AdminFeedback"));
 
 function AdminFallback() {
@@ -100,6 +101,7 @@ function ProtectedAdminRoute() {
         <div style={view !== "products" ? { display: "none" } : undefined}><AdminProducts /></div>
         <div style={view !== "categories" ? { display: "none" } : undefined}><AdminCategories /></div>
         <div style={view !== "rentals" ? { display: "none" } : undefined}><AdminRentals /></div>
+        <div style={view !== "calendar" ? { display: "none" } : undefined}><AdminCalendar /></div>
         <div style={view !== "feedback" ? { display: "none" } : undefined}><AdminFeedback /></div>
       </AdminLayoutWrapper>
     </Suspense>
